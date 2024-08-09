@@ -104,17 +104,17 @@ namespace Murong_Xue
                                     break;
                                 case "item":
                                     data.Add(new FeedData(_title, _fileName, _url, _expr, _history));
+                                    data.Last().Print();
                                     break;
                                 default:
                                     break;
                             }
                             break;
-                        case XmlNodeType.Whitespace:
+                        case XmlNodeType.CDATA:
+                            if (InUrl)
+                                _url = reader.Value;
                             break;
                         default:
-                            if (reader.NodeType.ToString() == "CDATA")
-                                if (InUrl)
-                                    _url = reader.Value;
                             break;
                     }
                 }
