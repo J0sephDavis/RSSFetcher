@@ -37,13 +37,27 @@
  *   3.3. Use an XMLReader to load data at the beginning, and have a ToString() option for each FeedData which is used in the XMLWriter
  * 
  */
+using Murong_Xue;
 using System.ComponentModel.DataAnnotations;
+using System.Xml;
 
 namespace MurongXue;
 public class Program
 {
-    public void Main(string[] args)
+    //! path to the rss-config.xml file we store data in
+    //TODO make a local path
+    private static readonly Uri filePath
+        = new Uri("D:\\VisualStudio Community Projects\\Murong Xue\\Murong Xue\\rss-config.xml");
+    private static ConfigData? config = null;
+    public static void Main()
     {
-        Console.WriteLine("MAIN");
+        config = new ConfigData(filePath);
+        if (config == null)
+        {
+            Console.WriteLine("config was null?");
+            return;
+        }
+        config.Process();
     }
+    
 }
