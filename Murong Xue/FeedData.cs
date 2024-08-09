@@ -16,7 +16,7 @@ namespace Murong_Xue
         protected string Expression;
         protected string History;
         protected bool HasNewHistory = false;
-        protected string NewHistory;
+        protected string NewHistory  = string.Empty;
         private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
 
         public FeedData(string title, string fileName,
@@ -53,12 +53,24 @@ namespace Murong_Xue
         */
         public void QueueDownload()
         {
-            DownloadEntryFeed entry = new DownloadEntryFeed(URL, FileName, this);
+            DownloadEntryFeed entry = new DownloadEntryFeed(URL, this);
             downloadHandler.AddDownload(entry);
+        }
+
+        public void AddFile(string title, Uri link)
+        {
+            if (HasNewHistory == false)
+            {
+                HasNewHistory = true;
+                NewHistory = title;
+            }
+            Console.WriteLine("- NEW DOWNLOAD {0}: {1}", title, link.ToString());
+            //DownloadEntryFile entry = new(link);
+            //downloadHandler.AddDownload();
         }
         public async void OnFeedDownloaded(Stream content)
         {
-            Console.WriteLine("----- Feed Downloaded {0}-----",content.Length);
+            Console.WriteLine("----- Feed Downloaded {1}({0})-----",content.Length,this.Title);
             XmlReaderSettings xSettings = new();
             xSettings.Async = true;
             //
@@ -101,15 +113,12 @@ namespace Murong_Xue
                                     IsUrl = false;
                                     break;
                                 case "item":
-                                    //TODO update history && check if its already in history
-                                    //TODO add download to list
                                     if (History == _title)
                                     {
-                                        Console.WriteLine("HISTORY MATCHED");
                                         return;
                                     }
-                                    else
-                                        Console.WriteLine("- {0} {1}", _title, _url);
+                                    //---
+                                    AddFile(_title, new Uri(_url));
                                     break;
                                 default:
                                     break;

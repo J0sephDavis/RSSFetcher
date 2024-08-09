@@ -10,7 +10,7 @@ namespace Murong_Xue
 {
     internal sealed class DownloadHandler
     {
-        const int BATCH_SIZE = 2;
+        const int BATCH_SIZE = 5;
         const int BATCH_DELAY_MS = 2000;
         private static DownloadHandler? s_DownloadHandler = null;
         private static HttpClient client = new();
@@ -52,7 +52,7 @@ namespace Murong_Xue
             while (Downloads.Count != 0)
             {
                 DownloadEntryBase entry = PopDownload();
-                Console.WriteLine("- entry: {0} {1}", entry.fileName, entry.link);
+                //Console.WriteLine("- entry: {0}", entry.link);
 
                 Task<HttpResponseMessage> request = client.GetAsync(entry.link);
                 await request.ContinueWith(entry.OnDownload);
@@ -77,13 +77,11 @@ namespace Murong_Xue
     internal class DownloadEntryBase //TODO better name?
     {
         public Uri link;
-        public string fileName;
-        public DownloadEntryBase(Uri link, string fileName)
+        public DownloadEntryBase(Uri link)
         {
             this.link = link;
-            this.fileName = fileName;
         }
-        virtual public void OnDownload(Task<HttpResponseMessage> response)
+        virtual public async void OnDownload(Task<HttpResponseMessage> response)
         {
             Console.WriteLine("DownloadEntryBase.OnDownload");
         }
@@ -92,13 +90,13 @@ namespace Murong_Xue
     internal class DownloadEntryFeed : DownloadEntryBase
     {
         private FeedData feed { get; set; }
-        public DownloadEntryFeed(Uri link, string fileName, FeedData _feed) : base(link, fileName)
+        public DownloadEntryFeed(Uri link, FeedData _feed)
+            : base(link)
         {
             this.feed = _feed;
         }
         override public async void OnDownload(Task<HttpResponseMessage> response)
         {
-            Console.WriteLine("DownloadFeed.OnDownload");
             HttpResponseMessage msg = await response;
             Stream content = await msg.Content.ReadAsStreamAsync();
 
@@ -108,5 +106,18 @@ namespace Murong_Xue
 
             feed.OnFeedDownloaded(content);
         }
+    }
+
+    internal class DownloadEntryFile : DownloadEntryBase
+    {
+        public DownloadEntryFile(Uri link)
+            : base(link)
+        { }
+        override public async void OnDownload(Task<HttpResponseMessage> response)
+        {
+            Console.WriteLine("File downloaded: " + link.ToString());
+            HttpResponseMessage resp = await response;
+        }
+
     }
 }
