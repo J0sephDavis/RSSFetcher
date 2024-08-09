@@ -82,6 +82,7 @@ namespace Murong_Xue
                 bool IsUrl = false;
                 string _title = string.Empty;
                 string _url = string.Empty;
+
                 while(reader.Read())
                 {
                     switch (reader.NodeType)

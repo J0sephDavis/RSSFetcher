@@ -23,7 +23,6 @@ namespace Murong_Xue
         
         private DownloadHandler()
         { }
-
         public static DownloadHandler GetInstance()
         {
             if (s_DownloadHandler == null)

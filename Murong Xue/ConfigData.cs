@@ -36,7 +36,7 @@ namespace Murong_Xue
         private void GetConfigData()
         {
             FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
-            XmlReaderSettings xSettings = new XmlReaderSettings();
+            XmlReaderSettings xSettings = new();
             xSettings.Async = false;
 
             using (XmlReader reader = XmlReader.Create(xStream, xSettings))
