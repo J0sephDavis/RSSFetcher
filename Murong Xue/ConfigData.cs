@@ -12,9 +12,12 @@ namespace Murong_Xue
     {
         private Uri path;
         private List<FeedData> data;
+        private DownloadHandler downloadHandler;
 
         public ConfigData(Uri filePath)
         {
+            downloadHandler = DownloadHandler.GetInstance();
+            
             this.path = filePath;
             data = new List<FeedData>();
             Console.WriteLine(
@@ -22,9 +25,17 @@ namespace Murong_Xue
                 $"LocalPath:{filePath.LocalPath}"
             );
         }
-        public void Process()
+        public async void Process()
         {
             GetConfigData();
+            Console.WriteLine("--------------------DOWNLOAD---------------------");
+            int i = 0;
+            foreach(FeedData feed in data)
+            {
+                feed.QueueDownload();
+                if (i++ >= 2) break;
+            }
+            downloadHandler.ProcessDownloads();
         }
         //! Reads the config XML files and populated the FeedData list
         private void GetConfigData()
@@ -104,7 +115,14 @@ namespace Murong_Xue
                                     InHistory = false;
                                     break;
                                 case "item":
-                                    data.Add(new FeedData(_title, _fileName, _url, _expr, _history));
+                                    data.Add(new FeedData(
+                                        title:      _title,
+                                        fileName:   _fileName,
+                                        url:        _url,
+                                        expression: _expr,
+                                        history:    _history,
+                                        downloadHandler:  downloadHandler)
+                                    );
                                     data.Last().Print();
                                     break;
                                 default:

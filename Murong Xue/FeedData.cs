@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,9 +16,11 @@ namespace Murong_Xue
         protected string History { get; set; }
         protected bool HasNewHistory { get; set; }
         protected string NewHistory { get; set; }
+        private DownloadHandler downloadHandler;
 
-
-        public FeedData(string title, string fileName, string url, string expression, string history)
+        public FeedData(string title, string fileName,
+            string url, string expression,
+            string history, DownloadHandler downloadHandler)
         {
             this.Title = title;
             this.FileName = fileName;
@@ -25,6 +28,7 @@ namespace Murong_Xue
             //TODO add checks on URL validity
             this.Expression = expression;
             this.History = history;
+            this.downloadHandler = downloadHandler;
         }
 
         public void Print()
@@ -38,28 +42,23 @@ namespace Murong_Xue
             if (HasNewHistory)
                 Console.WriteLine("\n\tNEW-HISTORY: {0}", NewHistory);
         }
-        //
-        private void  Process()
+        /*  1. Download the file
+            2. Read the file
+                2.1. If history != title
+                    2.1.1. If (HasNewHistory == false) //only adds the newest/first item to NewHistory
+                        HasNewHistory = true
+                        NewHistory = title
+                    2.1.2. Add URI to downloads
+                2.2. else RETURN
+        */
+        public void QueueDownload()
         {
-            /*  1. Download the file
-                2. Read the file
-                    2.1. If history != title
-                        2.1.1. If (HasNewHistory == false) //only adds the newest/first item to NewHistory
-                            HasNewHistory = true
-                            NewHistory = title
-                        2.1.2. Add URI to downloads
-                    2.2. else RETURN
-            */
-            DownloadFeed();
+            DownloadEntryFeed entry = new DownloadEntryFeed(URL, FileName, this);
+            downloadHandler.AddDownload(entry);
         }
-        private void DownloadFeed()
+        public void OnFeedDownloaded()
         {
-            //request download
-            //await 
-        }
-        private void ParseFeed()
-        {
-
+            Console.WriteLine("FeedData.OnFeedDownloaded");
         }
     }
 }
