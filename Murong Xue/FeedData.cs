@@ -10,13 +10,6 @@ namespace Murong_Xue
 {
     internal class FeedData
     {
-        enum Status
-        {
-            Initialized,
-            Queued,
-            Downloaded,
-            Processed
-        };
         protected string Title;
         protected string FileName;
         protected Uri URL; //TODO how to use this Uri data type
@@ -25,7 +18,6 @@ namespace Murong_Xue
         protected bool HasNewHistory = false;
         protected string NewHistory;
         private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
-        private Status _status;
 
         public FeedData(string title, string fileName,
             string url, string expression,
@@ -37,7 +29,6 @@ namespace Murong_Xue
             //TODO add checks on URL validity
             this.Expression = expression;
             this.History = history;
-            this._status = Status.Initialized;
         }
 
         public void Print()
@@ -62,19 +53,11 @@ namespace Murong_Xue
         */
         public void QueueDownload()
         {
-            if (_status >= Status.Queued)
-            {
-                Console.WriteLine("File has already been enqueued");
-                return;
-            }
-
             DownloadEntryFeed entry = new DownloadEntryFeed(URL, FileName, this);
             downloadHandler.AddDownload(entry);
-            _status = Status.Queued;
         }
         public async void OnFeedDownloaded(Stream content)
         {
-            _status = Status.Downloaded;
             Console.WriteLine("----- Feed Downloaded {0}-----",content.Length);
             XmlReaderSettings xSettings = new();
             xSettings.Async = true;
