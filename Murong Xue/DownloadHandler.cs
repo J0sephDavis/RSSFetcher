@@ -47,18 +47,13 @@ namespace Murong_Xue
         }
         public async void ProcessDownloads()
         {
-            List<Task<HttpResponseMessage>> CurrentBatch = [];
+            List<Task> CurrentBatch = [];
             List<DownloadEntryBase> tmpList = [];
             while (Downloads.Count != 0)
             {
                 DownloadEntryBase entry = PopDownload();
-                //Console.WriteLine("- entry: {0}", entry.link);
-
-                Task<HttpResponseMessage> request = client.GetAsync(entry.link);
-                await request.ContinueWith(entry.OnDownload);
-
                 //Add the entry to the task list
-                CurrentBatch.Add(client.GetAsync(entry.link));
+                CurrentBatch.Add(entry.Request(client));
                 
                 //When we've filled our budget or used em all
                 if (CurrentBatch.Count >= BATCH_SIZE || Downloads.Count == 0)
@@ -80,6 +75,12 @@ namespace Murong_Xue
         public DownloadEntryBase(Uri link)
         {
             this.link = link;
+        }
+        virtual public async Task Request(HttpClient client)
+        {
+            Task<HttpResponseMessage> request = client.GetAsync(this.link);
+            await request.ContinueWith(this.OnDownload);
+            return;
         }
         virtual public async void OnDownload(Task<HttpResponseMessage> response)
         {
