@@ -103,7 +103,13 @@ namespace Murong_Xue
                                 case "item":
                                     //TODO update history && check if its already in history
                                     //TODO add download to list
-                                    Console.WriteLine("- {0} {1}", _title, _url);
+                                    if (History == _title)
+                                    {
+                                        Console.WriteLine("HISTORY MATCHED");
+                                        return;
+                                    }
+                                    else
+                                        Console.WriteLine("- {0} {1}", _title, _url);
                                     break;
                                 default:
                                     break;

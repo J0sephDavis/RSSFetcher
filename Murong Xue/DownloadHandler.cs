@@ -10,8 +10,8 @@ namespace Murong_Xue
 {
     internal sealed class DownloadHandler
     {
-        const int BATCH_SIZE = 1;
-        const int BATCH_DELAY_MS = 10000;
+        const int BATCH_SIZE = 2;
+        const int BATCH_DELAY_MS = 2000;
         private static DownloadHandler? s_DownloadHandler = null;
         private static HttpClient client = new();
         private readonly object DownloadsLock = new(); //c# version 12 has not System.Threading.Lock
@@ -69,7 +69,6 @@ namespace Murong_Xue
                     CurrentBatch.Clear();
                     await Task.Delay(BATCH_DELAY_MS);
                 }
-                if (Downloads.Count <= 30) return;
             }
             Console.WriteLine("ALL DOWNLOADS PROCESSED");
         }
