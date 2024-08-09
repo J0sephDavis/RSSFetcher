@@ -58,6 +58,7 @@ public class Program
             return;
         }
         config.Process();
+        while (true) { }
     }
     
 }
