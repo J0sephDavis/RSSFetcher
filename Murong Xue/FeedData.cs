@@ -37,7 +37,6 @@ namespace Murong_Xue
             //TODO add checks on URL validity
             this.Expression = expression;
             this.History = history;
-            this.downloadHandler = downloadHandler;
             this._status = Status.Initialized;
         }
 
@@ -128,7 +127,6 @@ namespace Murong_Xue
                             }
                             break;
                         default:
-                            //Console.WriteLine("default: {0} {1}", reader.Name, await reader.GetValueAsync());
                             break;
                     }
                 }
