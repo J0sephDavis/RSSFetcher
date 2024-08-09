@@ -28,13 +28,10 @@ namespace Murong_Xue
         public async void Process()
         {
             GetConfigData();
-            Console.WriteLine("--------------------DOWNLOAD---------------------");
-            int i = 0;
+            //
             foreach(FeedData feed in data)
-            {
                 feed.QueueDownload();
-                if (i++ >= 2) break;
-            }
+            //
             downloadHandler.ProcessDownloads();
         }
         //! Reads the config XML files and populated the FeedData list
