@@ -49,7 +49,8 @@ public class Program
     private static readonly Uri filePath
         = new Uri("D:\\VisualStudio Community Projects\\Murong Xue\\Murong Xue\\rss-config.xml");
     private static ConfigData? config = null;
-    public static void Main()
+    private static bool KeepRunning = true;
+    public static async Task Main()
     {
         config = new ConfigData(filePath);
         if (config == null)
@@ -57,8 +58,7 @@ public class Program
             Console.WriteLine("config was null?");
             return;
         }
-        config.Process();
-        while (true) { }
+        await config.Process();
     }
     
 }

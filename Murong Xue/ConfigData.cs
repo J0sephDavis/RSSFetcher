@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MurongXue;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,9 +14,8 @@ namespace Murong_Xue
         private Uri path;
         private List<FeedData> data;
         private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
-
         public ConfigData(Uri filePath)
-        {            
+        {
             this.path = filePath;
             data = new List<FeedData>();
             Console.WriteLine(
@@ -23,14 +23,14 @@ namespace Murong_Xue
                 $"LocalPath:{filePath.LocalPath}"
             );
         }
-        public async void Process()
+        public async Task Process()
         {
             GetConfigData();
             //
             foreach(FeedData feed in data)
                 feed.QueueDownload();
             //
-            downloadHandler.ProcessDownloads();
+            await downloadHandler.ProcessDownloads();
         }
         //! Reads the config XML files and populated the FeedData list
         private void GetConfigData()

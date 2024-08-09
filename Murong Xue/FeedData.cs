@@ -18,6 +18,7 @@ namespace Murong_Xue
         protected bool HasNewHistory = false;
         protected string NewHistory  = string.Empty;
         private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
+        int id = 0;
 
         public FeedData(string title, string fileName,
             string url, string expression,
@@ -65,8 +66,9 @@ namespace Murong_Xue
                 NewHistory = title;
             }
             Console.WriteLine("- NEW DOWNLOAD {0}: {1}", title, link.ToString());
-            //DownloadEntryFile entry = new(link);
-            //downloadHandler.AddDownload();
+            DownloadEntryFile entry = new(link, "D:\\VisualStudio Community Projects\\Murong Xue\\Downloads\\" + this.Title + '_' + id.ToString() + ".txt");
+            id += 1;
+            downloadHandler.AddDownload(entry);
         }
         public async void OnFeedDownloaded(Stream content)
         {
