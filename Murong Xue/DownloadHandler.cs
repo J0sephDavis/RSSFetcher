@@ -18,7 +18,8 @@ namespace Murong_Xue
         
         private List<DownloadEntryBase> Downloads //list of files to be downloaded
             = [];
-        
+        const int BATCH_SIZE = 4;
+        const int BATCH_DELAY_MS = 4000;
         private DownloadHandler()
         { }
 
@@ -33,7 +34,6 @@ namespace Murong_Xue
         {
             Downloads.Add(entry);
         }
-
         public async void ProcessDownloads()
         {
             List<Task<HttpResponseMessage>> CurrentBatch = new List<Task<HttpResponseMessage>>();
@@ -42,19 +42,19 @@ namespace Murong_Xue
                 DownloadEntryBase entry = Downloads.First();
                 Console.WriteLine("- entry: {0} {1}", entry.fileName, entry.link);
                 Task<HttpResponseMessage> request = client.GetAsync(entry.link);
-                request.ContinueWith(entry.OnDownload);
+                await request.ContinueWith(entry.OnDownload);
                 //Add the entry to the task list & remove it from the downloads list
                 CurrentBatch.Add(client.GetAsync(entry.link));
                 Downloads.Remove(entry);
                 
                 //When we've filled our budget or used em all
-                if (CurrentBatch.Count() >= 4 || Downloads.Count() == 0)
+                if (CurrentBatch.Count() >= BATCH_SIZE || Downloads.Count() == 0)
                 {
                     Console.WriteLine("Downloads{0} Batch{1}", Downloads.Count(), CurrentBatch.Count());
 
                     await Task.WhenAll(CurrentBatch);
                     CurrentBatch.Clear();
-                    await Task.Delay(2000);
+                    await Task.Delay(BATCH_DELAY_MS);
                 }
             }
             Console.WriteLine("ALL DOWNLOADS PROCESSED");
@@ -88,8 +88,9 @@ namespace Murong_Xue
             Console.WriteLine("DownloadFeed.OnDownload");
             HttpResponseMessage msg = await response;
             string content = await msg.Content.ReadAsStringAsync();
+            //check if response size is low / equal to a known rate limit value, add back to the queue?
+            //handle in FeedData?
             feed.OnFeedDownloaded(content);
         }
     }
-
 }
