@@ -13,6 +13,9 @@ namespace Murong_Xue
         protected Uri URL { get; set; } //TODO how to use this Uri data type
         protected string Expression { get; set; }
         protected string History { get; set; }
+        protected bool HasNewHistory { get; set; }
+        protected string NewHistory { get; set; }
+
 
         public FeedData(string title, string fileName, string url, string expression, string history)
         {
@@ -32,6 +35,31 @@ namespace Murong_Xue
                 $"\n\t{this.URL}" +
                 $"\n\t{this.Expression}" +
                 $"\n\t{this.History}");
+            if (HasNewHistory)
+                Console.WriteLine("\n\tNEW-HISTORY: {0}", NewHistory);
+        }
+        //
+        private void  Process()
+        {
+            /*  1. Download the file
+                2. Read the file
+                    2.1. If history != title
+                        2.1.1. If (HasNewHistory == false) //only adds the newest/first item to NewHistory
+                            HasNewHistory = true
+                            NewHistory = title
+                        2.1.2. Add URI to downloads
+                    2.2. else RETURN
+            */
+            DownloadFeed();
+        }
+        private void DownloadFeed()
+        {
+            //request download
+            //await 
+        }
+        private void ParseFeed()
+        {
+
         }
     }
 }
