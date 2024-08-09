@@ -12,12 +12,10 @@ namespace Murong_Xue
     {
         private Uri path;
         private List<FeedData> data;
-        private DownloadHandler downloadHandler;
+        private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
 
         public ConfigData(Uri filePath)
-        {
-            downloadHandler = DownloadHandler.GetInstance();
-            
+        {            
             this.path = filePath;
             data = new List<FeedData>();
             Console.WriteLine(
@@ -117,8 +115,7 @@ namespace Murong_Xue
                                         fileName:   _fileName,
                                         url:        _url,
                                         expression: _expr,
-                                        history:    _history,
-                                        downloadHandler:  downloadHandler)
+                                        history:    _history)
                                     );
                                     data.Last().Print();
                                     break;

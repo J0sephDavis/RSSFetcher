@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Murong_Xue
 {
-    /* 1. Owns the HTTPClient
-     * 2. 
-     */
     internal sealed class DownloadHandler
     {
+        const int BATCH_SIZE = 1;
+        const int BATCH_DELAY_MS = 10000;
         private static DownloadHandler? s_DownloadHandler = null;
-
         private static HttpClient client = new();
+        private readonly object DownloadsLock = new(); //c# version 12 has not System.Threading.Lock
+        //list of files to be downloaded
+        private List<DownloadEntryBase> Downloads = [];
         
-        private List<DownloadEntryBase> Downloads //list of files to be downloaded
-            = [];
-        const int BATCH_SIZE = 4;
-        const int BATCH_DELAY_MS = 4000;
         private DownloadHandler()
         { }
 
@@ -32,20 +30,35 @@ namespace Murong_Xue
 
         public void AddDownload(DownloadEntryBase entry)
         {
-            Downloads.Add(entry);
+            lock(DownloadsLock)
+            {
+                Downloads.Add(entry);
+            }
+        }
+        private DownloadEntryBase PopDownload()
+        {
+            DownloadEntryBase entry;
+            lock (DownloadsLock)
+            {
+                entry = Downloads.First();
+                Downloads.Remove(entry);
+            }
+            return entry;
         }
         public async void ProcessDownloads()
         {
-            List<Task<HttpResponseMessage>> CurrentBatch = new List<Task<HttpResponseMessage>>();
+            List<Task<HttpResponseMessage>> CurrentBatch = [];
+            List<DownloadEntryBase> tmpList = [];
             while (Downloads.Count != 0)
             {
-                DownloadEntryBase entry = Downloads.First();
+                DownloadEntryBase entry = PopDownload();
                 Console.WriteLine("- entry: {0} {1}", entry.fileName, entry.link);
+
                 Task<HttpResponseMessage> request = client.GetAsync(entry.link);
                 await request.ContinueWith(entry.OnDownload);
-                //Add the entry to the task list & remove it from the downloads list
+
+                //Add the entry to the task list
                 CurrentBatch.Add(client.GetAsync(entry.link));
-                Downloads.Remove(entry);
                 
                 //When we've filled our budget or used em all
                 if (CurrentBatch.Count >= BATCH_SIZE || Downloads.Count == 0)
@@ -56,6 +69,7 @@ namespace Murong_Xue
                     CurrentBatch.Clear();
                     await Task.Delay(BATCH_DELAY_MS);
                 }
+                if (Downloads.Count <= 30) return;
             }
             Console.WriteLine("ALL DOWNLOADS PROCESSED");
         }
@@ -87,9 +101,12 @@ namespace Murong_Xue
         {
             Console.WriteLine("DownloadFeed.OnDownload");
             HttpResponseMessage msg = await response;
-            string content = await msg.Content.ReadAsStringAsync();
+            Stream content = await msg.Content.ReadAsStreamAsync();
+
+            //set/check state of the ProcessDownloads functions so we know whether we should start it again?
             //check if response size is low / equal to a known rate limit value, add back to the queue?
             //handle in FeedData?
+
             feed.OnFeedDownloaded(content);
         }
     }

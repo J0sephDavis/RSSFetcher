@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Murong_Xue
 {
@@ -23,12 +24,12 @@ namespace Murong_Xue
         protected string History;
         protected bool HasNewHistory = false;
         protected string NewHistory;
-        private DownloadHandler downloadHandler;
+        private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private Status _status;
 
         public FeedData(string title, string fileName,
             string url, string expression,
-            string history, DownloadHandler downloadHandler)
+            string history)
         {
             this.Title = title;
             this.FileName = fileName;
@@ -72,10 +73,66 @@ namespace Murong_Xue
             downloadHandler.AddDownload(entry);
             _status = Status.Queued;
         }
-        public void OnFeedDownloaded(string content)
+        public async void OnFeedDownloaded(Stream content)
         {
             _status = Status.Downloaded;
             Console.WriteLine("----- Feed Downloaded {0}-----",content.Length);
+            XmlReaderSettings xSettings = new();
+            xSettings.Async = true;
+            //
+            using (XmlReader reader = XmlReader.Create(content, xSettings))
+            {
+                bool IsTitle = false;
+                bool IsUrl = false;
+                string _title = string.Empty;
+                string _url = string.Empty;
+                while(reader.Read())
+                {
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            switch (reader.Name)
+                            {
+                                case "title":
+                                    IsTitle = true;
+                                    break;
+                                case "link":
+                                    IsUrl = true;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        case XmlNodeType.Text:
+                            if (IsTitle)
+                                _title = await reader.GetValueAsync();
+                            else if (IsUrl)
+                                _url = await reader.GetValueAsync();
+                            break;
+                        case XmlNodeType.EndElement:
+                            switch(reader.Name)
+                            {
+                                case "title":
+                                    IsTitle = false;
+                                    break;
+                                case "link":
+                                    IsUrl = false;
+                                    break;
+                                case "item":
+                                    //TODO update history && check if its already in history
+                                    //TODO add download to list
+                                    Console.WriteLine("- {0} {1}", _title, _url);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        default:
+                            //Console.WriteLine("default: {0} {1}", reader.Name, await reader.GetValueAsync());
+                            break;
+                    }
+                }
+            }
         }
     }
 }
