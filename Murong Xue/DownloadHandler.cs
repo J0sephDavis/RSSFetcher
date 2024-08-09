@@ -37,7 +37,7 @@ namespace Murong_Xue
         public async void ProcessDownloads()
         {
             List<Task<HttpResponseMessage>> CurrentBatch = new List<Task<HttpResponseMessage>>();
-            while (Downloads.Count() != 0)
+            while (Downloads.Count != 0)
             {
                 DownloadEntryBase entry = Downloads.First();
                 Console.WriteLine("- entry: {0} {1}", entry.fileName, entry.link);
@@ -48,9 +48,9 @@ namespace Murong_Xue
                 Downloads.Remove(entry);
                 
                 //When we've filled our budget or used em all
-                if (CurrentBatch.Count() >= BATCH_SIZE || Downloads.Count() == 0)
+                if (CurrentBatch.Count >= BATCH_SIZE || Downloads.Count == 0)
                 {
-                    Console.WriteLine("Downloads{0} Batch{1}", Downloads.Count(), CurrentBatch.Count());
+                    Console.WriteLine("Downloads{0} Batch{1}", Downloads.Count, CurrentBatch.Count);
 
                     await Task.WhenAll(CurrentBatch);
                     CurrentBatch.Clear();
