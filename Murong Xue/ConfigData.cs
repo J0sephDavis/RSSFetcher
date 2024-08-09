@@ -40,6 +40,7 @@ namespace Murong_Xue
                 string _url = string.Empty;
                 string _expr = string.Empty;
                 string _history = string.Empty;
+
                 bool InTitle = false;
                 bool InFileName = false;
                 bool InUrl = false;
