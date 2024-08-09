@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace Murong_Xue
         private static HttpClient client = new();
         
         private List<DownloadEntryBase> Downloads //list of files to be downloaded
-            = new List<DownloadEntryBase>();
+            = [];
         
         private DownloadHandler()
         { }
@@ -35,29 +36,41 @@ namespace Murong_Xue
 
         public async void ProcessDownloads()
         {
-            foreach (DownloadEntryBase entry in Downloads)
+            List<Task<HttpResponseMessage>> CurrentBatch = new List<Task<HttpResponseMessage>>();
+            while (Downloads.Count() != 0)
             {
+                DownloadEntryBase entry = Downloads.First();
                 Console.WriteLine("- entry: {0} {1}", entry.fileName, entry.link);
-                using HttpResponseMessage response = await client.GetAsync(entry.link);
-                response.EnsureSuccessStatusCode();
-                string content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("RECEIVED:{0}", content);
+                Task<HttpResponseMessage> request = client.GetAsync(entry.link);
+                request.ContinueWith(entry.OnDownload);
+                //Add the entry to the task list & remove it from the downloads list
+                CurrentBatch.Add(client.GetAsync(entry.link));
+                Downloads.Remove(entry);
                 
-                entry.OnDownload();
+                //When we've filled our budget or used em all
+                if (CurrentBatch.Count() >= 4 || Downloads.Count() == 0)
+                {
+                    Console.WriteLine("Downloads{0} Batch{1}", Downloads.Count(), CurrentBatch.Count());
+
+                    await Task.WhenAll(CurrentBatch);
+                    CurrentBatch.Clear();
+                    await Task.Delay(2000);
+                }
             }
+            Console.WriteLine("ALL DOWNLOADS PROCESSED");
         }
     }
 
     internal class DownloadEntryBase //TODO better name?
     {
-        public Uri link = null;
-        public string fileName = string.Empty;
+        public Uri link;
+        public string fileName;
         public DownloadEntryBase(Uri link, string fileName)
         {
             this.link = link;
             this.fileName = fileName;
         }
-        virtual public void OnDownload()
+        virtual public void OnDownload(Task<HttpResponseMessage> response)
         {
             Console.WriteLine("DownloadEntryBase.OnDownload");
         }
@@ -70,10 +83,12 @@ namespace Murong_Xue
         {
             this.feed = _feed;
         }
-        override public void OnDownload()
+        override public async void OnDownload(Task<HttpResponseMessage> response)
         {
             Console.WriteLine("DownloadFeed.OnDownload");
-            feed.OnFeedDownloaded();
+            HttpResponseMessage msg = await response;
+            string content = await msg.Content.ReadAsStringAsync();
+            feed.OnFeedDownloaded(content);
         }
     }
 

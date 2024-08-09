@@ -9,14 +9,22 @@ namespace Murong_Xue
 {
     internal class FeedData
     {
-        protected string Title { get; set; }
-        protected string FileName { get; set; }
-        protected Uri URL { get; set; } //TODO how to use this Uri data type
-        protected string Expression { get; set; }
-        protected string History { get; set; }
-        protected bool HasNewHistory { get; set; }
-        protected string NewHistory { get; set; }
+        enum Status
+        {
+            Initialized,
+            Queued,
+            Downloaded,
+            Processed
+        };
+        protected string Title;
+        protected string FileName;
+        protected Uri URL; //TODO how to use this Uri data type
+        protected string Expression;
+        protected string History;
+        protected bool HasNewHistory = false;
+        protected string NewHistory;
         private DownloadHandler downloadHandler;
+        private Status _status;
 
         public FeedData(string title, string fileName,
             string url, string expression,
@@ -29,6 +37,7 @@ namespace Murong_Xue
             this.Expression = expression;
             this.History = history;
             this.downloadHandler = downloadHandler;
+            this._status = Status.Initialized;
         }
 
         public void Print()
@@ -53,12 +62,20 @@ namespace Murong_Xue
         */
         public void QueueDownload()
         {
+            if (_status >= Status.Queued)
+            {
+                Console.WriteLine("File has already been enqueued");
+                return;
+            }
+
             DownloadEntryFeed entry = new DownloadEntryFeed(URL, FileName, this);
             downloadHandler.AddDownload(entry);
+            _status = Status.Queued;
         }
-        public void OnFeedDownloaded()
+        public void OnFeedDownloaded(string content)
         {
-            Console.WriteLine("FeedData.OnFeedDownloaded");
+            _status = Status.Downloaded;
+            Console.WriteLine("----- Feed Downloaded {0}-----",content.Length);
         }
     }
 }
