@@ -14,22 +14,24 @@ namespace Murong_Xue
         protected string Expression { get; set; }
         protected string History { get; set; }
 
-        public FeedData() //accept RSS data here?
+        public FeedData(string title, string fileName, string url, string expression, string history)
         {
-            this.Title = "subspleases - slime";
-            this.FileName = "subsplease_tensei_shitara.xml";
-            this.URL = new Uri("https://nyaa.si/?page=rss&q=1080+%5BSubsPlease%5D+Tensei+Shitara+Slime+Datta+Ken+-&c=0_0&f=0");
-            this.Expression = "[SubsPlease] Tensei Shitara Slime Datta Ken -.*";
-            this.History = "[SubsPlease] Tensei Shitara Slime Datta Ken - 65 (1080p) [7C636E3C].mkv";
+            this.Title = title;
+            this.FileName = fileName;
+            this.URL = new Uri(url);
+            //TODO add checks on URL validity
+            this.Expression = expression;
+            this.History = history;
         }
 
         public void Print()
         {
-            Console.WriteLine($"Title: {this.Title}\t" +
-                $"FileName:{this.FileName}\t" +
-                $"URL:{this.URL}\t" +
-                $"Expr:{this.Expression}\t" +
-                $"History:{this.History}");
+            Console.WriteLine("FeedData Obj:" +
+                $"\n\t{this.Title}" +
+                $"\n\t{this.FileName}" +
+                $"\n\t{this.URL}" +
+                $"\n\t{this.Expression}" +
+                $"\n\t{this.History}");
         }
     }
 }

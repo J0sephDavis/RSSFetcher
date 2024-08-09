@@ -24,36 +24,97 @@ namespace Murong_Xue
         }
         public void Process()
         {
-            DoConfig();
+            GetConfigData();
         }
-        public async void DoConfig()
+        //! Reads the config XML files and populated the FeedData list
+        private void GetConfigData()
         {
-            Console.WriteLine("Opening file");
             FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
-            await ReadConfig(xStream);
-        }
-        async Task ReadConfig(System.IO.Stream stream)
-        {
             XmlReaderSettings xSettings = new XmlReaderSettings();
-            xSettings.Async = true;
+            xSettings.Async = false;
 
-            using (XmlReader reader = XmlReader.Create(stream, xSettings))
+            using (XmlReader reader = XmlReader.Create(xStream, xSettings))
             {
-                while (await reader.ReadAsync())
+                string _title = string.Empty;
+                string _fileName = string.Empty;
+                string _url = string.Empty;
+                string _expr = string.Empty;
+                string _history = string.Empty;
+                bool InTitle = false;
+                bool InFileName = false;
+                bool InUrl = false;
+                bool InExpr = false;
+                bool InHistory = false;
+                while (reader.Read())
                 {
+
                     switch (reader.NodeType)
                     {
                         case XmlNodeType.Element:
-                            Console.WriteLine("Start Element {0}", reader.Name);
+                            switch(reader.Name)
+                            {
+                                case "title":
+                                    InTitle = true;
+                                    break;
+                                case "feedFileName":
+                                    InFileName = true;
+                                    break;
+                                case "feed-url":
+                                    InUrl = true;
+                                    break;
+                                case "expr":
+                                    InExpr = true;
+                                    break;
+                                case "history":
+                                    InHistory = true;
+                                    break;
+                                default:
+                                    break;
+                            }
                             break;
                         case XmlNodeType.Text:
-                            Console.WriteLine("Text Node {0}", await reader.GetValueAsync());
+                            if (InTitle)
+                                _title = reader.Value;
+                            else if (InFileName)
+                                _fileName = reader.Value;
+                            else if (InUrl)
+                                _url = reader.Value;
+                            else if (InExpr)
+                                _expr = reader.Value;
+                            else if (InHistory)
+                                _history = reader.Value;
                             break;
                         case XmlNodeType.EndElement:
-                            Console.WriteLine("End Element {0}", reader.Name);
+                            switch (reader.Name)
+                            {
+                                case "title":
+                                    InTitle = false;
+                                    break;
+                                case "feedFileName":
+                                    InFileName = false;
+                                    break;
+                                case "feed-url":
+                                    InUrl = false;
+                                    break;
+                                case "expr":
+                                    InExpr = false;
+                                    break;
+                                case "history":
+                                    InHistory = false;
+                                    break;
+                                case "item":
+                                    data.Add(new FeedData(_title, _fileName, _url, _expr, _history));
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        case XmlNodeType.Whitespace:
                             break;
                         default:
-                            Console.WriteLine("Other Node {0} with value {1}", reader.NodeType, reader.Value);
+                            if (reader.NodeType.ToString() == "CDATA")
+                                if (InUrl)
+                                    _url = reader.Value;
                             break;
                     }
                 }
