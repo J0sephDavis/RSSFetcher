@@ -126,5 +126,29 @@ namespace Murong_Xue
                 }
             }
         }
+        public string GetTitle()
+        {
+            return Title;
+        }
+        public string GetFileName()
+        {
+            return FileName;
+        }
+        public string GetURL()
+        {
+            return URL.ToString();
+        }
+        public string GetHistory()
+        {
+            if (HasNewHistory && NewHistory != string.Empty)
+            {
+                return NewHistory;
+            }
+            return History;
+        }
+        public string GetExpr()
+        {
+            return Expression;
+        }
     }
 }
