@@ -14,6 +14,12 @@ namespace Murong_Xue
         private Uri path;
         private List<FeedData> Feeds;
         private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
+        private Config config = Config.GetInstance();
+        private const string RSS_Title = "title";
+        private const string RSS_URL = "feed-url";
+        private const string RSS_Expression = "expr";
+        private const string RSS_History = "history";
+        private const string RSS_Item = "item";
         public EntryData(Uri RSSPath)
         {
             this.path = RSSPath;
@@ -49,13 +55,11 @@ namespace Murong_Xue
             using (XmlReader reader = XmlReader.Create(xStream, xSettings))
             {
                 string _title = string.Empty;
-                string _fileName = string.Empty;
                 string _url = string.Empty;
                 string _expr = string.Empty;
                 string _history = string.Empty;
 
                 bool InTitle = false;
-                bool InFileName = false;
                 bool InUrl = false;
                 bool InExpr = false;
                 bool InHistory = false;
@@ -67,19 +71,16 @@ namespace Murong_Xue
                         case XmlNodeType.Element:
                             switch(reader.Name)
                             {
-                                case "title":
+                                case RSS_Title:
                                     InTitle = true;
                                     break;
-                                case "feedFileName":
-                                    InFileName = true;
-                                    break;
-                                case "feed-url":
+                                case RSS_URL:
                                     InUrl = true;
                                     break;
-                                case "expr":
+                                case RSS_Expression:
                                     InExpr = true;
                                     break;
-                                case "history":
+                                case RSS_History:
                                     InHistory = true;
                                     break;
                                 default:
@@ -89,8 +90,6 @@ namespace Murong_Xue
                         case XmlNodeType.Text:
                             if (InTitle)
                                 _title = reader.Value;
-                            else if (InFileName)
-                                _fileName = reader.Value;
                             else if (InUrl)
                                 _url = reader.Value;
                             else if (InExpr)
@@ -101,25 +100,21 @@ namespace Murong_Xue
                         case XmlNodeType.EndElement:
                             switch (reader.Name)
                             {
-                                case "title":
+                                case RSS_Title:
                                     InTitle = false;
                                     break;
-                                case "feedFileName":
-                                    InFileName = false;
-                                    break;
-                                case "feed-url":
+                                case RSS_URL:
                                     InUrl = false;
                                     break;
-                                case "expr":
+                                case RSS_Expression:
                                     InExpr = false;
                                     break;
-                                case "history":
+                                case RSS_History:
                                     InHistory = false;
                                     break;
-                                case "item":
+                                case RSS_Item:
                                     Feeds.Add(new FeedData(
                                         title:      _title,
-                                        fileName:   _fileName,
                                         url:        _url,
                                         expression: _expr,
                                         history:    _history)
@@ -153,9 +148,9 @@ namespace Murong_Xue
                 //---- item
                 foreach (FeedData feed in Feeds)
                 {
-                    await writer.WriteStartElementAsync(null, "item", null);
+                    await writer.WriteStartElementAsync(null, RSS_Item, null);
                     // 1. Title
-                    await writer.WriteStartElementAsync(null, "tite", null);
+                    await writer.WriteStartElementAsync(null, RSS_Title, null);
                     await writer.WriteStringAsync(feed.GetTitle());
                     await writer.WriteEndElementAsync();
                     // 2. feedFileName (nullable now)
@@ -165,15 +160,15 @@ namespace Murong_Xue
                     await writer.WriteEndElementAsync();
                     */
                     // 3. feed-url
-                    await writer.WriteStartElementAsync(null, "feed-url", null);
+                    await writer.WriteStartElementAsync(null, RSS_URL, null);
                     await writer.WriteCDataAsync(feed.GetURL());
                     await writer.WriteEndElementAsync();
                     // 4. expr
-                    await writer.WriteStartElementAsync(null, "expr", null);
+                    await writer.WriteStartElementAsync(null, RSS_Expression, null);
                     await writer.WriteStringAsync(feed.GetExpr());
                     await writer.WriteEndElementAsync();
                     // 5. history
-                    await writer.WriteStartElementAsync(null, "history", null);
+                    await writer.WriteStartElementAsync(null, RSS_History, null);
                     await writer.WriteStringAsync(feed.GetHistory());
                     await writer.WriteEndElementAsync();
                     //---- end item
