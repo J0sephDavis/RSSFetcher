@@ -44,15 +44,42 @@ using System.Xml;
 namespace MurongXue;
 public class Program
 {
-    //! path to the rss-config.xml file we store data in
-    //TODO make a local path
-    //private static readonly Uri filePath
-    //    = new Uri("D:\\VisualStudio Community Projects\\Murong Xue\\Murong Xue\\rss-config.xml");
     private static EntryData? RSSEntries = null;
-    private static bool KeepRunning = true;
-    private static Config cfg = Config.GetInstance();
-    public static async Task Main()
+    private static readonly Config cfg = Config.GetInstance();
+    public static async Task Main(string[] args)
     {
+        bool NextIsConfig = false;
+        bool NextIsDownloadDir = false;
+        foreach (string arg in args)
+        {
+            switch (arg.ToLower())
+            {
+                case "-help":
+                case "--help":
+                case "-h":
+                    Console.WriteLine(
+                        "Use -rsscfg PATH\\CONFIGFILE.xml to set the confit path\n" +
+                        "Use -downloadPath PATH\\DOWNLOADS_FOLDER to set the downloads folder");
+                    return;
+                case "--rsscfg":
+                case "-rsscfg":
+                    NextIsConfig = true;
+                    break;
+                case "--downloadpath":
+                case "-downloadpath":
+                    NextIsDownloadDir = true;
+                    break;
+                default:
+                    if (NextIsConfig)
+                        cfg.SetRSSPath(Path.GetFullPath(arg));
+                    else if (NextIsDownloadDir)
+                        cfg.SetDownloadPath(Path.GetFullPath(arg));
+                    //-
+                    NextIsDownloadDir = false;
+                    NextIsConfig = false;
+                    break;
+            }
+        }
         RSSEntries = new EntryData(cfg.GetRSSPath());
         await RSSEntries.Process();
     }
