@@ -71,7 +71,6 @@ namespace Murong_Xue
                 bool InHistory = false;
                 while (reader.Read())
                 {
-
                     switch (reader.NodeType)
                     {
                         case XmlNodeType.Element:
@@ -161,21 +160,15 @@ namespace Murong_Xue
                     await writer.WriteStartElementAsync(null, RSS_Title, null);
                     await writer.WriteStringAsync(feed.GetTitle());
                     await writer.WriteEndElementAsync();
-                    // 2. feedFileName (nullable now)
-                    /*
-                    await writer.WriteStartElementAsync(null, "feedFileName", null);
-                    await writer.WriteStringAsync(feed.GetFileName());
-                    await writer.WriteEndElementAsync();
-                    */
-                    // 3. feed-url
+                    // 2. feed-url
                     await writer.WriteStartElementAsync(null, RSS_URL, null);
                     await writer.WriteCDataAsync(feed.GetURL());
                     await writer.WriteEndElementAsync();
-                    // 4. expr
+                    // 3. expr
                     await writer.WriteStartElementAsync(null, RSS_Expression, null);
                     await writer.WriteStringAsync(feed.GetExpr());
                     await writer.WriteEndElementAsync();
-                    // 5. history
+                    // 4. history
                     await writer.WriteStartElementAsync(null, RSS_History, null);
                     await writer.WriteStringAsync(feed.GetHistory());
                     await writer.WriteEndElementAsync();
