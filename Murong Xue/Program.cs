@@ -59,8 +59,16 @@ public class Program
                 case "-h":
                     Console.WriteLine(
                         "Use -rsscfg PATH\\CONFIGFILE.xml to set the confit path\n" +
-                        "Use -downloadPath PATH\\DOWNLOADS_FOLDER to set the downloads folder");
+                        "Use -downloadPath PATH\\DOWNLOADS_FOLDER to set the downloads folder\n" +
+                        "Use -version to get the last commit hash(gotta remember to update this one)");
                     return;
+                case "--version":
+                case "-version":
+                case "--v":
+                case "-v":
+                    Console.WriteLine("Last commit hash: 584b3e3d");
+                    return;
+                //-------------------------
                 case "--rsscfg":
                 case "-rsscfg":
                     NextIsConfig = true;
