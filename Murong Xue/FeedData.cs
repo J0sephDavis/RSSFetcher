@@ -142,5 +142,22 @@ namespace Murong_Xue
         {
             return Expression;
         }
+        public void SetTitle(string title)
+        {
+            this.Title = title;
+        }
+        public void  SetURL(string URL)
+        {
+            //TODO do some checks here to make sure it is a valid URL & catch any errors
+            this.URL = new Uri(URL);
+        }
+        public void SetHistory(string History)
+        {
+            this.History = History;
+        }
+        public void SetExpr(string Expression)
+        {
+            this.Expression = Expression;
+        }
     }
 }

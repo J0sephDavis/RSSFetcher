@@ -1,5 +1,7 @@
 ﻿using Murong_Xue;
 using System.ComponentModel.DataAnnotations;
+using System.Net.NetworkInformation;
+using System.Numerics;
 using System.Xml;
 
 namespace MurongXue;
@@ -11,6 +13,10 @@ public class Program
     {
         bool NextIsConfig = false;
         bool NextIsDownloadDir = false;
+        bool EditConfigs = false;
+#if DEBUG
+        args = ["--edit"];
+#endif
         foreach (string arg in args)
         {
             switch (arg.ToLower())
@@ -27,8 +33,13 @@ public class Program
                 case "-version":
                 case "--v":
                 case "-v":
-                    Console.WriteLine("Last commit hash: 584b3e3d");
+                    Console.WriteLine("Last commit hash: 0b8375a8");
                     return;
+                //-------------------------
+                case "--edit":
+                case "-edit":
+                    EditConfigs = true;
+                    break;
                 //-------------------------
                 case "--rsscfg":
                 case "-rsscfg":
@@ -50,6 +61,12 @@ public class Program
             }
         }
         RSSEntries = new EntryData(cfg.GetRSSPath());
-        await RSSEntries.Process();
+        if (EditConfigs)
+        {
+            InteractiveEditor editor = new InteractiveEditor(RSSEntries.GetFeeds());
+            editor.MainLoop();
+        }
+        else
+            await RSSEntries.Process();
     }
 }
