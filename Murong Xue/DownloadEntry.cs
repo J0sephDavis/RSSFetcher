@@ -16,7 +16,6 @@ namespace Murong_Xue
         }
         virtual public async Task Request(HttpClient client)
         {
-            downloadHandler.AddProcessing(this);
             Task<HttpResponseMessage> request = client.GetAsync(this.link);
             await request.ContinueWith(this.OnDownload);
             await request; //only return when the request has actually been completed

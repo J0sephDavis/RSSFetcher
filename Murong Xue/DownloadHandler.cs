@@ -14,8 +14,8 @@ namespace Murong_Xue
         const int BATCH_DELAY_MS = 100;
         private static DownloadHandler? s_DownloadHandler = null;
         private static HttpClient client = new();
-        private readonly object DownloadsLock = new(); //c# version 12 has not System.Threading.Lock
-        private readonly object ProcessingLock = new();
+        //c# version 12 does not have System.Threading.Lock, so we use Object()
+        private readonly object DPLock = new(); //for when swapping between the two lists.
         //list of files to be downloaded
         private List<DownloadEntryBase> Downloads = [];
         //Not in download, but also not done.
@@ -37,7 +37,7 @@ namespace Murong_Xue
             {
                 while (Downloads.Count != 0)
                 {
-                    DownloadEntryBase entry = PopDownload();
+                    DownloadEntryBase entry = PopSwapDownload();
                     //Add the entry to the task list
                     CurrentBatch.Add(entry.Request(client));
                     //When we've filled our budget or used em all
@@ -54,31 +54,25 @@ namespace Murong_Xue
         }
         public void AddDownload(DownloadEntryBase entry)
         {
-            lock(DownloadsLock)
+            lock(DPLock)
             {
                 Downloads.Add(entry);
             }
         }
-        private DownloadEntryBase PopDownload()
+        private DownloadEntryBase PopSwapDownload()
         {
-            DownloadEntryBase entry;
-            lock (DownloadsLock)
+            DownloadEntryBase? entry = null;
+            lock (DPLock)
             {
                 entry = Downloads.First();
                 Downloads.Remove(entry);
+                Processing.Add(entry);
             }
             return entry;
         }
-        public void AddProcessing(DownloadEntryBase entry)
-        {
-            lock(ProcessingLock)
-            {
-                Processing.Add(entry);
-            }
-        }
         public void RemoveProcessing(DownloadEntryBase entry)
         {
-            lock(ProcessingLock)
+            lock(DPLock)
             {
                 Processing.Remove(entry);
             }
