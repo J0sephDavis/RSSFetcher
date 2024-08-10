@@ -18,10 +18,6 @@ namespace Murong_Xue
         {
             this.path = RSSPath;
             data = new List<FeedData>();
-            Console.WriteLine(
-                $"filePath: IsFile?{this.path.IsFile}" +
-                $"LocalPath:{this.path.LocalPath}"
-            );
         }
         public async Task Process()
         {
@@ -35,6 +31,11 @@ namespace Murong_Xue
         //! Reads the XML files and populated the FeedData list
         private void GetEntries()
         {
+            if (File.Exists(path.LocalPath) == false)
+            {
+                Console.WriteLine("!!!RSS CONFIG FILE NOT FOUND AT:" + path);
+                return;
+            }
             FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
             XmlReaderSettings xSettings = new();
             xSettings.Async = false;
