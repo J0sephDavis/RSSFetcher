@@ -9,8 +9,8 @@ namespace Murong_Xue
 {
     internal sealed class DownloadHandler
     {
-        const int BATCH_SIZE = 5;
-        const int BATCH_DELAY_MS = 100;
+        int BATCH_SIZE = 10;
+        int BATCH_DELAY_MS = 10;
         private static DownloadHandler? s_DownloadHandler = null;
         private static HttpClient client = new();
         //c# version 12 does not have System.Threading.Lock, so we use Object()
@@ -74,6 +74,18 @@ namespace Murong_Xue
             lock(DPLock)
             {
                 Processing.Remove(entry);
+            }
+        }
+        public void ReQueue(DownloadEntryBase entry)
+        {
+            lock(DPLock)
+            {
+                Processing.Remove(entry);
+                Downloads.Add(entry);
+                Console.WriteLine("Delay {0} += 200\n" +
+                    "Size {1}--", BATCH_DELAY_MS, BATCH_SIZE);
+                BATCH_DELAY_MS += 200;
+                if (BATCH_SIZE > 5) BATCH_SIZE -= 1;
             }
         }
     }

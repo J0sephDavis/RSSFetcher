@@ -21,14 +21,38 @@ namespace Murong_Xue
             await request; //only return when the request has actually been completed
             return;
         }
-        virtual public async void OnDownload(Task<HttpResponseMessage> response)
+        protected async Task OnDownload(Task<HttpResponseMessage> response)
         {
             Console.WriteLine("DownloadEntryBase.OnDownload");
-            RemoveProcessing();
+            try
+            {
+                HttpResponseMessage msg = await response;
+                msg.EnsureSuccessStatusCode();
+
+                Stream content = await msg.Content.ReadAsStreamAsync();
+                await HandleDownload(content);
+                RemoveProcessing();
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("HTTP REQUEST EXCEPTION: " + e.Message);
+                ReQueue();
+                return;
+            }
+        }
+        virtual public async Task HandleDownload(Stream content)
+        {
+            Console.WriteLine("DownloadEntryBase::HandleDownload()");
+            return;
         }
         protected void RemoveProcessing()
         {
             downloadHandler.RemoveProcessing(this);
+        }
+        protected void ReQueue()
+        {
+            Console.WriteLine("DownloadEntryBase::ReQueue");
+            downloadHandler.ReQueue(this);
         }
     }
 
@@ -40,12 +64,9 @@ namespace Murong_Xue
         {
             this.feed = _feed;
         }
-        override public async void OnDownload(Task<HttpResponseMessage> response)
+        override public async Task HandleDownload(Stream content)
         {
-            HttpResponseMessage msg = await response;
-            Stream content = await msg.Content.ReadAsStreamAsync();
-            feed.OnFeedDownloaded(content);
-            RemoveProcessing();
+                feed.OnFeedDownloaded(content);
         }
     }
 
@@ -57,25 +78,18 @@ namespace Murong_Xue
         {
             this.DownloadPath = DownloadPath;
         }
-        override public async void OnDownload(Task<HttpResponseMessage> response)
+        override public async Task HandleDownload(Stream content)
         {
-            HttpResponseMessage resp = await response;
-            Stream content = await resp.Content.ReadAsStreamAsync();
-
             string fileName = Path.GetFileName(link.AbsolutePath);
             string destinationPath = this.DownloadPath.LocalPath + fileName;
             if (File.Exists(destinationPath))
-            {
                 Console.WriteLine("file already exists {0}", destinationPath);
-                return;
-            }
-            using (FileStream fs = File.Create(destinationPath))
+            else using (FileStream fs = File.Create(destinationPath))
             {
                 content.Seek(0, SeekOrigin.Begin);
                 content.CopyTo(fs);
+                Console.WriteLine("FILE WRITTEN TO {0}", destinationPath);
             }
-            Console.WriteLine("FILE WRITTEN TO {0}", destinationPath);
-            RemoveProcessing();
         }
     }
 }
