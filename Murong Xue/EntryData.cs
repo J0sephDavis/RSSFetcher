@@ -21,7 +21,11 @@ namespace Murong_Xue
         }
         public async Task Process()
         {
-            GetEntries();
+            if(GetEntries() == false)
+            {
+                Console.WriteLine("failed to get entries");
+                return;
+            }
             //
             foreach(FeedData feed in data)
                 feed.QueueDownload();
@@ -29,12 +33,12 @@ namespace Murong_Xue
             await downloadHandler.ProcessDownloads();
         }
         //! Reads the XML files and populated the FeedData list
-        private void GetEntries()
+        private bool GetEntries()
         {
             if (File.Exists(path.LocalPath) == false)
             {
                 Console.WriteLine("!!!RSS CONFIG FILE NOT FOUND AT:" + path);
-                return;
+                return false;
             }
             FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
             XmlReaderSettings xSettings = new();
@@ -133,6 +137,7 @@ namespace Murong_Xue
                     }
                 }
             }
+            return true;
         }
     }
 }
