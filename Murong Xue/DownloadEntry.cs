@@ -45,11 +45,6 @@ namespace Murong_Xue
         {
             HttpResponseMessage msg = await response;
             Stream content = await msg.Content.ReadAsStreamAsync();
-
-            //set/check state of the ProcessDownloads functions so we know whether we should start it again?
-            //check if response size is low / equal to a known rate limit value, add back to the queue?
-            //handle in FeedData?
-
             feed.OnFeedDownloaded(content);
             RemoveProcessing();
         }
@@ -57,8 +52,8 @@ namespace Murong_Xue
 
     internal class DownloadEntryFile : DownloadEntryBase
     {
-        private string DownloadPath = string.Empty;
-        public DownloadEntryFile(Uri link, string DownloadPath)
+        private Uri DownloadPath;
+        public DownloadEntryFile(Uri link, Uri DownloadPath)
             : base(link)
         {
             this.DownloadPath = DownloadPath;
@@ -69,12 +64,12 @@ namespace Murong_Xue
             HttpResponseMessage resp = await response;
 
             Stream content = await resp.Content.ReadAsStreamAsync();
-            if (File.Exists(this.DownloadPath))
+            if (File.Exists(this.DownloadPath.ToString()))
             {
                 Console.WriteLine("file already exists {0}", this.DownloadPath);
                 return;
             }
-            using (FileStream fs = File.Create(this.DownloadPath))
+            using (FileStream fs = File.Create(this.DownloadPath.ToString()))
             {
                 content.Seek(0, SeekOrigin.Begin);
                 content.CopyTo(fs);

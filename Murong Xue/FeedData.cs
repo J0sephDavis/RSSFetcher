@@ -66,7 +66,8 @@ namespace Murong_Xue
                 NewHistory = title;
             }
             Console.WriteLine("- NEW DOWNLOAD {0}: {1}", title, link.ToString());
-            DownloadEntryFile entry = new(link, "D:\\VisualStudio Community Projects\\Murong Xue\\Downloads\\" + this.Title + '_' + id.ToString() + ".txt");
+            Uri downloadPath = new Uri("D:\\VisualStudio Community Projects\\Murong Xue\\Downloads\\" + this.Title + '_' + id.ToString() + ".txt");
+            DownloadEntryFile entry = new(link, downloadPath);
             id += 1;
             downloadHandler.AddDownload(entry);
         }

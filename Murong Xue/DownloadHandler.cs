@@ -29,6 +29,29 @@ namespace Murong_Xue
                 s_DownloadHandler = new DownloadHandler();
             return s_DownloadHandler;
         }
+        public async Task ProcessDownloads()
+        {
+            List<Task> CurrentBatch = [];
+            List<DownloadEntryBase> tmpList = [];
+            while (Downloads.Count != 0 || Processing.Count != 0)
+            {
+                while (Downloads.Count != 0)
+                {
+                    DownloadEntryBase entry = PopDownload();
+                    //Add the entry to the task list
+                    CurrentBatch.Add(entry.Request(client));
+                    //When we've filled our budget or used em all
+                    if (CurrentBatch.Count >= BATCH_SIZE || Downloads.Count == 0)
+                    {
+                        Console.WriteLine("Downloads{0} Batch{1} Processing{2}", Downloads.Count, CurrentBatch.Count, Processing.Count);
+                        await Task.WhenAll(CurrentBatch);
+                        CurrentBatch.Clear();
+                        await Task.Delay(BATCH_DELAY_MS);
+                    }
+                }
+            }
+            Console.WriteLine("ALL DOWNLOADS PROCESSED");
+        }
         public void AddDownload(DownloadEntryBase entry)
         {
             lock(DownloadsLock)
@@ -59,30 +82,6 @@ namespace Murong_Xue
             {
                 Processing.Remove(entry);
             }
-        }
-        public async Task ProcessDownloads()
-        {
-            List<Task> CurrentBatch = [];
-            List<DownloadEntryBase> tmpList = [];
-            while(Downloads.Count != 0 || Processing.Count != 0)
-            {
-                Console.WriteLine("!!!!!! D{0} P{1}", Downloads.Count, Processing.Count);
-                while (Downloads.Count != 0)
-                {
-                    DownloadEntryBase entry = PopDownload();
-                    //Add the entry to the task list
-                    CurrentBatch.Add(entry.Request(client));
-                    //When we've filled our budget or used em all
-                    if (CurrentBatch.Count >= BATCH_SIZE || Downloads.Count == 0)
-                    {
-                        Console.WriteLine("Downloads{0} Batch{1} Processing{2}", Downloads.Count, CurrentBatch.Count, Processing.Count);
-                        await Task.WhenAll(CurrentBatch);
-                        CurrentBatch.Clear();
-                        await Task.Delay(BATCH_DELAY_MS);
-                    }
-                }
-            }
-            Console.WriteLine("ALL DOWNLOADS PROCESSED");
         }
     }
 }
