@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -11,7 +12,6 @@ namespace Murong_Xue
     internal class FeedData
     {
         protected string Title;
-        protected string FileName;
         protected Uri URL; //TODO how to use this Uri data type
         protected string Expression;
         protected string History;
@@ -21,12 +21,11 @@ namespace Murong_Xue
         private Config cfg = Config.GetInstance();
         int id = 0;
 
-        public FeedData(string title, string fileName,
+        public FeedData(string title,
             string url, string expression,
             string history)
         {
             this.Title = title;
-            this.FileName = fileName;
             this.URL = new Uri(url);
             //TODO add checks on URL validity
             this.Expression = expression;
@@ -37,7 +36,6 @@ namespace Murong_Xue
         {
             Console.WriteLine("FeedData Obj:" +
                 $"\n\t{this.Title}" +
-                $"\n\t{this.FileName}" +
                 $"\n\t{this.URL}" +
                 $"\n\t{this.Expression}" +
                 $"\n\t{this.History}");
@@ -110,11 +108,9 @@ namespace Murong_Xue
                                     break;
                                 case "item":
                                     if (History == _title)
-                                    {
                                         return;
-                                    }
-                                    //---
-                                    AddFile(_title, new Uri(_url));
+                                    if (Regex.IsMatch(_title, this.Expression))
+                                        AddFile(_title, new Uri(_url));
                                     break;
                                 default:
                                     break;
@@ -129,10 +125,6 @@ namespace Murong_Xue
         public string GetTitle()
         {
             return Title;
-        }
-        public string GetFileName()
-        {
-            return FileName;
         }
         public string GetURL()
         {

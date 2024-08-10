@@ -10,7 +10,7 @@ namespace Murong_Xue
     internal sealed class DownloadHandler
     {
         int BATCH_SIZE = 10;
-        int BATCH_DELAY_MS = 10;
+        int BATCH_DELAY_MS = 100;
         private static DownloadHandler? s_DownloadHandler = null;
         private static HttpClient client = new();
         //c# version 12 does not have System.Threading.Lock, so we use Object()
