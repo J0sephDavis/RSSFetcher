@@ -40,6 +40,12 @@ namespace Murong_Xue
             //save changes
             await UpdateEntries();
         }
+        public List<FeedData> GetFeeds()
+        {
+            if (Feeds.Count == 0)
+                GetEntries();
+            return Feeds;
+        }
         //! Reads the XML files and populated the FeedData list
         private bool GetEntries()
         {
