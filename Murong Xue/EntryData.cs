@@ -143,7 +143,7 @@ namespace Murong_Xue
             xStream.Dispose();
             return true;
         }
-        private async Task UpdateEntries()
+        public async Task UpdateEntries()
         {
             File.Move(path.LocalPath, path.LocalPath + "_OLD.xml", overwrite:true); //TODO split the file name first and add the OLD/PREVIOUS tag before the extension
             FileStream xStream = File.Open(path.LocalPath, FileMode.Create);

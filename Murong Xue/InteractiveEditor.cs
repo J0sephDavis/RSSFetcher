@@ -228,13 +228,13 @@ namespace Murong_Xue
             FeedData newEntry = new FeedData(_title, _url, _expr, _history);
             Feeds.Add(newEntry);
         }
-        public void MainLoop()
+        public bool MainLoop()
         {
             int totalFeeds = Feeds.Count;
             if (totalFeeds == 0)
             {
                 Console.WriteLine("no feeds!");
-                return;
+                return false;
             }
             Console.WriteLine("\n!!!---INTERACTIVE MODE---!!!");
             string? input = null;
@@ -261,7 +261,7 @@ namespace Murong_Xue
                 switch (input_args[0])
                 {
                     case "help":
-                        Console.WriteLine("print #?/Edit #/Delete #/Create/Help");
+                        Console.WriteLine("print #?/Edit #/Delete #/Create/Save/Exit/Help");
                         break;
                     case "print":
                         op = INTERACTIVE_OPTIONS.PRINT;
@@ -276,7 +276,9 @@ namespace Murong_Xue
                         op = INTERACTIVE_OPTIONS.CREATE;
                         break;
                     case "exit":
-                        return;
+                        return false;
+                    case "save":
+                        return true;
                     default:
                         op = INTERACTIVE_OPTIONS.NONE;
                         break;

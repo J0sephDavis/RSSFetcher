@@ -64,7 +64,13 @@ public class Program
         if (EditConfigs)
         {
             InteractiveEditor editor = new InteractiveEditor(RSSEntries.GetFeeds());
-            editor.MainLoop();
+            if (editor.MainLoop())
+            {
+                Console.WriteLine("SAVE!!!");
+                await RSSEntries.UpdateEntries();
+            }
+            else
+                Console.WriteLine("DISCARD.");
         }
         else
             await RSSEntries.Process();
