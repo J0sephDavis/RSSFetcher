@@ -12,12 +12,12 @@ namespace Murong_Xue
     internal class EntryData
     {
         private Uri path;
-        private List<FeedData> data;
+        private List<FeedData> Feeds;
         private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         public EntryData(Uri RSSPath)
         {
             this.path = RSSPath;
-            data = new List<FeedData>();
+            Feeds = new List<FeedData>();
         }
         public async Task Process()
         {
@@ -27,10 +27,12 @@ namespace Murong_Xue
                 return;
             }
             //
-            foreach(FeedData feed in data)
+            foreach(FeedData feed in Feeds)
                 feed.QueueDownload();
             //
             await downloadHandler.ProcessDownloads();
+            //save changes
+            await UpdateEntries();
         }
         //! Reads the XML files and populated the FeedData list
         private bool GetEntries()
@@ -115,14 +117,14 @@ namespace Murong_Xue
                                     InHistory = false;
                                     break;
                                 case "item":
-                                    data.Add(new FeedData(
+                                    Feeds.Add(new FeedData(
                                         title:      _title,
                                         fileName:   _fileName,
                                         url:        _url,
                                         expression: _expr,
                                         history:    _history)
                                     );
-                                    data.Last().Print();
+                                    Feeds.Last().Print();
                                     break;
                                 default:
                                     break;
@@ -138,6 +140,50 @@ namespace Murong_Xue
                 }
             }
             return true;
+        }
+        private async Task UpdateEntries()
+        {
+            FileStream xStream = File.Open(path.LocalPath+"_modified.xml", FileMode.OpenOrCreate);
+            XmlWriterSettings xSettings = new();
+            xSettings.Async = true;
+            using (XmlWriter writer = XmlWriter.Create(xStream,xSettings))
+            {
+                //-------- ROOT
+                await writer.WriteStartElementAsync(null,"root",null);
+                //---- item
+                foreach (FeedData feed in Feeds)
+                {
+                    await writer.WriteStartElementAsync(null, "item", null);
+                    // 1. Title
+                    await writer.WriteStartElementAsync(null, "tite", null);
+                    await writer.WriteStringAsync(feed.GetTitle());
+                    await writer.WriteEndElementAsync();
+                    // 2. feedFileName (nullable now)
+                    /*
+                    await writer.WriteStartElementAsync(null, "feedFileName", null);
+                    await writer.WriteStringAsync(feed.GetFileName());
+                    await writer.WriteEndElementAsync();
+                    */
+                    // 3. feed-url
+                    await writer.WriteStartElementAsync(null, "feed-url", null);
+                    await writer.WriteCDataAsync(feed.GetURL());
+                    await writer.WriteEndElementAsync();
+                    // 4. expr
+                    await writer.WriteStartElementAsync(null, "expr", null);
+                    await writer.WriteStringAsync(feed.GetExpr());
+                    await writer.WriteEndElementAsync();
+                    // 5. history
+                    await writer.WriteStartElementAsync(null, "history", null);
+                    await writer.WriteStringAsync(feed.GetHistory());
+                    await writer.WriteEndElementAsync();
+                    //---- end item
+                    await writer.WriteEndElementAsync();
+                }
+                //------- ROOT
+                await writer.WriteEndElementAsync();
+                await writer.FlushAsync();
+            }
+
         }
     }
 }
