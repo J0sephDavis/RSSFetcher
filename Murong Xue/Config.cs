@@ -8,8 +8,10 @@ namespace Murong_Xue
 {
     internal class Config
     {
-        private string DownloadDirectory = ".\\Downloads\\";
-        private Uri RSSConfigPath = new Uri(".\\rss-config.xml");
+        private string DownloadDirectory = rootDir+"Downloads\\";
+        private const string rootDir
+            = @"D:\VisualStudio Community Projects\Murong Xue\Murong Xue\bin\Debug\net8.0\";
+        private Uri RSSConfigPath = new Uri(rootDir+"rss-config.xml");
         private static Config s_Config;
         private Config()
         { }
@@ -22,6 +24,10 @@ namespace Murong_Xue
         public Uri GetRSSPath()
         {
             return RSSConfigPath;
+        }
+        public string GetDownloadPath()
+        {
+            return DownloadDirectory;
         }
     }
 }

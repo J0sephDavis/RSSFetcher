@@ -59,21 +59,22 @@ namespace Murong_Xue
         }
         override public async void OnDownload(Task<HttpResponseMessage> response)
         {
-            Console.WriteLine("File downloaded: " + link.ToString());
             HttpResponseMessage resp = await response;
-
             Stream content = await resp.Content.ReadAsStreamAsync();
-            if (File.Exists(this.DownloadPath.ToString()))
+
+            string fileName = Path.GetFileName(link.AbsolutePath);
+            string destinationPath = this.DownloadPath.LocalPath + fileName;
+            if (File.Exists(destinationPath))
             {
-                Console.WriteLine("file already exists {0}", this.DownloadPath);
+                Console.WriteLine("file already exists {0}", destinationPath);
                 return;
             }
-            using (FileStream fs = File.Create(this.DownloadPath.ToString()))
+            using (FileStream fs = File.Create(destinationPath))
             {
                 content.Seek(0, SeekOrigin.Begin);
                 content.CopyTo(fs);
             }
-            Console.WriteLine("FILE WRITTEN TO {0}", this.DownloadPath);
+            Console.WriteLine("FILE WRITTEN TO {0}", destinationPath);
             RemoveProcessing();
         }
     }

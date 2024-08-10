@@ -18,6 +18,7 @@ namespace Murong_Xue
         protected bool HasNewHistory = false;
         protected string NewHistory  = string.Empty;
         private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
+        private Config cfg = Config.GetInstance();
         int id = 0;
 
         public FeedData(string title, string fileName,
@@ -43,15 +44,6 @@ namespace Murong_Xue
             if (HasNewHistory)
                 Console.WriteLine("\n\tNEW-HISTORY: {0}", NewHistory);
         }
-        /*  1. Download the file
-            2. Read the file
-                2.1. If history != title
-                    2.1.1. If (HasNewHistory == false) //only adds the newest/first item to NewHistory
-                        HasNewHistory = true
-                        NewHistory = title
-                    2.1.2. Add URI to downloads
-                2.2. else RETURN
-        */
         public void QueueDownload()
         {
             DownloadEntryFeed entry = new DownloadEntryFeed(URL, this);
@@ -66,7 +58,7 @@ namespace Murong_Xue
                 NewHistory = title;
             }
             Console.WriteLine("- NEW DOWNLOAD {0}: {1}", title, link.ToString());
-            Uri downloadPath = new Uri("D:\\VisualStudio Community Projects\\Murong Xue\\Downloads\\" + this.Title + '_' + id.ToString() + ".txt");
+            Uri downloadPath = new Uri(cfg.GetDownloadPath());
             DownloadEntryFile entry = new(link, downloadPath);
             id += 1;
             downloadHandler.AddDownload(entry);
