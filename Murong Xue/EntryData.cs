@@ -9,31 +9,31 @@ using System.Xml;
 
 namespace Murong_Xue
 {
-    internal class ConfigData
+    internal class EntryData
     {
         private Uri path;
         private List<FeedData> data;
         private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
-        public ConfigData(Uri filePath)
+        public EntryData(Uri RSSPath)
         {
-            this.path = filePath;
+            this.path = RSSPath;
             data = new List<FeedData>();
             Console.WriteLine(
-                $"filePath: IsFile?{filePath.IsFile}" +
-                $"LocalPath:{filePath.LocalPath}"
+                $"filePath: IsFile?{this.path.IsFile}" +
+                $"LocalPath:{this.path.LocalPath}"
             );
         }
         public async Task Process()
         {
-            GetConfigData();
+            GetEntries();
             //
             foreach(FeedData feed in data)
                 feed.QueueDownload();
             //
             await downloadHandler.ProcessDownloads();
         }
-        //! Reads the config XML files and populated the FeedData list
-        private void GetConfigData()
+        //! Reads the XML files and populated the FeedData list
+        private void GetEntries()
         {
             FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
             XmlReaderSettings xSettings = new();

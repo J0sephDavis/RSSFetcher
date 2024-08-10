@@ -46,19 +46,14 @@ public class Program
 {
     //! path to the rss-config.xml file we store data in
     //TODO make a local path
-    private static readonly Uri filePath
-        = new Uri("D:\\VisualStudio Community Projects\\Murong Xue\\Murong Xue\\rss-config.xml");
-    private static ConfigData? config = null;
+    //private static readonly Uri filePath
+    //    = new Uri("D:\\VisualStudio Community Projects\\Murong Xue\\Murong Xue\\rss-config.xml");
+    private static EntryData? RSSEntries = null;
     private static bool KeepRunning = true;
+    private static Config cfg = Config.GetInstance();
     public static async Task Main()
     {
-        config = new ConfigData(filePath);
-        if (config == null)
-        {
-            Console.WriteLine("config was null?");
-            return;
-        }
-        await config.Process();
+        RSSEntries = new EntryData(cfg.GetRSSPath());
+        await RSSEntries.Process();
     }
-    
 }
