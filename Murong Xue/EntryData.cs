@@ -144,7 +144,11 @@ namespace Murong_Xue
         }
         public async Task UpdateEntries()
         {
-            File.Move(path.LocalPath, path.LocalPath + "_OLD.xml", overwrite:true); //TODO split the file name first and add the OLD/PREVIOUS tag before the extension
+            string? newFilePath
+                = Path.GetDirectoryName(path.LocalPath) + @"\"
+                + Path.GetFileNameWithoutExtension(path.LocalPath) + "_OLD.xml";
+
+            File.Move(path.LocalPath, newFilePath, overwrite:true);
             FileStream xStream = File.Open(path.LocalPath, FileMode.Create);
             XmlWriterSettings xSettings = new();
             xSettings.Async = true;
