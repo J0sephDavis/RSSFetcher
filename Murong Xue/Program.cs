@@ -33,7 +33,7 @@ public class Program
                 case "-version":
                 case "--v":
                 case "-v":
-                    Console.WriteLine("Last commit hash: f037580");
+                    Console.WriteLine("Last commit hash: c3f79562");
                     return;
                 //-------------------------
                 case "--edit":

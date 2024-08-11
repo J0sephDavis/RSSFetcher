@@ -70,9 +70,10 @@ namespace Murong_Xue
             do
             {
                 Console.Write("E>");
-                string? input = Console.ReadLine().ToLower();
+                string? input = Console.ReadLine();
                 if (input == null)
                     continue;
+                input = input.ToLower();
                 input_char = input[0];
                 Console.Write("EDIT:");
                 switch (input_char)
@@ -123,9 +124,10 @@ namespace Murong_Xue
                         do
                         {
                             Console.Write("E(X) SAVE?:");
-                            input = Console.ReadLine().ToLower();
+                            input = Console.ReadLine();
                             if (input == null)
                                 break;
+                            input = input.ToLower();
                             input_char = input[0];
                             switch(input_char)
                             {
@@ -164,9 +166,10 @@ namespace Murong_Xue
             {
                 Console.Write("D> DELETE? (Y/N):");
                 //-----
-                input = Console.ReadLine().ToLower();
+                input = Console.ReadLine();
                 if (input == null)
                     continue;
+                input = input.ToLower();
                 input_char = input[0];
                 //-----
                 switch (input_char)
@@ -191,7 +194,6 @@ namespace Murong_Xue
             string _expr = string.Empty;
 
             string? input;
-            int input_char = 0;
             while(_title == string.Empty)
             {
                 Console.Write("Title:");
@@ -241,7 +243,6 @@ namespace Murong_Xue
             string[] input_args = [];
             int value = -1;
             bool parsedInt;
-            FeedData? entry = null;
             while (true)
             {
                 INTERACTIVE_OPTIONS op = INTERACTIVE_OPTIONS.NONE;
