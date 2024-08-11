@@ -144,11 +144,9 @@ namespace Murong_Xue
         }
         public async Task UpdateEntries()
         {
-            string? newFilePath
-                = Path.GetDirectoryName(path.LocalPath) + @"\"
-                + Path.GetFileNameWithoutExtension(path.LocalPath) + "_OLD.xml";
-
-            File.Move(path.LocalPath, newFilePath, overwrite:true);
+            Uri newFilePath = new Uri(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
+            Console.WriteLine($"newPath {newFilePath.LocalPath}");
+            File.Move(path.LocalPath, newFilePath.LocalPath, overwrite:true);
             FileStream xStream = File.Open(path.LocalPath, FileMode.Create);
             XmlWriterSettings xSettings = new();
             xSettings.Async = true;
