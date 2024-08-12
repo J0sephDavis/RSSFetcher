@@ -1,4 +1,12 @@
-﻿using Murong_Xue;
+﻿/* TODO
+ * Create a cron/headless option that will minimize output to include:
+ * 1. Total files scanned
+ * 2. Total files added/fetched
+ * 3. Running time
+ * ----
+ * This might benefit from a logging system with flags (DEBUG/ERROR/WARN/VERBOSE/NOTEWORTH/)
+ */
+using Murong_Xue;
 using System.ComponentModel.DataAnnotations;
 using System.Net.NetworkInformation;
 using System.Numerics;
@@ -33,7 +41,7 @@ public class Program
                 case "-version":
                 case "--v":
                 case "-v":
-                    Console.WriteLine("Last commit hash: a3ebe23c");
+                    Console.WriteLine("Last commit hash: d5b80b86");
                     return;
                 //-------------------------
                 case "--edit":
