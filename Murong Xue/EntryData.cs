@@ -15,6 +15,7 @@ namespace Murong_Xue
         private List<FeedData> Feeds;
         private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private Config config = Config.GetInstance();
+        private Reporter report = new Reporter(LogFlag.DEFAULT, "EntryData");
         private const string RSS_Title = "title";
         private const string RSS_URL = "feed-url";
         private const string RSS_Expression = "expr";
@@ -27,21 +28,26 @@ namespace Murong_Xue
         }
         public async Task Process()
         {
+            report.Log(LogFlag.DEBUG_SPAM, "Requesting entry data");
             if(GetEntries() == false)
             {
-                Console.WriteLine("failed to get entries");
+                report.Log(LogFlag.ERROR, "Failed to get entries");
                 return;
             }
             //
-            foreach(FeedData feed in Feeds)
+            report.Log(LogFlag.DEBUG_SPAM, "Queueing Downloads");
+            foreach (FeedData feed in Feeds)
                 feed.QueueDownload();
             //
+            report.Log(LogFlag.DEBUG_SPAM, "Process Downloads");
             await downloadHandler.ProcessDownloads();
             //save changes
+            report.Log(LogFlag.DEBUG_SPAM, "Save Changes");
             await UpdateEntries();
         }
         public List<FeedData> GetFeeds()
         {
+            report.Log(LogFlag.DEBUG_SPAM, "Get Feeds");
             if (Feeds.Count == 0)
                 GetEntries();
             return Feeds;
@@ -49,9 +55,10 @@ namespace Murong_Xue
         //! Reads the XML files and populated the FeedData list
         private bool GetEntries()
         {
+            report.Log(LogFlag.DEBUG_SPAM, "Get Entries");
             if (File.Exists(path.LocalPath) == false)
             {
-                Console.WriteLine("!!!RSS CONFIG FILE NOT FOUND AT:" + path);
+                report.Log(LogFlag.ERROR, $"RSS Config File not found ({path})");
                 return false;
             }
             FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
@@ -144,6 +151,7 @@ namespace Murong_Xue
         }
         public async Task UpdateEntries()
         {
+            report.Log(LogFlag.DEBUG, "Update Entries");
             Uri newFilePath = new Uri(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
             Console.WriteLine($"newPath {newFilePath.LocalPath}");
             File.Move(path.LocalPath, newFilePath.LocalPath, overwrite:true);

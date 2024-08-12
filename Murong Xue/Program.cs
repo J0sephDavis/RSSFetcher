@@ -10,6 +10,7 @@ using Murong_Xue;
 using System.ComponentModel.DataAnnotations;
 using System.Net.NetworkInformation;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Xml;
 
 namespace MurongXue;
@@ -17,14 +18,17 @@ public class Program
 {
     private static EntryData? RSSEntries = null;
     private static readonly Config cfg = Config.GetInstance();
+    private static readonly Reporter report = new Reporter(LogFlag.DEFAULT, "PROGRAM");
     public static async Task Main(string[] args)
     {
+        report.Log(LogFlag.DEBUG, $"Started program with args: {args}");
         bool NextIsConfig = false;
         bool NextIsDownloadDir = false;
         bool EditConfigs = false;
 #if DEBUG
-        args = ["--edit"];
+        //args = ["--edit",];
 #endif
+        report.Log(LogFlag.DEBUG, "Processing args");
         foreach (string arg in args)
         {
             switch (arg.ToLower())
@@ -32,8 +36,9 @@ public class Program
                 case "-help":
                 case "--help":
                 case "-h":
-                    Console.WriteLine(
-                        "Use -rsscfg PATH\\CONFIGFILE.xml to set the confit path\n" +
+                    report.Log(LogFlag.DEBUG, "HELP");
+                    report.Log(LogFlag.FEEDBACK,
+                       "Use -rsscfg PATH\\CONFIGFILE.xml to set the confit path\n" +
                         "Use -downloadPath PATH\\DOWNLOADS_FOLDER to set the downloads folder\n" +
                         "Use -version to get the last commit hash(gotta remember to update this one)");
                     return;
@@ -41,44 +46,56 @@ public class Program
                 case "-version":
                 case "--v":
                 case "-v":
-                    Console.WriteLine("Last commit hash: d5b80b86");
+                    report.Log(LogFlag.DEBUG, "VERSION");
+                    report.Log(LogFlag.FEEDBACK, "Last commit hash: d5b80b86");
                     return;
                 //-------------------------
                 case "--edit":
                 case "-edit":
                     EditConfigs = true;
+                    report.Log(LogFlag.DEBUG, "EDIT: EditConfigs = true");
                     break;
                 //-------------------------
                 case "--rsscfg":
                 case "-rsscfg":
+                    report.Log(LogFlag.DEBUG, "RSSCFG: NextIsConfig");
                     NextIsConfig = true;
                     break;
                 case "--downloadpath":
                 case "-downloadpath":
+                    report.Log(LogFlag.DEBUG, "DLPATH: NextIsPath");
                     NextIsDownloadDir = true;
                     break;
                 default:
                     if (NextIsConfig)
+                    {
+                        report.Log(LogFlag.DEBUG, $"RSSCFG: Set Path to {arg}");
                         cfg.SetRSSPath(Path.GetFullPath(arg));
+                    }
                     else if (NextIsDownloadDir)
+                    {
+                        report.Log(LogFlag.DEBUG, $"RSSCFG: Set Path to {arg}");
                         cfg.SetDownloadPath(Path.GetFullPath(arg));
+                    }
                     //-
+                    report.Log(LogFlag.DEBUG, $"NextIsDL/CFG = FALSE");
                     NextIsDownloadDir = false;
                     NextIsConfig = false;
                     break;
             }
         }
+        report.Log(LogFlag.DEBUG, "Program starting");
         RSSEntries = new EntryData(cfg.GetRSSPath());
         if (EditConfigs)
         {
             InteractiveEditor editor = new InteractiveEditor(RSSEntries.GetFeeds());
             if (editor.MainLoop())
             {
-                Console.WriteLine("SAVE!!!");
+                report.Log(LogFlag.FEEDBACK, $"Saving entries from interactive session");
                 await RSSEntries.UpdateEntries();
             }
             else
-                Console.WriteLine("DISCARD.");
+                report.Log(LogFlag.FEEDBACK, $"Discarding change from interactive session");
         }
         else
             await RSSEntries.Process();

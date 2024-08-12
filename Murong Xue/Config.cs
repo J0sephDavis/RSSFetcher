@@ -12,14 +12,18 @@ namespace Murong_Xue
         private string DownloadDirectory;
         private Uri RSSConfigPath;
         private static Config? s_Config = null;
+        private static readonly Reporter report = new Reporter(LogFlag.DEFAULT, "CONFIG");
         private Config()
         {
+
             string rootDir = Path.GetDirectoryName(System.AppContext.BaseDirectory) + @"\";
             DownloadDirectory = rootDir + @"Downloads\";
             RSSConfigPath = new Uri(rootDir + "rss-config.xml");
+            report.Log(LogFlag.DEBUG, $"Config(), rootDir: {rootDir}, cfgPath:{RSSConfigPath}, downloadDir:{DownloadDirectory}");
         }
         public static Config GetInstance()
         {
+            report.Log(LogFlag.DEBUG, "GetInstance");
             if (s_Config == null)
                 s_Config = new Config();
             return s_Config;
@@ -27,21 +31,21 @@ namespace Murong_Xue
         public void SetRSSPath(string path)
         {
             RSSConfigPath = new Uri(path);
-            Console.WriteLine("RSS PATH: {0}", RSSConfigPath);
+            report.Log(LogFlag.SPAM, $"RSS Path changed: {RSSConfigPath}");
         }
         public Uri GetRSSPath()
         {
-            Console.WriteLine("RSS PATH: {0}", RSSConfigPath);
+            report.Log(LogFlag.SPAM, $"Get RSSPath: {RSSConfigPath}");
             return RSSConfigPath;
         }
         public void SetDownloadPath(string path)
         {
             DownloadDirectory = path;
-            Console.WriteLine("DOWNLOAD PATH: {0}", DownloadDirectory);
+            report.Log(LogFlag.SPAM, $"Download Path changed: {DownloadDirectory}");
         }
         public string GetDownloadPath()
         {
-            Console.WriteLine("DOWNLOAD PATH: {0}", DownloadDirectory);
+            report.Log(LogFlag.SPAM, $"Get DownloadPath: {DownloadDirectory}");
             return DownloadDirectory;
         }
     }

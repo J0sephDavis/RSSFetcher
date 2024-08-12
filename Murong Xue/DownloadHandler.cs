@@ -19,19 +19,23 @@ namespace Murong_Xue
         private List<DownloadEntryBase> Downloads = [];
         //Not in download, but also not done.
         private List<DownloadEntryBase> Processing = [];
+        private static Reporter report = new Reporter(LogFlag.DEFAULT, "Download Handler");
         
         private DownloadHandler()
         { }
         public static DownloadHandler GetInstance()
         {
+            report.Log(LogFlag.DEBUG_SPAM, "GetInstance");
             if (s_DownloadHandler == null)
                 s_DownloadHandler = new DownloadHandler();
             return s_DownloadHandler;
         }
         public async Task ProcessDownloads()
         {
+            report.Log(LogFlag.DEBUG, "Processing Downloads");
             List<Task> CurrentBatch = [];
             List<DownloadEntryBase> tmpList = [];
+            report.Log(LogFlag.DEBUG, $"Before processing, Downloads[{Downloads.Count}] Processing[{Processing.Count}]");
             while (Downloads.Count != 0 || Processing.Count != 0)
             {
                 while (Downloads.Count != 0)
@@ -42,50 +46,59 @@ namespace Murong_Xue
                     //When we've filled our budget or used em all
                     if (CurrentBatch.Count >= BATCH_SIZE || Downloads.Count == 0)
                     {
-                        Console.WriteLine("Downloads{0} Batch{1} Processing{2}", Downloads.Count, CurrentBatch.Count, Processing.Count);
+                        report.Log(LogFlag.DEBUG, $"BATCH[{CurrentBatch.Count}]! Downloads[{Downloads.Count}] Processing[{Processing.Count}]");
                         await Task.WhenAll(CurrentBatch);
+                        report.Log(LogFlag.DEBUG_SPAM, "Cleared currentBatch");
                         CurrentBatch.Clear();
+                        report.Log(LogFlag.DEBUG_SPAM, $"Wait {BATCH_DELAY_MS}ms");
                         await Task.Delay(BATCH_DELAY_MS);
                     }
                 }
             }
-            Console.WriteLine("ALL DOWNLOADS PROCESSED");
+            report.Log(LogFlag.NOTEWORTHY, "Downloads Processed!");
         }
         public void AddDownload(DownloadEntryBase entry)
         {
+            report.Log(LogFlag.DEBUG_SPAM, "Add Download (waiting on lock)");
             lock(DPLock)
             {
                 Downloads.Add(entry);
+                report.Log(LogFlag.DEBUG_SPAM, "Download Added (releasing lock)");
             }
         }
         private DownloadEntryBase PopSwapDownload()
         {
+            report.Log(LogFlag.DEBUG_SPAM, "PopSwap (waiting on lock)");
             DownloadEntryBase? entry = null;
             lock (DPLock)
             {
                 entry = Downloads.First();
                 Downloads.Remove(entry);
                 Processing.Add(entry);
+                report.Log(LogFlag.DEBUG_SPAM, "PopSwapped (releasing lock)");
             }
             return entry;
         }
         public void RemoveProcessing(DownloadEntryBase entry)
         {
-            lock(DPLock)
+            report.Log(LogFlag.DEBUG_SPAM, "Remove Processing (Waiting on lock)");
+            lock (DPLock)
             {
                 Processing.Remove(entry);
+                report.Log(LogFlag.DEBUG_SPAM, "Removed from processing (releasing lock)");
             }
         }
         public void ReQueue(DownloadEntryBase entry)
         {
-            lock(DPLock)
+            report.Log(LogFlag.DEBUG_SPAM, "ReQueue (Waiting on lock)");
+            lock (DPLock)
             {
                 Processing.Remove(entry);
                 Downloads.Add(entry);
-                Console.WriteLine("Delay {0} += 200\n" +
-                    "Size {1}--", BATCH_DELAY_MS, BATCH_SIZE);
+                report.Log(LogFlag.DEBUG_SPAM | LogFlag.WARN, $"Batch Delay {BATCH_DELAY_MS}+=200\tSize {BATCH_SIZE}-=1 (min 5)");
                 BATCH_DELAY_MS += 200;
                 if (BATCH_SIZE > 5) BATCH_SIZE -= 1;
+                report.Log(LogFlag.DEBUG_SPAM, "ReQueue (Releasing Lock)");
             }
         }
     }

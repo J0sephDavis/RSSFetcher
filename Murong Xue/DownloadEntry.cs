@@ -10,12 +10,16 @@ namespace Murong_Xue
     {
         protected DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         public Uri link;
+        protected Reporter report;
         public DownloadEntryBase(Uri link)
         {
             this.link = link;
+            if (report == null)
+                report = new Reporter(LogFlag.DEFAULT, "DownloadEntryBase");
         }
         virtual public async Task Request(HttpClient client)
         {
+            report.Log(LogFlag.DEBUG_SPAM, "Requesting data");
             Task<HttpResponseMessage> request = client.GetAsync(this.link);
             await request.ContinueWith(this.OnDownload);
             await request; //only return when the request has actually been completed
@@ -23,7 +27,7 @@ namespace Murong_Xue
         }
         protected async Task OnDownload(Task<HttpResponseMessage> response)
         {
-            Console.WriteLine("DownloadEntryBase.OnDownload");
+            report.Log(LogFlag.DEBUG_SPAM, "On Download");
             try
             {
                 HttpResponseMessage msg = await response;
@@ -35,23 +39,24 @@ namespace Murong_Xue
             }
             catch (HttpRequestException e)
             {
-                Console.WriteLine("HTTP REQUEST EXCEPTION: " + e.Message);
+                report.Log(LogFlag.ERROR, $"HTTP Request Exception: {e.Message}");
                 ReQueue();
                 return;
             }
         }
         virtual public async Task HandleDownload(Stream content)
         {
-            Console.WriteLine("DownloadEntryBase::HandleDownload()");
+            report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
             return;
         }
         protected void RemoveProcessing()
         {
+            report.Log(LogFlag.DEBUG_SPAM, "Remove Processing");
             downloadHandler.RemoveProcessing(this);
         }
         protected void ReQueue()
         {
-            Console.WriteLine("DownloadEntryBase::ReQueue");
+            report.Log(LogFlag.DEBUG_SPAM, "ReQueue");
             downloadHandler.ReQueue(this);
         }
     }
@@ -63,10 +68,16 @@ namespace Murong_Xue
             : base(link)
         {
             this.feed = _feed;
+            if (report == null)
+                report = new Reporter(
+                    LogFlag.DEFAULT,
+                    "DownloadEntryFeed"
+                );
         }
         override public async Task HandleDownload(Stream content)
         {
-                feed.OnFeedDownloaded(content);
+            report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
+            feed.OnFeedDownloaded(content);
         }
     }
 
@@ -77,18 +88,21 @@ namespace Murong_Xue
             : base(link)
         {
             this.DownloadPath = DownloadPath;
+            if (report == null)
+                report = new Reporter(LogFlag.DEFAULT, "DownloadEntryFile");
         }
         override public async Task HandleDownload(Stream content)
         {
+            report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
             string fileName = Path.GetFileName(link.AbsolutePath);
             string destinationPath = this.DownloadPath.LocalPath + fileName;
             if (File.Exists(destinationPath))
-                Console.WriteLine("file already exists {0}", destinationPath);
+                report.Log(LogFlag.ERROR, $"File already exists {destinationPath}");
             else using (FileStream fs = File.Create(destinationPath))
             {
                 content.Seek(0, SeekOrigin.Begin);
                 content.CopyTo(fs);
-                Console.WriteLine("FILE WRITTEN TO {0}", destinationPath);
+                report.Log(LogFlag.NOTEWORTHY, $"FILE WRITTEN TO {destinationPath}");
             }
         }
     }

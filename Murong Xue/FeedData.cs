@@ -19,7 +19,11 @@ namespace Murong_Xue
         protected string NewHistory  = string.Empty;
         private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private Config cfg = Config.GetInstance();
-        int id = 0;
+        private Reporter report = new Reporter(
+            LogFlag._EXCEPTION | LogFlag.FEEDBACK,
+            "FeedData"
+        );
+  
 
         public FeedData(string title,
             string url, string expression,
@@ -34,16 +38,18 @@ namespace Murong_Xue
 
         public void Print()
         {
-            Console.WriteLine("FeedData Obj:" +
+            string tmp = "FeedData Obj:" +
                 $"\n\t{this.Title}" +
                 $"\n\t{this.URL}" +
                 $"\n\t{this.Expression}" +
-                $"\n\t{this.History}");
+                $"\n\t{this.History}";
             if (HasNewHistory)
-                Console.WriteLine("\n\tNEW-HISTORY: {0}", NewHistory);
+                tmp += $"\n\tNEW-HISTORY: {NewHistory}";
+            report.Log(LogFlag.NOTEWORTHY | LogFlag.SPAM, tmp);
         }
         public void QueueDownload()
         {
+            report.Log(LogFlag.DEBUG_SPAM, "Queue Download");
             DownloadEntryFeed entry = new DownloadEntryFeed(URL, this);
             downloadHandler.AddDownload(entry);
         }
@@ -55,15 +61,14 @@ namespace Murong_Xue
                 HasNewHistory = true;
                 NewHistory = title;
             }
-            Console.WriteLine("- NEW DOWNLOAD {0}: {1}", title, link.ToString());
+            report.Log(LogFlag.FEEDBACK, $"Add File {title} {link.ToString()}");
             Uri downloadPath = new Uri(cfg.GetDownloadPath());
             DownloadEntryFile entry = new(link, downloadPath);
-            id += 1;
             downloadHandler.AddDownload(entry);
         }
         public async void OnFeedDownloaded(Stream content)
         {
-            Console.WriteLine("----- Feed Downloaded {1}({0})-----",content.Length,this.Title);
+            report.Log(LogFlag.NOTEWORTHY, $"Feed Downloaded len:{content.Length}, {this.Title}");
             XmlReaderSettings xSettings = new();
             xSettings.Async = true;
             //
