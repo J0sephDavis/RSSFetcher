@@ -50,6 +50,8 @@ namespace Murong_Xue
 
     }
     //For now, just handles what is print to the console, no special stuff yet
+    //TODO log buffer
+    //TODO async
     internal class Logger
     {
         private static Logger s_Logger;
