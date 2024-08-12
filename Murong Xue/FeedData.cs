@@ -139,8 +139,10 @@ namespace Murong_Xue
         {
             if (HasNewHistory && NewHistory != string.Empty)
             {
+                report.Log(LogFlag.DEBUG_SPAM, "GetHistory (HasNewHistory && !=empty)");
                 return NewHistory;
             }
+            report.Log(LogFlag.DEBUG_SPAM, "GetHistory");
             return History;
         }
         public string GetExpr()
@@ -149,19 +151,23 @@ namespace Murong_Xue
         }
         public void SetTitle(string title)
         {
+            report.Log(LogFlag.DEBUG_SPAM, $"SetTitle {title}");
             this.Title = title;
         }
         public void  SetURL(string URL)
         {
+            report.Log(LogFlag.DEBUG_SPAM, $"SetURL {URL}");
             //TODO do some checks here to make sure it is a valid URL & catch any errors
             this.URL = new Uri(URL);
         }
         public void SetHistory(string History)
         {
+            report.Log(LogFlag.DEBUG_SPAM, $"SetHistory {History}");
             this.History = History;
         }
         public void SetExpr(string Expression)
         {
+            report.Log(LogFlag.DEBUG_SPAM, $"SetExpression {Expression}");
             this.Expression = Expression;
         }
     }
