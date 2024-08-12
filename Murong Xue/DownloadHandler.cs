@@ -94,22 +94,28 @@ namespace Murong_Xue
         }
         public void ReQueue(DownloadEntryBase entry)
         {
-            BATCH_DELAY_MS += 100;
-            //---
-            lock(fail_lock)
-            {
-                if (BATCH_SIZE > 5 && fails > BATCH_SIZE*3/4) BATCH_SIZE--;
-                
-                report.Log(LogFlag.WARN,
-                $"({fails++}) Batch Delay {BATCH_DELAY_MS}+=200\t" +
-                $"Size {BATCH_SIZE}-=1 (min 5)");
-            }
-            //---
+            //TODO save optimal batch settings in config
             lock (DPLock)
             {
                 Processing.Remove(entry);
                 Downloads.Add(entry);
             }
+            //---
+            lock(fail_lock)
+            {
+                fails++;
+                BATCH_DELAY_MS += 200;
+                if (BATCH_SIZE > 5 && fails > BATCH_SIZE / 2)
+                {
+                    BATCH_SIZE--;
+                    fails = 0;
+                }
+                
+                report.Log(LogFlag.WARN,
+                $"({fails}) Batch Delay {BATCH_DELAY_MS}\t" +
+                $"Size {BATCH_SIZE}");
+            }
+            //---
         }
     }
 }
