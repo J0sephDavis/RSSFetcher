@@ -18,7 +18,6 @@ namespace Murong_Xue
         NOTEWORTHY  = 1 << 4,
         FEEDBACK    = 1 << 5,
         ERROR       = 1 << 6,
-
         //---
         _EXCEPTION = ERROR | WARN,
         _DEBUG = DEBUG | DEBUG_SPAM,

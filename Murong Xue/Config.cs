@@ -11,8 +11,11 @@ namespace Murong_Xue
     {
         private string DownloadDirectory;
         private Uri RSSConfigPath;
+        private LogFlag LogLevel = LogFlag.ALL;
+        //---
         private static Config? s_Config = null;
         private static readonly Reporter report = new Reporter(LogFlag.DEFAULT, "CONFIG");
+
         private Config()
         {
 
@@ -27,6 +30,16 @@ namespace Murong_Xue
             if (s_Config == null)
                 s_Config = new Config();
             return s_Config;
+        }
+        public void SetLogLevel(LogFlag level)
+        {
+            this.LogLevel = level;
+            report.Log(LogFlag.DEBUG_SPAM, $"New LogLevel {this.LogLevel}");
+        }
+        public LogFlag GetLogLevel()
+        {
+            report.Log(LogFlag.DEBUG_SPAM, $"Get LogLevel {this.LogLevel}");
+            return this.LogLevel;
         }
         public void SetRSSPath(string path)
         {

@@ -16,9 +16,9 @@ using System.Xml;
 namespace MurongXue;
 public class Program
 {
-    private static EntryData? RSSEntries = null;
     private static readonly Config cfg = Config.GetInstance();
     private static readonly Reporter report = new Reporter(LogFlag.DEFAULT, "PROGRAM");
+    private static EntryData? RSSEntries = null;
     public static async Task Main(string[] args)
     {
         report.Log(LogFlag.DEBUG, $"Started program with args: {args}");
