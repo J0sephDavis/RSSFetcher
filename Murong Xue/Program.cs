@@ -9,7 +9,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 1;
-    static readonly int PATCH = 0;
+    static readonly int PATCH = 1;
     //---
     static readonly Config cfg = Config.GetInstance();
     static Reporter report;
@@ -25,10 +25,16 @@ public class Program
     public static async Task Main(string[] args)
     {
         report ??= Config.OneReporterPlease("PROGRAM");
-        report.Log(LogFlag.DEBUG, $"Started program with args: {args}");
+        report.Log(LogFlag.DEBUG, $"Started program with {args.Length}args");
+        foreach (string s in args)
+            report.Log(LogFlag.DEBUG_SPAM, s);
 #if DEBUG
         report.Log(LogFlag.WARN, "!!!PROGRAM COMPILED IN DEBUG MODE!!!");
-        args = ["--loglevel", $"{((int)LogFlag.ALL)}", "--edit"];
+        args = [
+            "--loglevel",
+            $"{32}",//$"{((int)LogFlag.ALL)}",
+            "--edit"
+        ];
 #endif
         ArgResult choice = HandleArgs(args);
 
@@ -139,6 +145,7 @@ public class Program
             {
                 LogFlag value = (LogFlag) int.Parse(arg); //TODO exception handling // TryParse
                 report.Log(LogFlag.DEBUG, $"LOGLEVEL: Set to {value}");
+                Config.SetLogLevel(value);
                 NextIsLogLevel = false;
                 continue;
             }
