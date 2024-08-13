@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,6 +11,10 @@ namespace Murong_Xue
     internal class InteractiveEditor
     {
         List<FeedData> Feeds;
+        Reporter report = new(LogFlag.DEFAULT, "Editor");
+        // TODO either edit the base functionality for the logger or inherit the class & make on specifically for the editor
+        //The editor should be able to hide all the prefixes for printout (but keep them in the saved logfile)
+        //Maybe this is just how FEEDBACK works
         public InteractiveEditor(List<FeedData> Feeds)
         {
             this.Feeds = Feeds;
@@ -50,105 +56,148 @@ namespace Murong_Xue
                     idx, entry.GetTitle(), entry.GetHistory());
             }
         }
+
+         protected void PromptForInput(string prompt, out string? input)
+        {
+            report.Log(LogFlag.DEBUG_SPAM, "Prompting for input");
+            Console.Write(prompt);
+            input = Console.ReadLine();
+            if (input != null && input.Length < 3){
+                report.Log(LogFlag.FEEDBACK | LogFlag.WARN, "input.len < 3 or NULL. DISCARDING");
+                input = null;
+            }
+            report.Log(LogFlag.DEBUG_SPAM, $"[Input:{input}]");
+        }
+
+        static readonly string[] edit_cmds_title = { "title", "t" };
+        static readonly string[] edit_cmds_history = { "history", "h" };
+        static readonly string[] edit_cmds_expr = { "expr", "regex", "e", "expression" };
+        static readonly string[] edit_cmds_url = { "url", "u" };
+        static readonly string[] edit_cmds_conf = { "confirm", "conf", "save", "quit", "x" };
+        static readonly string[] edit_cmds_print = { "print", "p" };
+
+
+        static readonly string edit_help = @"Title / History / Expr / Url / Confirm (X) / Help (default) / Print";
+        static readonly string edit_prefix = @"E: ";
         protected void EditHandler(int? index)
         {
-            const string edit_help = @"(T)itle/(H)istory/(E)xpression/(U)rl\E(X)it/(P)RINT";
+            
             if (index == null || index < 0 || index >= Feeds.Count)
             {
-                Console.WriteLine("EDIT: Invalid index {0}", index);
+                report.Log(LogFlag.FEEDBACK, edit_prefix + $"Invalid index {index}");
                 return;
             }
             FeedData entry = Feeds[(int)index];
             PrintHandler(index);
             Console.WriteLine(edit_help);
             //----
-            int input_char = 0;
             string _title = entry.GetTitle();
             string _history = entry.GetHistory();
             string _url = entry.GetURL();
             string _expr = entry.GetExpr();
-            do
+            
+            while(true)
             {
-                Console.Write("E>");
+                Console.Write(edit_prefix);
                 string? input = Console.ReadLine();
-                if (input == null)
-                    continue;
-                input = input.ToLower();
-                input_char = input[0];
-                Console.Write("EDIT:");
-                switch (input_char)
+                if (input == null || input == string.Empty)
                 {
-                    case 't':
-                        Console.WriteLine("Current Title:\t>{0}", _title);
-                        Console.Write("Title:");
-
-                        input = Console.ReadLine();
-                        if (input == null || input.Length == 0) break;
-
-                        _title = input;
-                        Console.WriteLine("New Title:\t>{0}", _title);
-                        break;
-                    case 'h':
-                        Console.WriteLine("Current History:\t>{0}", _history);
-                        Console.Write("History:");
-
-                        input = Console.ReadLine();
-                        if (input == null || input.Length == 0) break;
-
-                        _history = input;
-                        Console.WriteLine("New History:\t>{0}", _history);
-                        break;
-                    case 'e':
-                        Console.WriteLine("Current Expression:\t>{0}", _expr);
-                        Console.Write("Expression:");
-
-                        input = Console.ReadLine();
-                        if (input == null || input.Length == 0) break;
-
-                        _expr = input;
-                        Console.WriteLine("New Expression:\t>{0}", _expr);
-                        break;
-                    case 'u':
-                        Console.WriteLine("Current URL:\t>{0}", _url);
-                        Console.Write("URL:");
-
-                        input = Console.ReadLine();
-                        if (input == null || input.Length == 0) break;
-
-                        _url = input;
-                        Console.WriteLine("New URL:\t[{0}]", _url);
-                        break;
-                    //----
-                    case 'x':
-                        Console.WriteLine("CONFIRM CHANGES: Y/N/back(x)");
-                        do
-                        {
-                            Console.Write("E(X) SAVE?:");
-                            input = Console.ReadLine();
-                            if (input == null)
-                                break;
-                            input = input.ToLower();
-                            input_char = input[0];
-                            switch(input_char)
-                            {
-                                case 'y':
-                                    Console.WriteLine("Changes SAVED");
-                                    return;
-                                case 'n':
-                                    Console.WriteLine("Changes DISCARDED");
-                                    return;
-                               default:
-                                    continue;
-                            }
-
-                        } while (input_char != 'z');
-                        input_char = 0;
-                        break;
-                    default:
-                        Console.WriteLine(edit_help);
-                        break;
+                    //help cmd
+                    report.Log(LogFlag.FEEDBACK, edit_help);
+                    continue;
                 }
-            } while (input_char != 'x');
+                else
+                    input = input.ToLower();
+                //---
+                if (edit_cmds_title.Contains(input))
+                {
+                    string title_prompt =
+                        $"Current Title:\t[{_title}]\n" +
+                        $"{edit_prefix}Title:";
+
+                    PromptForInput(title_prompt, out input);
+                    if (input == null)
+                        continue;
+                    _title = input;
+
+                    report.Log(LogFlag.NOTEWORTHY, $"New Title: {_title}");
+                    continue;
+                }
+                if (edit_cmds_history.Contains(input))
+                {
+                    string history_prompt =
+                        $"Current History:\t[{_history}]\n" +
+                        $"{edit_prefix}History:";
+
+                    PromptForInput(history_prompt, out input);
+                    if (input == null)
+                        continue;
+                    _history = input;
+
+                    report.Log(LogFlag.NOTEWORTHY, $"New History: {_history}");
+                    continue;
+                }
+                if (edit_cmds_expr.Contains(input))
+                {
+                    string expression_prompt =
+                        $"Current Expression:\t[{_expr}]\n" +
+                        $"{edit_prefix}Regex:";
+
+                    PromptForInput(expression_prompt, out input);
+                    if (input == null)
+                        continue;
+                    _expr = input;
+
+                    report.Log(LogFlag.NOTEWORTHY, $"New Regex: {_expr}");
+                    continue;
+                }
+                if (edit_cmds_url.Contains(input))
+                {
+                    string url_prompt =
+                        $"Current URL:\t[{_url}]\n" +
+                        $"{edit_prefix}URL:";
+
+                    PromptForInput(url_prompt, out input);
+                    if (input == null)
+                        continue;
+                    _url = input;
+
+                    report.Log(LogFlag.NOTEWORTHY, $"New URL: {_url}");
+                    continue;
+                }
+                if (edit_cmds_conf.Contains(input))
+                {
+                    Console.WriteLine("Save Changes? y/n/back(any other input)");
+                    Console.Write(edit_prefix + "?:");
+                    //---
+                    input = Console.ReadLine();
+                    if (input == null || input == string.Empty)
+                        input = " ";
+                    else
+                        input = input.ToLower();
+                    //---
+                    switch (input[0])
+                    {
+                        case 'y':
+                            Console.WriteLine("SAVED (TODO)");
+                            return;
+                        case 'n':
+                            Console.WriteLine("DISCARDED");
+                            return;
+                        default:
+                            Console.WriteLine("BACK");
+                            break;
+                    }
+                    continue;
+                }
+                if (edit_cmds_print.Contains(input))
+                {
+                    PrintHandler(index);
+                    continue;
+                }
+                //help cmd
+                report.Log(LogFlag.FEEDBACK,edit_help);
+            }
         }
         protected void DeleteHandler(int? index)
         {
