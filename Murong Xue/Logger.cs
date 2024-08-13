@@ -23,7 +23,11 @@ namespace Murong_Xue
         _DEBUG = DEBUG | DEBUG_SPAM,
         _INFO = FEEDBACK | NOTEWORTHY,
         //---
+#if DEBUG
+        DEFAULT = _INFO | _EXCEPTION | DEBUG,
+#else
         DEFAULT = _INFO | _EXCEPTION,
+#endif
         ALL = NONE 
             | _DEBUG        //| DEBUG | DEBUG_SPAM
             | _EXCEPTION    //| ERROR | WARN
