@@ -7,9 +7,9 @@
 namespace Murong_Xue;
 public class Program
 {
-    const int MAJOR_VERSION = 1;
-    const int MINOR_VERSION = 0;
-    const int PATCH = 0;
+    static readonly int MAJOR_VERSION = 1;
+    static readonly int MINOR_VERSION = 0;
+    static readonly int PATCH = 0;
     //---
     private static readonly Config cfg = Config.GetInstance();
     private static readonly Reporter report = new(LogFlag.DEFAULT, "PROGRAM");
