@@ -28,7 +28,7 @@ public class Program
         report.Log(LogFlag.DEBUG, $"Started program with args: {args}");
 #if DEBUG
         report.Log(LogFlag.WARN, "!!!PROGRAM COMPILED IN DEBUG MODE!!!");
-        args = ["--help"];
+        args = ["--loglevel", "127", "--edit"];
 #endif
         ArgResult choice = HandleArgs(args);
 
