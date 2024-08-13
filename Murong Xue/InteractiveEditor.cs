@@ -229,11 +229,17 @@ namespace Murong_Xue
                                 entry.SetHistory(_history);
                             if ((edits & EditFlag.EXPR) > 0)
                                 entry.SetExpr(_expr);
-                            if ((edits & EditFlag.URL) > 0)
-                                entry.SetURL(_url);
-
-                            Console.WriteLine("SAVED (WIP)");
-                            
+                            try
+                            {
+                                if ((edits & EditFlag.URL) > 0)
+                                    entry.SetURL(_url);
+                            }
+                            catch (System.UriFormatException e)
+                            {
+                                report.Log(LogFlag.ERROR, $"{e.Message}");
+                                report.Log(LogFlag.WARN, "Change to URL DISCARDED");
+                            }
+                            report.Log(LogFlag.FEEDBACK, "SAVED");
                             return;
                         case 'n':
                             Console.WriteLine("DISCARDED");
