@@ -50,7 +50,12 @@ namespace Murong_Xue
             if ((level & ReportFilter) != LogFlag.NONE)
                 _Logger.Log($"{ReportIdentifier} [{level}] {msg}");
         }
-
+        //----
+        public void SetLogLevel(LogFlag flag)
+        {
+            Log(LogFlag.DEBUG, "Loglevel Set");
+            this.ReportFilter = flag;
+        }
     }
     //For now, just handles what is print to the console, no special stuff yet
     //TODO log buffer
