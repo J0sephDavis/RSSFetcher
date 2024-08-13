@@ -3,21 +3,16 @@
  * 1. Total files scanned
  * 2. Total files added/fetched
  * 3. Running time
- * ----
- * This might benefit from a logging system with flags (DEBUG/ERROR/WARN/VERBOSE/NOTEWORTH/)
  */
-using Murong_Xue;
-using System.ComponentModel.DataAnnotations;
-using System.Net.NetworkInformation;
-using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Xml;
-
-namespace MurongXue;
+namespace Murong_Xue;
 public class Program
 {
+    const int MAJOR_VERSION = 1;
+    const int MINOR_VERSION = 0;
+    const int PATCH = 0;
+    //---
     private static readonly Config cfg = Config.GetInstance();
-    private static readonly Reporter report = new Reporter(LogFlag.DEFAULT, "PROGRAM");
+    private static readonly Reporter report = new(LogFlag.DEFAULT, "PROGRAM");
     private static EntryData? RSSEntries = null;
     public static async Task Main(string[] args)
     {
@@ -47,7 +42,7 @@ public class Program
                 case "--v":
                 case "-v":
                     report.Log(LogFlag.DEBUG, "VERSION");
-                    report.Log(LogFlag.FEEDBACK, "Last commit hash: d5b80b86");
+                    report.Log(LogFlag.FEEDBACK, $"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
                     return;
                 //-------------------------
                 case "--edit":
@@ -91,11 +86,11 @@ public class Program
             InteractiveEditor editor = new InteractiveEditor(RSSEntries.GetFeeds());
             if (editor.MainLoop())
             {
-                report.Log(LogFlag.FEEDBACK, $"Saving entries from interactive session");
+                report.Log(LogFlag.FEEDBACK, "Saving entries from interactive session");
                 await RSSEntries.UpdateEntries();
             }
             else
-                report.Log(LogFlag.FEEDBACK, $"Discarding change from interactive session");
+                report.Log(LogFlag.FEEDBACK, "Discarding change from interactive session");
         }
         else
             await RSSEntries.Process();
