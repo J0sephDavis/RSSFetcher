@@ -3,7 +3,7 @@
  * 1. Total files scanned
  * 2. Total files added/fetched
  * 3. Running time
- */
+*/
 namespace Murong_Xue;
 public class Program
 {
@@ -36,12 +36,12 @@ public class Program
         {
             case (ArgResult.EDIT):
                 await StartEditor();
-                    break;
+                break;
             case (ArgResult.RUN):
                 await RSSEntries.Process();
-                    break;
+                break;
             case (ArgResult.NONE):
-                default:
+            default:
                 report.Log(LogFlag.WARN | LogFlag.DEBUG, "DEFFAULT/ARG.RESLT = NONE. EXITING");
                 goto case ArgResult.EXIT;
             case (ArgResult.EXIT):
@@ -82,22 +82,22 @@ public class Program
         report.Log(LogFlag.DEBUG, "Processing args");
         foreach (string arg in args)
         {
-                    if (NextIsConfig)
-                    {
-                        report.Log(LogFlag.DEBUG, $"RSSCFG: Set Path to {arg}");
-                        cfg.SetRSSPath(Path.GetFullPath(arg));
+            if (NextIsConfig)
+            {
+                report.Log(LogFlag.DEBUG, $"RSSCFG: Set Path to {arg}");
+                cfg.SetRSSPath(Path.GetFullPath(arg));
                 //---
                 NextIsConfig = false;
                 continue;
-                    }
-                    else if (NextIsDownloadDir)
-                    {
-                        report.Log(LogFlag.DEBUG, $"RSSCFG: Set Path to {arg}");
-                        cfg.SetDownloadPath(Path.GetFullPath(arg));
+            }
+            else if (NextIsDownloadDir)
+            {
+                report.Log(LogFlag.DEBUG, $"RSSCFG: Set Path to {arg}");
+                cfg.SetDownloadPath(Path.GetFullPath(arg));
                 //---
                 NextIsDownloadDir = false;
                 continue;
-                    }
+            }
             //-------------------------
             string _arg = arg.ToLower();
             if (help_cmds.Contains(_arg))
@@ -122,10 +122,10 @@ public class Program
                 report.Log(LogFlag.DEBUG, "EDIT: EditConfigs = true");
                 retVal = ArgResult.EDIT;
                 continue;
-        }
+            }
             //-------------------------
             if (rss_cmds.Contains(_arg))
-        {
+            {
                 report.Log(LogFlag.DEBUG, "RSSCFG: NextIsConfig");
                 NextIsConfig = true;
                 continue;
