@@ -11,9 +11,17 @@ public class Program
     static readonly int MINOR_VERSION = 0;
     static readonly int PATCH = 0;
     //---
-    private static readonly Config cfg = Config.GetInstance();
-    private static readonly Reporter report = new(LogFlag.DEFAULT, "PROGRAM");
-    private static EntryData? RSSEntries = null;
+    static readonly Config cfg = Config.GetInstance();
+    static readonly Reporter report = new(LogFlag.DEFAULT, "PROGRAM");
+    static EntryData? RSSEntries = null;
+    [Flags]
+    protected enum ArgResult
+    {
+        NONE    = 0,
+        EXIT    = 1 << 0,
+        EDIT    = 1 << 1,
+        RUN     = 1 << 2,
+    };
     public static async Task Main(string[] args)
     {
         report.Log(LogFlag.DEBUG, $"Started program with args: {args}");
