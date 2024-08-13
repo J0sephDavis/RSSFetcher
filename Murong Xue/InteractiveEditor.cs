@@ -76,7 +76,15 @@ namespace Murong_Xue
         static readonly string[] edit_cmds_url = ["url", "u"];
         static readonly string[] edit_cmds_conf = ["confirm", "conf", "save", "quit", "x"];
         static readonly string[] edit_cmds_print = ["print", "p"];
-
+        [Flags]
+        enum EditFlag
+        {
+            NONE = 0,
+            TITLE = 1 << 0,
+            HISTORY = 1 << 1,
+            URL = 1 << 2,
+            EXPR = 1 << 3,
+        };
 
         static readonly string edit_help = @"Title / History / Expr / Url / Confirm (X) / Help (default) / Print";
         static readonly string edit_prefix = @"E: ";
@@ -92,6 +100,7 @@ namespace Murong_Xue
             PrintHandler(index);
             Console.WriteLine(edit_help);
             //----
+            EditFlag edits = EditFlag.NONE;
             string _title = entry.GetTitle();
             string _history = entry.GetHistory();
             string _url = entry.GetURL();
@@ -118,7 +127,15 @@ namespace Murong_Xue
 
                     PromptForInput(title_prompt, out input);
                     if (input == null)
+                    {
+                        report.Log(LogFlag.FEEDBACK, "Set title back to original");
+                        _title = entry.GetTitle();
+                        if ((edits & EditFlag.TITLE) != EditFlag.NONE)
+                            edits -= EditFlag.TITLE;
+                        report.Log(LogFlag.DEBUG, $"Post-EditFlag: {edits}");
                         continue;
+                    }
+                    edits |= EditFlag.TITLE;
                     _title = input;
 
                     report.Log(LogFlag.NOTEWORTHY, $"New Title: {_title}");
@@ -132,7 +149,15 @@ namespace Murong_Xue
 
                     PromptForInput(history_prompt, out input);
                     if (input == null)
+                    {
+                        report.Log(LogFlag.FEEDBACK, "Set history to original");
+                        _title = entry.GetTitle();
+                        if ((edits & EditFlag.HISTORY) != EditFlag.NONE)
+                            edits -= EditFlag.HISTORY;
+                        report.Log(LogFlag.DEBUG, $"Post-EditFlag: {edits}");
                         continue;
+                    }
+                    edits |= EditFlag.HISTORY;
                     _history = input;
 
                     report.Log(LogFlag.NOTEWORTHY, $"New History: {_history}");
@@ -146,7 +171,15 @@ namespace Murong_Xue
 
                     PromptForInput(expression_prompt, out input);
                     if (input == null)
+                    {
+                        report.Log(LogFlag.FEEDBACK, "Set expression to original");
+                        _title = entry.GetTitle();
+                        if ((edits & EditFlag.EXPR) != EditFlag.NONE)
+                            edits -= EditFlag.EXPR;
+                        report.Log(LogFlag.DEBUG, $"Post-EditFlag: {edits}");
                         continue;
+                    }
+                    edits |= EditFlag.EXPR;
                     _expr = input;
 
                     report.Log(LogFlag.NOTEWORTHY, $"New Regex: {_expr}");
@@ -160,7 +193,15 @@ namespace Murong_Xue
 
                     PromptForInput(url_prompt, out input);
                     if (input == null)
+                    {
+                        report.Log(LogFlag.FEEDBACK, "Set URL to original");
+                        _title = entry.GetTitle();
+                        if ((edits & EditFlag.URL) != EditFlag.NONE)
+                            edits -= EditFlag.URL;
+                        report.Log(LogFlag.DEBUG, $"Post-EditFlag: {edits}");
                         continue;
+                    }
+                    edits |= EditFlag.URL;
                     _url = input;
 
                     report.Log(LogFlag.NOTEWORTHY, $"New URL: {_url}");
@@ -168,7 +209,7 @@ namespace Murong_Xue
                 }
                 if (edit_cmds_conf.Contains(input))
                 {
-                    Console.WriteLine("Save Changes? y/n/back(any other input)");
+                    report.Log(LogFlag.FEEDBACK,"Save Changes? y/n/back(any other input)" + $"\tChanges:{edits}");
                     Console.Write(edit_prefix + "?:");
                     //---
                     input = Console.ReadLine();
@@ -180,7 +221,19 @@ namespace Murong_Xue
                     switch (input[0])
                     {
                         case 'y':
-                            Console.WriteLine("SAVED (TODO)");
+                            report.Log(LogFlag.FEEDBACK, "Entry saved");
+
+                            if ((edits & EditFlag.TITLE) > 0)
+                                entry.SetTitle(_title);
+                            if ((edits & EditFlag.HISTORY) > 0)
+                                entry.SetHistory(_history);
+                            if ((edits & EditFlag.EXPR) > 0)
+                                entry.SetExpr(_expr);
+                            if ((edits & EditFlag.URL) > 0)
+                                entry.SetURL(_url);
+
+                            Console.WriteLine("SAVED (WIP)");
+                            
                             return;
                         case 'n':
                             Console.WriteLine("DISCARDED");
@@ -194,6 +247,21 @@ namespace Murong_Xue
                 if (edit_cmds_print.Contains(input))
                 {
                     PrintHandler(index);
+                    if (edits != EditFlag.NONE)
+                    {
+                        string response = $"{edits}";
+
+                        if ((edits & EditFlag.TITLE) > 0)
+                            response += $"\n_Title:{_title}";
+                        if ((edits & EditFlag.HISTORY) > 0)
+                            response += $"\n_History:{_history}";
+                        if ((edits & EditFlag.EXPR) > 0)
+                            response += $"\n_Expr:{_expr}";
+                        if ((edits & EditFlag.URL) > 0)
+                            response += $"\n_URL:{_url}";
+                        //----
+                        report.Log(LogFlag.FEEDBACK, response);
+                    }
                     continue;
                 }
                 //help cmd
