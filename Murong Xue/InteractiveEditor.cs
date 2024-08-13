@@ -58,13 +58,13 @@ namespace Murong_Xue
             }
         }
 
-         protected void PromptForInput(string prompt, out string? input)
+         protected void PromptForInput(string prompt, out string? input, uint minLen = 3)
         {
             report.Log(LogFlag.DEBUG_SPAM, "Prompting for input");
             Console.Write(prompt);
             input = Console.ReadLine();
-            if (input != null && input.Length < 3){
-                report.Log(LogFlag.FEEDBACK | LogFlag.WARN, "input.len < 3 or NULL. DISCARDING");
+            if (input != null && input.Length < minLen){
+                report.Log(LogFlag.FEEDBACK | LogFlag.WARN, $"input.len < {minLen} or NULL. DISCARDING");
                 input = null;
             }
             report.Log(LogFlag.DEBUG_SPAM, $"[Input:{input}]");
