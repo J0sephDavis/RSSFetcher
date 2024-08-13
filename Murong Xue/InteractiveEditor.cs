@@ -147,7 +147,7 @@ namespace Murong_Xue
                         $"Current History:\t[{_history}]\n" +
                         $"{edit_prefix}History:";
 
-                    PromptForInput(history_prompt, out input);
+                    PromptForInput(history_prompt, out input,0);
                     if (input == null)
                     {
                         report.Log(LogFlag.FEEDBACK, "Set history to original");
@@ -169,7 +169,7 @@ namespace Murong_Xue
                         $"Current Expression:\t[{_expr}]\n" +
                         $"{edit_prefix}Regex:";
 
-                    PromptForInput(expression_prompt, out input);
+                    PromptForInput(expression_prompt, out input,0);
                     if (input == null)
                     {
                         report.Log(LogFlag.FEEDBACK, "Set expression to original");
