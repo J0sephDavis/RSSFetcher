@@ -24,7 +24,7 @@ namespace Murong_Xue
         protected void PrintHandler(int? index)
         {
             FeedData? entry;
-            if (index != null && index > 0 && index < Feeds.Count)
+            if (index != null && index > -1 && index < Feeds.Count)
             {
                 entry = Feeds[(int)index];
                 Console.WriteLine(
@@ -53,7 +53,7 @@ namespace Murong_Xue
         protected void EditHandler(int? index)
         {
             const string edit_help = @"(T)itle/(H)istory/(E)xpression/(U)rl\E(X)it/(P)RINT";
-            if (index == null || index <= -1 || index >= Feeds.Count)
+            if (index == null || index < 0 || index >= Feeds.Count)
             {
                 Console.WriteLine("EDIT: Invalid index {0}", index);
                 return;
