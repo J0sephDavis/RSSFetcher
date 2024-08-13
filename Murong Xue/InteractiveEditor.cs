@@ -10,14 +10,15 @@ namespace Murong_Xue
 {
     internal class InteractiveEditor
     {
-        List<FeedData> Feeds;
-        Reporter report = new(LogFlag.DEFAULT, "Editor");
+        readonly List<FeedData> Feeds;
+        readonly Reporter report;
         // TODO either edit the base functionality for the logger or inherit the class & make on specifically for the editor
         //The editor should be able to hide all the prefixes for printout (but keep them in the saved logfile)
         //Maybe this is just how FEEDBACK works
         public InteractiveEditor(List<FeedData> Feeds)
         {
             this.Feeds = Feeds;
+            report = Config.OneReporterPlease("Editor");
         }
         enum INTERACTIVE_OPTIONS
         {
@@ -53,7 +54,7 @@ namespace Murong_Xue
             {
                 entry = Feeds[idx];
                 Console.WriteLine("{0}\t{1}",
-                    idx, entry.GetTitle(), entry.GetHistory());
+                    idx, entry.GetTitle());
             }
         }
 
@@ -69,12 +70,12 @@ namespace Murong_Xue
             report.Log(LogFlag.DEBUG_SPAM, $"[Input:{input}]");
         }
 
-        static readonly string[] edit_cmds_title = { "title", "t" };
-        static readonly string[] edit_cmds_history = { "history", "h" };
-        static readonly string[] edit_cmds_expr = { "expr", "regex", "e", "expression" };
-        static readonly string[] edit_cmds_url = { "url", "u" };
-        static readonly string[] edit_cmds_conf = { "confirm", "conf", "save", "quit", "x" };
-        static readonly string[] edit_cmds_print = { "print", "p" };
+        static readonly string[] edit_cmds_title = ["title", "t"];
+        static readonly string[] edit_cmds_history = ["history", "h"];
+        static readonly string[] edit_cmds_expr = ["expr", "regex", "e", "expression"];
+        static readonly string[] edit_cmds_url = ["url", "u"];
+        static readonly string[] edit_cmds_conf = ["confirm", "conf", "save", "quit", "x"];
+        static readonly string[] edit_cmds_print = ["print", "p"];
 
 
         static readonly string edit_help = @"Title / History / Expr / Url / Confirm (X) / Help (default) / Print";
@@ -276,7 +277,7 @@ namespace Murong_Xue
                 $"\tExpression:\t{_expr}\n" +
                 $"\tURL:\t\t{_url}"
             );
-            FeedData newEntry = new FeedData(_title, _url, _expr, _history);
+            FeedData newEntry = new(_title, _url, _expr, _history);
             Feeds.Add(newEntry);
         }
         public bool MainLoop()
@@ -288,8 +289,8 @@ namespace Murong_Xue
                 return false;
             }
             Console.WriteLine("\n!!!---INTERACTIVE MODE---!!!");
-            string? input = null;
-            string[] input_args = [];
+            string? input;
+            string[] input_args;
             int value = -1;
             bool parsedInt;
             while (true)

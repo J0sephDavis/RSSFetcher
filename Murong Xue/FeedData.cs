@@ -48,7 +48,7 @@ namespace Murong_Xue
         public void QueueDownload()
         {
             report.Log(LogFlag.DEBUG_SPAM, "Queue Download");
-            DownloadEntryFeed entry = new DownloadEntryFeed(URL, this);
+            DownloadEntryFeed entry = new (URL, this);
             downloadHandler.AddDownload(entry);
         }
 
@@ -59,8 +59,8 @@ namespace Murong_Xue
                 HasNewHistory = true;
                 NewHistory = title;
             }
-            report.Log(LogFlag.FEEDBACK, $"Add File {title} {link.ToString()}");
-            Uri downloadPath = new Uri(cfg.GetDownloadPath());
+            report.Log(LogFlag.FEEDBACK, $"Add File {title} {link}");
+            Uri downloadPath = new(cfg.GetDownloadPath());
             DownloadEntryFile entry = new(link, downloadPath);
             downloadHandler.AddDownload(entry);
         }

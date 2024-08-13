@@ -12,15 +12,15 @@ namespace Murong_Xue
         int BATCH_SIZE = 7;
         int BATCH_DELAY_MS = 200;
         //"fails" will be used for  batch size & delay adjustments
-        private readonly object fail_lock = new object();
+        private readonly object fail_lock = new();
         private uint fails = 0;
         //---
         private static DownloadHandler? s_DownloadHandler = null;
-        private static HttpClient client = new();
+        private readonly static HttpClient client = new();
         //c# version 12 does not have System.Threading.Lock, so we use Object()
         private readonly object DPLock = new(); //for when swapping between the two lists.
         //list of files to be downloaded
-        private List<DownloadEntryBase> Downloads = [];
+        private readonly List<DownloadEntryBase> Downloads = [];
         //Not in download, but also not done.
         private readonly List<DownloadEntryBase> Processing = [];
         private static Reporter report;
@@ -31,16 +31,14 @@ namespace Murong_Xue
         }
         public static DownloadHandler GetInstance()
         {
+            s_DownloadHandler ??= new DownloadHandler();
             report.Log(LogFlag.DEBUG_SPAM, "GetInstance");
-            if (s_DownloadHandler == null)
-                s_DownloadHandler = new DownloadHandler();
             return s_DownloadHandler;
         }
         public async Task ProcessDownloads()
         {
             report.Log(LogFlag.DEBUG, "Processing Downloads");
             List<Task> CurrentBatch = [];
-            List<DownloadEntryBase> tmpList = [];
             report.Log(LogFlag.DEBUG, $"Before processing, Downloads[{Downloads.Count}] Processing[{Processing.Count}]");
             while (Downloads.Count != 0 || Processing.Count != 0)
             {
