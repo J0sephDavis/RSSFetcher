@@ -22,11 +22,13 @@ namespace Murong_Xue
         //list of files to be downloaded
         private List<DownloadEntryBase> Downloads = [];
         //Not in download, but also not done.
-        private List<DownloadEntryBase> Processing = [];
-        private static Reporter report = new Reporter(LogFlag.DEFAULT, "Download Handler");
+        private readonly List<DownloadEntryBase> Processing = [];
+        private static Reporter report;
         
         private DownloadHandler()
-        { }
+        {
+            report = Config.OneReporterPlease("DownloadHandler");
+        }
         public static DownloadHandler GetInstance()
         {
             report.Log(LogFlag.DEBUG_SPAM, "GetInstance");

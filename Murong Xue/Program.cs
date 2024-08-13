@@ -12,7 +12,7 @@ public class Program
     static readonly int PATCH = 0;
     //---
     static readonly Config cfg = Config.GetInstance();
-    static readonly Reporter report = new(LogFlag.DEFAULT, "PROGRAM");
+    static Reporter report;
     static EntryData? RSSEntries = null;
     [Flags]
     protected enum ArgResult
@@ -24,6 +24,7 @@ public class Program
     };
     public static async Task Main(string[] args)
     {
+        report ??= Config.OneReporterPlease("PROGRAM");
         report.Log(LogFlag.DEBUG, $"Started program with args: {args}");
 #if DEBUG
         report.Log(LogFlag.WARN, "!!!PROGRAM COMPILED IN DEBUG MODE!!!");
@@ -69,19 +70,19 @@ public class Program
             report.Log(LogFlag.FEEDBACK, "Discarding change from interactive session");
     }
 
-    protected static readonly string[] version_cmds = { "--version", "-version", "-v", "--v" };
-    protected static string version_cmd_desc = "(void) Show version information";
+    protected static readonly string[] version_cmds = ["--version", "-version", "-v", "--v"];
+    protected static readonly string version_cmd_desc = "(void) Show version information";
 
-    protected static readonly string[] edit_cmds = { "-edit", "--edit" };
-    protected static string edit_cmd_desc = "(void) Enter interactive mode and edit the rss config";
+    protected static readonly string[] edit_cmds = ["-edit", "--edit"];
+    protected static readonly string edit_cmd_desc = "(void) Enter interactive mode and edit the rss config";
     
-    protected static readonly string[] rss_cmds = { "-rsscfg", "--rsscfg" };
+    protected static readonly string[] rss_cmds = ["-rsscfg", "--rsscfg"];
     protected static readonly string rss_cmd_desc = "(string) Set the path of the RSS Config file";
 
-    protected static readonly string[] download_cmds = { "-downloadpath", "--downloadpath" };
+    protected static readonly string[] download_cmds = ["-downloadpath", "--downloadpath"];
     protected static readonly string download_cmd_desc = "(string) Set the download folder for all fetched files";
     
-    protected static readonly string[] help_cmds = { "-help", "--help", "-h", "--h" };
+    protected static readonly string[] help_cmds = ["-help", "--help", "-h", "--h"];
     protected static readonly string help_cmd_desc = "(void) Get a brief description for each command";
     protected static readonly string help_str =
         $"{help_cmds[0]}:\t{help_cmd_desc}\n" +

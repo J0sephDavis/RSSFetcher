@@ -9,14 +9,15 @@ namespace Murong_Xue
 {
     internal class Config
     {
-        private readonly static LogFlag ConfigDefaultLogLevel = LogFlag.ALL; //So that we can set default in LogLevel & static Reporter
+        private readonly static LogFlag ConfigDefaultLogLevel = LogFlag.NONE; //So that we can set default in LogLevel & static Reporter
         //---
         private string DownloadDirectory;
         private Uri RSSConfigPath;
-        private LogFlag LogLevel = ConfigDefaultLogLevel;
+        private static LogFlag LogLevel = ConfigDefaultLogLevel;
+        private static List<Reporter>? Reporters = null;
         //---
         private static Config? s_Config = null;
-        private static readonly Reporter report = new Reporter(ConfigDefaultLogLevel, "CONFIG");
+        private static readonly Reporter report = new(ConfigDefaultLogLevel, "CONFIG");
 
         private Config()
         {
@@ -25,23 +26,54 @@ namespace Murong_Xue
             DownloadDirectory = rootDir + @"Downloads\";
             RSSConfigPath = new Uri(rootDir + "rss-config.xml");
             report.Log(LogFlag.DEBUG, $"Config(), rootDir: {rootDir}, cfgPath:{RSSConfigPath}, downloadDir:{DownloadDirectory}");
+            Reporters = [];
+            Subscribe(report);
         }
         public static Config GetInstance()
         {
+            s_Config ??= new Config();
             report.Log(LogFlag.DEBUG, "GetInstance");
-            if (s_Config == null)
-                s_Config = new Config();
             return s_Config;
         }
-        public void SetLogLevel(LogFlag level)
+        //--------
+        public static Reporter OneReporterPlease(string ModuleName, LogFlag flag = LogFlag.NONE)
         {
-            this.LogLevel = level;
-            report.Log(LogFlag.DEBUG_SPAM, $"New LogLevel {this.LogLevel}");
+            if (flag == LogFlag.NONE)
+                flag = LogLevel;
+            Reporter _r = new(flag, ModuleName);
+            Subscribe(_r);
+            return _r;
         }
-        public LogFlag GetLogLevel()
+        private static void Subscribe(Reporter reporter)
         {
-            report.Log(LogFlag.DEBUG_SPAM, $"Get LogLevel {this.LogLevel}");
-            return this.LogLevel;
+            lock(Reporters)
+            {
+                report.Log(LogFlag.DEBUG, $"SUBSCRIBER! {report.ReportIdentifier}");
+                Reporters.Add(reporter);
+            }
+        }
+        protected static void NotifySubscribers()
+        {
+            //update loglevels
+            lock (Reporters)
+            {
+                foreach (Reporter r in Reporters)
+                {
+                    r.SetLogLevel(LogLevel);
+                }
+            }
+        }
+        //----------
+        public static void SetLogLevel(LogFlag level)
+        {
+            LogLevel = level;
+            report.Log(LogFlag.DEBUG_SPAM, $"New LogLevel {LogLevel}");
+            NotifySubscribers();
+        }
+        public static LogFlag GetLogLevel()
+        {
+            report.Log(LogFlag.DEBUG_SPAM, $"Get LogLevel {LogLevel}");
+            return LogLevel;
         }
         public void SetRSSPath(string path)
         {

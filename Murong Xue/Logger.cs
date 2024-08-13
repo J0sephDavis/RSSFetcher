@@ -28,8 +28,7 @@ namespace Murong_Xue
 #else
         DEFAULT = _INFO | _EXCEPTION,
 #endif
-        ALL = NONE 
-            | _DEBUG        //| DEBUG | DEBUG_SPAM
+        ALL = _DEBUG        //| DEBUG | DEBUG_SPAM
             | _EXCEPTION    //| ERROR | WARN
             | _INFO         //| NOTEWORTHY | FEEDBACK,
             | SPAM,
@@ -37,9 +36,9 @@ namespace Murong_Xue
     //REPORTS to the logger when anything happens
     internal class Reporter
     {
-        private Logger _Logger = Logger.GetInstance();
+        private readonly Logger _Logger = Logger.GetInstance();
         private LogFlag ReportFilter;
-        private string ReportIdentifier; // e.g. Program, FeedData, Config, &c
+        public readonly string ReportIdentifier; // e.g. Program, FeedData, Config, &c
         public Reporter(LogFlag logFlags, string identifier)
         {
             ReportFilter = logFlags;
@@ -66,8 +65,7 @@ namespace Murong_Xue
         private Logger() { }
         public static Logger GetInstance()
         {
-            if (s_Logger == null)
-                s_Logger = new();
+            s_Logger ??= new();
             return s_Logger;
         }
         //------------------------------------

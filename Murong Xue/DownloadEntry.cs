@@ -14,8 +14,7 @@ namespace Murong_Xue
         public DownloadEntryBase(Uri link)
         {
             this.link = link;
-            if (report == null)
-                report = new Reporter(LogFlag.DEFAULT, "DownloadEntryBase");
+            report ??= Config.OneReporterPlease("DownloadEntryBase");
         }
         virtual public async Task Request(HttpClient client)
         {
@@ -63,33 +62,26 @@ namespace Murong_Xue
 
     internal class DownloadEntryFeed : DownloadEntryBase
     {
-        private FeedData feed { get; set; }
-        public DownloadEntryFeed(Uri link, FeedData _feed)
-            : base(link)
+        private FeedData Feed { get; set; }
+        public DownloadEntryFeed(Uri link, FeedData _feed) : base(link)
         {
-            this.feed = _feed;
-            if (report == null)
-                report = new Reporter(
-                    LogFlag.DEFAULT,
-                    "DownloadEntryFeed"
-                );
+            this.Feed = _feed;
+            report ??= Config.OneReporterPlease("DownloadEntryFeed");
         }
         override public async Task HandleDownload(Stream content)
         {
             report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
-            feed.OnFeedDownloaded(content);
+            Feed.OnFeedDownloaded(content);
         }
     }
 
     internal class DownloadEntryFile : DownloadEntryBase
     {
-        private Uri DownloadPath;
-        public DownloadEntryFile(Uri link, Uri DownloadPath)
-            : base(link)
+        private readonly Uri DownloadPath;
+        public DownloadEntryFile(Uri link, Uri DownloadPath) : base(link)
         {
             this.DownloadPath = DownloadPath;
-            if (report == null)
-                report = new Reporter(LogFlag.DEFAULT, "DownloadEntryFile");
+            report ??= Config.OneReporterPlease("DownloadEntryFile");
         }
         override public async Task HandleDownload(Stream content)
         {

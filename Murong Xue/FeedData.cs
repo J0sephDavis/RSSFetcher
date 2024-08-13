@@ -17,12 +17,9 @@ namespace Murong_Xue
         protected string History;
         protected bool HasNewHistory = false;
         protected string NewHistory  = string.Empty;
-        private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
-        private Config cfg = Config.GetInstance();
-        private Reporter report = new Reporter(
-            LogFlag._EXCEPTION | LogFlag.FEEDBACK,
-            "FeedData"
-        );
+        private readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
+        private readonly Config cfg = Config.GetInstance();
+        private readonly Reporter report;
   
 
         public FeedData(string title,
@@ -30,10 +27,11 @@ namespace Murong_Xue
             string history)
         {
             this.Title = title;
-            this.URL = new Uri(url);
-            //TODO add checks on URL validity
+            this.URL = new Uri(url); //TODO add checks on URL validity
             this.Expression = expression;
             this.History = history;
+
+            report = Config.OneReporterPlease("FeedData");
         }
 
         public void Print()

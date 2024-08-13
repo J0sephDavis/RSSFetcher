@@ -14,8 +14,7 @@ namespace Murong_Xue
         private Uri path;
         private List<FeedData> Feeds;
         private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
-        private Config config = Config.GetInstance();
-        private Reporter report = new Reporter(LogFlag.DEFAULT, "EntryData");
+        private Reporter? report;// = new Reporter(LogFlag.DEFAULT, "EntryData");
         private const string RSS_Title = "title";
         private const string RSS_URL = "feed-url";
         private const string RSS_Expression = "expr";
@@ -24,7 +23,8 @@ namespace Murong_Xue
         public EntryData(Uri RSSPath)
         {
             this.path = RSSPath;
-            Feeds = new List<FeedData>();
+            Feeds = [];
+            report ??= Config.OneReporterPlease("EntryData");
         }
         public async Task Process()
         {
