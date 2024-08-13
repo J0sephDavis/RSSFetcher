@@ -9,7 +9,7 @@ namespace Murong_Xue
 {
     internal class Config
     {
-        private readonly static LogFlag ConfigDefaultLogLevel = LogFlag.NONE; //So that we can set default in LogLevel & static Reporter
+        private readonly static LogFlag ConfigDefaultLogLevel = LogFlag.ALL; //So that we can set default in LogLevel & static Reporter
         //---
         private string DownloadDirectory;
         private Uri RSSConfigPath;
