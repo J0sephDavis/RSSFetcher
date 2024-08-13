@@ -8,7 +8,7 @@ namespace Murong_Xue;
 public class Program
 {
     static readonly int MAJOR_VERSION = 1;
-    static readonly int MINOR_VERSION = 0;
+    static readonly int MINOR_VERSION = 1;
     static readonly int PATCH = 0;
     //---
     static readonly Config cfg = Config.GetInstance();
