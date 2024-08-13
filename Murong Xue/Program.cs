@@ -26,7 +26,8 @@ public class Program
     {
         report.Log(LogFlag.DEBUG, $"Started program with args: {args}");
 #if DEBUG
-        //args = ["--edit",];
+        report.Log(LogFlag.WARN, "!!!PROGRAM COMPILED IN DEBUG MODE!!!");
+        //args = ["--version", "--help"];
 #endif
         ArgResult choice = HandleArgs(args);
 
@@ -68,11 +69,26 @@ public class Program
             report.Log(LogFlag.FEEDBACK, "Discarding change from interactive session");
     }
 
-    protected static readonly string[] help_cmds = { "-help", "--help", "-h", "--h"};
     protected static readonly string[] version_cmds = { "--version", "-version", "-v", "--v" };
+    protected static string version_cmd_desc = "(void) Show version information";
+
     protected static readonly string[] edit_cmds = { "-edit", "--edit" };
+    protected static string edit_cmd_desc = "(void) Enter interactive mode and edit the rss config";
+    
     protected static readonly string[] rss_cmds = { "-rsscfg", "--rsscfg" };
+    protected static readonly string rss_cmd_desc = "(string) Set the path of the RSS Config file";
+
     protected static readonly string[] download_cmds = { "-downloadpath", "--downloadpath" };
+    protected static readonly string download_cmd_desc = "(string) Set the download folder for all fetched files";
+    
+    protected static readonly string[] help_cmds = { "-help", "--help", "-h", "--h" };
+    protected static readonly string help_cmd_desc = "(void) Get a brief description for each command";
+    protected static readonly string help_str =
+        $"{help_cmds[0]}:\t{help_cmd_desc}\n" +
+        $"{version_cmds[0]}:\t{version_cmd_desc}\n" +
+        $"{edit_cmds[0]}:\t{edit_cmd_desc}\n" +
+        $"{rss_cmds[0]}:\t{rss_cmd_desc}\n" +
+        $"{download_cmds[0]}:\t{download_cmd_desc}";
     protected static ArgResult HandleArgs(string[] args)
     {
         bool NextIsConfig = false;
@@ -104,9 +120,7 @@ public class Program
             {
                 report.Log(LogFlag.DEBUG, "HELP");
                 report.Log(LogFlag.FEEDBACK,
-                   "Use -rsscfg PATH\\CONFIGFILE.xml to set the confit path\n" +
-                    "Use -downloadPath PATH\\DOWNLOADS_FOLDER to set the downloads folder\n" +
-                    "Use -version to get the last commit hash(gotta remember to update this one)");
+                   help_str);
                 retVal = ArgResult.EXIT;
                 continue;
             }
