@@ -33,7 +33,7 @@ public class Program
         args = [
             "--loglevel",
             $"{32}",//$"{((int)LogFlag.ALL)}",
-            "--edit"
+            "--help"
         ];
 #endif
         ArgResult choice = HandleArgs(args);
@@ -104,7 +104,8 @@ public class Program
         $"\t_INFO({(int)LogFlag._INFO})\t" +
             $"DEFAULT({(int)LogFlag.DEFAULT})\n" +
         $"\tDEFAULT({(int)LogFlag.DEFAULT})\t" +
-            $"ALL({(int)LogFlag.ALL})";
+            $"HEADLESS({(int)LogFlag.HEADLESS})\n" +
+        $"\tALL({(int)LogFlag.ALL})";
 
     protected static readonly string[] help_cmds = ["-help", "--help", "-h", "--h"];
     protected static readonly string help_cmd_desc = "(void) Get a brief description for each command";

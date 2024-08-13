@@ -28,6 +28,7 @@ namespace Murong_Xue
 #else
         DEFAULT = _INFO | _EXCEPTION,
 #endif
+        HEADLESS = FEEDBACK | ERROR | WARN,
         ALL = _DEBUG        //| DEBUG | DEBUG_SPAM
             | _EXCEPTION    //| ERROR | WARN
             | _INFO         //| NOTEWORTHY | FEEDBACK,
