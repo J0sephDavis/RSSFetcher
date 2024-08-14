@@ -55,6 +55,8 @@ namespace Murong_Xue
         //! Reads the XML files and populated the FeedData list
         private bool GetEntries()
         {
+            /* NOTE! Running the XMLReader in Async on our config file takes 23-26ms
+             * Running Synchronously it takes 13-14ms                               */
             report.Log(LogFlag.DEBUG_SPAM, "Get Entries");
             if (File.Exists(path.LocalPath) == false)
             {
