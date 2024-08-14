@@ -33,7 +33,7 @@ public class Program
         args = [
             "--loglevel",
             //$"{32}",
-            $"{((int)LogFlag.DEFAULT)}",
+            $"{((int)(LogFlag.DEBUG | LogFlag.FEEDBACK | LogFlag._EXCEPTION | LogFlag.NOTEWORTHY))}",
             //"--help"
         ];
 #endif
