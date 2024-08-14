@@ -46,7 +46,7 @@ namespace Murong_Xue
                 {
                     DownloadEntryBase entry = PopSwapDownload();
                     //Add the entry to the task list
-                    CurrentBatch.Add(entry.Request(client));
+                    CurrentBatch.Add(Task.Run(() => entry.Request(client)));
                     //When we've filled our budget or used em all
                     if (CurrentBatch.Count >= BATCH_SIZE || Downloads.Count == 0)
                     {
