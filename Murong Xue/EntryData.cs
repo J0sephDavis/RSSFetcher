@@ -11,10 +11,10 @@ namespace Murong_Xue
 {
     internal class EntryData
     {
-        private Uri path;
-        private List<FeedData> Feeds;
-        private DownloadHandler downloadHandler = DownloadHandler.GetInstance();
-        private Reporter? report;// = new Reporter(LogFlag.DEFAULT, "EntryData");
+        private readonly Uri path;
+        private readonly List<FeedData> Feeds;
+        private readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
+        private readonly Reporter report;// = new Reporter(LogFlag.DEFAULT, "EntryData");
         private const string RSS_Title = "title";
         private const string RSS_URL = "feed-url";
         private const string RSS_Expression = "expr";
@@ -67,8 +67,7 @@ namespace Murong_Xue
                 return false;
             }
             FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
-            XmlReaderSettings xSettings = new();
-            xSettings.Async = false;
+            XmlReaderSettings xSettings = new() { Async = false };
 
             using (XmlReader reader = XmlReader.Create(xStream, xSettings))
             {
@@ -157,12 +156,11 @@ namespace Murong_Xue
         public async Task UpdateEntries()
         {
             report.Log(LogFlag.DEBUG, "Update Entries");
-            Uri newFilePath = new Uri(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
+            Uri newFilePath = new(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
             Console.WriteLine($"newPath {newFilePath.LocalPath}");
             File.Move(path.LocalPath, newFilePath.LocalPath, overwrite:true);
             FileStream xStream = File.Open(path.LocalPath, FileMode.Create);
-            XmlWriterSettings xSettings = new();
-            xSettings.Async = true;
+            XmlWriterSettings xSettings = new() { Async = true };
             using (XmlWriter writer = XmlWriter.Create(xStream,xSettings))
             {
                 //-------- ROOT
