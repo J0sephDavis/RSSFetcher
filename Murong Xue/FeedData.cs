@@ -45,7 +45,7 @@ namespace Murong_Xue
                 tmp += $"\n\tNEW-HISTORY: {NewHistory}";
             report.Log(LogFlag.NOTEWORTHY | LogFlag.SPAM, tmp);
         }
-        public async void QueueDownload()
+        public void QueueDownload()
         {
             report.Log(LogFlag.DEBUG_SPAM, "Queue Download");
             DownloadEntryFeed entry = new (URL, this);

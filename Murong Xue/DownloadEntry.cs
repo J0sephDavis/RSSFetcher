@@ -42,7 +42,7 @@ namespace Murong_Xue
                 ReQueue();
             }
         }
-        virtual public async Task HandleDownload(Stream content)
+        virtual public void HandleDownload(Stream content)
         {
             report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
             DoneProcessing();
@@ -72,10 +72,10 @@ namespace Murong_Xue
             this.Feed = _feed;
             report ??= Config.OneReporterPlease("DownloadEntryFeed");
         }
-        override public async Task HandleDownload(Stream content)
+        override public async void HandleDownload(Stream content)
         {
             report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
-            Feed.OnFeedDownloaded(content);
+            await Task.Run(()=>Feed.OnFeedDownloaded(content));
             DoneProcessing();
         }
     }
@@ -88,7 +88,7 @@ namespace Murong_Xue
             this.DownloadPath = DownloadPath;
             report ??= Config.OneReporterPlease("DownloadEntryFile");
         }
-        override public async Task HandleDownload(Stream content)
+        override public void HandleDownload(Stream content)
         {
             report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
             string fileName = Path.GetFileName(link.AbsolutePath);
