@@ -50,12 +50,10 @@ namespace Murong_Xue
                     //When we've filled our budget or used em all
                     if (CurrentBatch.Count >= BATCH_SIZE || Downloads.Count == 0)
                     {
-                        report.Log(LogFlag.DEBUG, $"BATCH[{CurrentBatch.Count}]! Downloads[{Downloads.Count}] Processing[{Processing.Count}]");
+                        report.Log(LogFlag.DEBUG_SPAM, $"BATCH[{CurrentBatch.Count}]\tDownloads[{Downloads.Count}]\tProcessing[{Processing.Count}]\tWait {BATCH_DELAY_MS}ms");
                         await Task.WhenAll(CurrentBatch);
-                        report.Log(LogFlag.DEBUG_SPAM, "Cleared currentBatch");
-                        CurrentBatch.Clear();
-                        report.Log(LogFlag.DEBUG_SPAM, $"Wait {BATCH_DELAY_MS}ms");
                         await Task.Delay(BATCH_DELAY_MS);
+                        CurrentBatch.Clear();
                     }
                 }
             }
