@@ -34,7 +34,7 @@ namespace Murong_Xue
 
                 Stream content = await msg.Content.ReadAsStreamAsync();
                 SetProcessing();
-                Task.Run(()=> HandleDownload(content));
+                _ = Task.Run(() => HandleDownload(content));
             }
             catch (HttpRequestException e)
             {
