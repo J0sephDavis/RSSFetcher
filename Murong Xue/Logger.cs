@@ -1,9 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Murong_Xue
 {
     [Flags]
@@ -48,7 +42,7 @@ namespace Murong_Xue
         {
             LogMsg _msg = new(level, ReportIdentifier, msg);
             if ((level & ReportFilter) != LogFlag.NONE)
-                Task.Run(()=>Logger.Log(_msg));
+                Task.Run(() => Logger.Log(_msg));
         }
         //----
         public void SetLogLevel(LogFlag flag)
@@ -57,7 +51,7 @@ namespace Murong_Xue
             this.ReportFilter = flag;
         }
     }
-    internal sealed class LogMsg(LogFlag severity, string identifier,string content)
+    internal sealed class LogMsg(LogFlag severity, string identifier, string content)
     {
         public LogFlag SEVERITY => severity;
         public string IDENTIFIER => identifier;
@@ -88,7 +82,7 @@ namespace Murong_Xue
         public static void Log(LogMsg msg)
         {
             List<LogMsg>? copiedBuff = null;
-            lock(buffLock)
+            lock (buffLock)
             {
                 bufferedMsgs.Add(msg);
                 if (bufferedMsgs.Count > BUFFER_THRESHOLD)
