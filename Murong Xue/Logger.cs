@@ -37,7 +37,6 @@ namespace Murong_Xue
     //REPORTS to the logger when anything happens
     internal class Reporter
     {
-        private readonly Logger _Logger = Logger.GetInstance();
         private LogFlag ReportFilter;
         public readonly string ReportIdentifier; // e.g. Program, FeedData, Config, &c
         public Reporter(LogFlag logFlags, string identifier)
@@ -47,8 +46,9 @@ namespace Murong_Xue
         }
         public void Log(LogFlag level, string msg)
         {
+            LogMsg _msg = new(level, ReportIdentifier, msg);
             if ((level & ReportFilter) != LogFlag.NONE)
-                _Logger.Log($"{ReportIdentifier} [{level}] {msg}");
+                Task.Run(()=>Logger.Log(_msg));
         }
         //----
         public void SetLogLevel(LogFlag flag)
@@ -57,22 +57,54 @@ namespace Murong_Xue
             this.ReportFilter = flag;
         }
     }
-    //For now, just handles what is print to the console, no special stuff yet
-    //TODO log buffer
-    //TODO async
-    internal class Logger
+    internal sealed class LogMsg(LogFlag severity, string identifier,string content)
     {
-        private static Logger s_Logger;
-        private Logger() { }
-        public static Logger GetInstance()
+        public LogFlag SEVERITY => severity;
+        public string IDENTIFIER => identifier;
+        public string CONTENT => content;
+        public override string ToString()
         {
-            s_Logger ??= new();
-            return s_Logger;
+            return $"!{identifier} [{severity}] {content}";
+        }
+    }
+    //For now, just handles what is print to the console, no special stuff yet
+    internal static class Logger
+    {
+        private static readonly List<LogMsg> bufferedMsgs = [];
+        private static readonly Object buffLock = new();
+        const int BUFFER_THRESHOLD = 5;
+        public static void Quit()
+        {
+            lock (buffLock)
+            {
+                if (bufferedMsgs.Count > BUFFER_THRESHOLD)
+                {
+                    ProcessBatch(bufferedMsgs);
+                    bufferedMsgs.Clear();
+                }
+            }
         }
         //------------------------------------
-        public void Log(string msg)
+        public static void Log(LogMsg msg)
         {
-            Console.WriteLine(msg.ToString());
+            List<LogMsg>? copiedBuff = null;
+            lock(buffLock)
+            {
+                bufferedMsgs.Add(msg);
+                if (bufferedMsgs.Count > BUFFER_THRESHOLD)
+                {
+                    copiedBuff = new(bufferedMsgs);
+                    bufferedMsgs.Clear();
+                }
+            }
+            if (copiedBuff != null)
+                Task.Run(() => ProcessBatch(copiedBuff));
+        }
+        //Process a batch of logs (SAVE & PRINT)
+        private static void ProcessBatch(List<LogMsg> msgs)
+        {
+            foreach (LogMsg msg in msgs)
+                Console.WriteLine(msg);
         }
     }
 }

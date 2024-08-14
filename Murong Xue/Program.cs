@@ -58,6 +58,7 @@ public class Program
                 return;
         }
         report.Log(LogFlag.DEBUG, "Program STOP");
+        Logger.Quit();
     }
     public static async Task StartEditor()
     {
