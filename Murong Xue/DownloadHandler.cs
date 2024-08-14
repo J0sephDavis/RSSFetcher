@@ -40,38 +40,24 @@ namespace Murong_Xue
             report.Log(LogFlag.DEBUG, "Processing Downloads");
             List<Task> CurrentBatch = [];
             report.Log(LogFlag.DEBUG, $"Before processing, Downloads[{Downloads.Count}] Processing[{Processing.Count}]");
-            /* async add as many files to dw*/
-            AutoResetEvent BatchReady = new(false);
-
             while (Downloads.Count != 0 || Processing.Count != 0)
             {
                 while (Downloads.Count != 0)
                 {
-                    report.Log(LogFlag.DEBUG, $"START - Processing, Downloads[{Downloads.Count}] Processing[{Processing.Count}]");
                     DownloadEntryBase entry = PopSwapDownload();
                     //Add the entry to the task list
-                    //CurrentBatch.Add(Task.Run(() => entry.Request(client)));
-                    CurrentBatch.Add(entry.Request(client));
+                    CurrentBatch.Add(Task.Run(() => entry.Request(client)));
                     //When we've filled our budget or used em all
                     if (CurrentBatch.Count >= BATCH_SIZE || Downloads.Count == 0)
                     {
                         report.Log(LogFlag.DEBUG_SPAM, $"BATCH[{CurrentBatch.Count}]\tDownloads[{Downloads.Count}]\tProcessing[{Processing.Count}]\tWait {BATCH_DELAY_MS}ms");
                         await Task.WhenAll(CurrentBatch);
-                        report.Log(LogFlag.DEBUG, "STOP");
                         await Task.Delay(BATCH_DELAY_MS);
                         CurrentBatch.Clear();
                     }
-
                 }
             }
             report.Log(LogFlag.NOTEWORTHY, "Downloads Processed!");
-        }
-        private async void DownloadQueueLoop()
-        {
-            while (Downloads.Count != 0 || Processing.Count == 0)
-            {
-
-            }
         }
         public void AddDownload(DownloadEntryBase entry)
         {

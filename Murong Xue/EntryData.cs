@@ -40,7 +40,7 @@ namespace Murong_Xue
             List<Task> taskList = [];
             foreach (FeedData feed in Feeds)
                 taskList.Add(Task.Run(() => feed.QueueDownload()));
-            await Task.WhenAny(taskList); //When any just so everything is initialized
+            await Task.WhenAll(taskList);
             //
             report.Log(LogFlag.DEBUG_SPAM, "Process Downloads");
             await downloadHandler.ProcessDownloads();
