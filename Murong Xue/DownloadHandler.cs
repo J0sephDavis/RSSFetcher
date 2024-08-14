@@ -10,7 +10,6 @@ namespace Murong_Xue
     internal sealed class DownloadHandler
     {
         int BATCH_SIZE = 7;
-        int BATCH_DELAY_MS = 200;
         int BATCH_MIN_TIME = 1000;
         //"fails" will be used for  batch size & delay adjustments
         private readonly object fail_lock = new();
@@ -123,7 +122,6 @@ namespace Murong_Xue
             lock(fail_lock)
             {
                 fails++;
-                //BATCH_DELAY_MS += 200;
                 BATCH_MIN_TIME += 200;
                 if (BATCH_SIZE > 5 && fails > (BATCH_SIZE * 3/4))
                 {
@@ -133,7 +131,7 @@ namespace Murong_Xue
                 }
                 
                 report.Log(LogFlag.WARN,
-                $"({fails}) Batch Delay {BATCH_DELAY_MS}\t" +
+                $"({fails}) Batch " +
                 $"Size {BATCH_SIZE}\t" +
                 $"Min {BATCH_MIN_TIME}");
             }
