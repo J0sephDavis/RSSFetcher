@@ -30,11 +30,11 @@ public class Program
             report.Log(LogFlag.DEBUG_SPAM, s);
 #if DEBUG
         report.Log(LogFlag.WARN, "!!!PROGRAM COMPILED IN DEBUG MODE!!!");
-        args = [
+        /*args = [
             "--loglevel",
             $"{32}",//$"{((int)LogFlag.ALL)}",
             "--help"
-        ];
+        ];*/
 #endif
         ArgResult choice = HandleArgs(args);
 

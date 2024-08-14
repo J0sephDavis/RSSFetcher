@@ -36,8 +36,11 @@ namespace Murong_Xue
             }
             //
             report.Log(LogFlag.DEBUG_SPAM, "Queueing Downloads");
+            //Queueing feeds asynchronously saves 23ms (53ms sync, 32ms async)
+            List<Task> taskList = [];
             foreach (FeedData feed in Feeds)
-                feed.QueueDownload();
+                taskList.Add(Task.Run(() => feed.QueueDownload()));
+            await Task.WhenAll(taskList);
             //
             report.Log(LogFlag.DEBUG_SPAM, "Process Downloads");
             await downloadHandler.ProcessDownloads();
