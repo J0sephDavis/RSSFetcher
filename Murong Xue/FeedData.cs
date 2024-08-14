@@ -49,7 +49,7 @@ namespace Murong_Xue
         {
             report.Log(LogFlag.DEBUG_SPAM, "Queue Download");
             DownloadEntryFeed entry = new (URL, this);
-            downloadHandler.AddDownload(entry);
+            downloadHandler.QueueDownload(entry);
         }
 
         public void AddFile(string title, Uri link)
@@ -62,7 +62,7 @@ namespace Murong_Xue
             report.Log(LogFlag.FEEDBACK, $"Add File {title} {link}");
             Uri downloadPath = new(cfg.GetDownloadPath());
             DownloadEntryFile entry = new(link, downloadPath);
-            downloadHandler.AddDownload(entry);
+            downloadHandler.QueueDownload(entry);
         }
         public async void OnFeedDownloaded(Stream content)
         {

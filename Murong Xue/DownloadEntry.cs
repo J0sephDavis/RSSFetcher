@@ -20,7 +20,7 @@ namespace Murong_Xue
         {
             report.Log(LogFlag.DEBUG_SPAM, "Requesting data");
             Task<HttpResponseMessage> request = client.GetAsync(this.link);
-            await request.ContinueWith(this.OnDownload);
+            _ = request.ContinueWith(this.OnDownload);
             await request; //only return when the request has actually been completed
             return;
         }
@@ -33,24 +33,28 @@ namespace Murong_Xue
                 msg.EnsureSuccessStatusCode();
 
                 Stream content = await msg.Content.ReadAsStreamAsync();
-                await HandleDownload(content);
-                RemoveProcessing();
+                SetProcessing();
+                Task.Run(()=> HandleDownload(content));
             }
             catch (HttpRequestException e)
             {
                 report.Log(LogFlag.ERROR, $"HTTP Request Exception: {e.Message}");
                 ReQueue();
-                return;
             }
         }
         virtual public async Task HandleDownload(Stream content)
         {
             report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
+            DoneProcessing();
             return;
         }
-        protected void RemoveProcessing()
+        protected void SetProcessing()
         {
             report.Log(LogFlag.DEBUG_SPAM, "Remove Processing");
+            downloadHandler.DownloadingToProcessing(this);
+        }
+        protected void DoneProcessing()
+        {
             downloadHandler.RemoveProcessing(this);
         }
         protected void ReQueue()
@@ -72,6 +76,7 @@ namespace Murong_Xue
         {
             report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
             Feed.OnFeedDownloaded(content);
+            DoneProcessing();
         }
     }
 
@@ -96,6 +101,7 @@ namespace Murong_Xue
                 content.CopyTo(fs);
                 report.Log(LogFlag.NOTEWORTHY, $"FILE WRITTEN TO {destinationPath}");
             }
+            DoneProcessing();
         }
     }
 }

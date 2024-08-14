@@ -11,17 +11,19 @@ namespace Murong_Xue
     {
         int BATCH_SIZE = 7;
         int BATCH_DELAY_MS = 200;
+        int BATCH_MIN_TIME = 1000;
         //"fails" will be used for  batch size & delay adjustments
         private readonly object fail_lock = new();
-        private uint fails = 0;
+        private int fails = 0;
         //---
         private static DownloadHandler? s_DownloadHandler = null;
         private readonly static HttpClient client = new();
         //c# version 12 does not have System.Threading.Lock, so we use Object()
         private readonly object DPLock = new(); //for when swapping between the two lists.
         //list of files to be downloaded
-        private readonly List<DownloadEntryBase> Downloads = [];
+        private readonly List<DownloadEntryBase> Queued = [];
         //Not in download, but also not done.
+        private readonly List<DownloadEntryBase> Downloading = [];
         private readonly List<DownloadEntryBase> Processing = [];
         private static Reporter report;
         
@@ -39,79 +41,101 @@ namespace Murong_Xue
         {
             report.Log(LogFlag.DEBUG, "Processing Downloads");
             List<Task> CurrentBatch = [];
-            report.Log(LogFlag.DEBUG, $"Before processing, Downloads[{Downloads.Count}] Processing[{Processing.Count}]");
-            while (Downloads.Count != 0 || Processing.Count != 0)
+            report.Log(LogFlag.DEBUG, $"Before processing, Queued[{Queued.Count}] Downloading[{Downloading.Count}]");
+            while (Queued.Count != 0 || Downloading.Count != 0 || Processing.Count != 0) //these are volatile, might consider some type of sentinel/semaphore to handle this behavior
             {
-                while (Downloads.Count != 0)
+                while (Queued.Count != 0)
                 {
                     DownloadEntryBase entry = PopSwapDownload();
                     //Add the entry to the task list
                     CurrentBatch.Add(Task.Run(() => entry.Request(client)));
                     //When we've filled our budget or used em all
-                    if (CurrentBatch.Count >= BATCH_SIZE || Downloads.Count == 0)
+                    if (CurrentBatch.Count >= BATCH_SIZE || Queued.Count == 0)
                     {
-                        report.Log(LogFlag.DEBUG_SPAM, $"BATCH[{CurrentBatch.Count}]\tDownloads[{Downloads.Count}]\tProcessing[{Processing.Count}]\tWait {BATCH_DELAY_MS}ms");
+                        CurrentBatch.Add(Task.Delay(BATCH_MIN_TIME));
+                        report.Log(LogFlag.DEBUG, $"\t\tQ[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]\tMIN TIME{BATCH_MIN_TIME}ms");
                         await Task.WhenAll(CurrentBatch);
-                        await Task.Delay(BATCH_DELAY_MS);
                         CurrentBatch.Clear();
                     }
                 }
             }
-            report.Log(LogFlag.NOTEWORTHY, "Downloads Processed!");
-        }
-        public void AddDownload(DownloadEntryBase entry)
-        {
-            report.Log(LogFlag.DEBUG_SPAM, "Add Download (waiting on lock)");
             lock(DPLock)
             {
-                Downloads.Add(entry);
-                report.Log(LogFlag.DEBUG_SPAM, "Download Added (releasing lock)");
+                if (Queued.Count != 0 || Downloading.Count != 0 || Processing.Count != 0)
+                {
+                    report.Log(LogFlag.ERROR, "Time to use a better method for handling this loop. " +
+                        "Either Queued/Downloading/Processing had a value after the while loop ended");
+                }
+            }
+            report.Log(LogFlag.NOTEWORTHY, "Queue Complete!");
+            report.Log(LogFlag.DEBUG, $"\t\tQ[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]");
+        }
+        public void QueueDownload(DownloadEntryBase entry)
+        {
+            report.Log(LogFlag.DEBUG_SPAM, "Add to Queue (waiting on lock)");
+            lock(DPLock)
+            {
+                Queued.Add(entry);
+                report.Log(LogFlag.DEBUG_SPAM, "Queued (releasing lock)");
             }
         }
         private DownloadEntryBase PopSwapDownload()
         {
-            report.Log(LogFlag.DEBUG_SPAM, "PopSwap (waiting on lock)");
+            report.Log(LogFlag.DEBUG_SPAM, "PopSwap Q->D (waiting on lock)");
             DownloadEntryBase? entry = null;
             lock (DPLock)
             {
-                entry = Downloads.First();
-                Downloads.Remove(entry);
-                Processing.Add(entry);
-                report.Log(LogFlag.DEBUG_SPAM, "PopSwapped (releasing lock)");
+                entry = Queued.First();
+                Queued.Remove(entry);
+                Downloading.Add(entry);
             }
+            report.Log(LogFlag.DEBUG_SPAM, "PopSwapped (released lock)");
             return entry;
+        }
+        public void DownloadingToProcessing(DownloadEntryBase entry)
+        {
+            report.Log(LogFlag.DEBUG_SPAM, "DownloadingToProcessing (Waiting on lock)");
+            lock (DPLock)
+            {
+                Downloading.Remove(entry);
+                Processing.Add(entry);
+            }
+            report.Log(LogFlag.DEBUG_SPAM, "DownloadingToProcessing (released lock)");
         }
         public void RemoveProcessing(DownloadEntryBase entry)
         {
-            report.Log(LogFlag.DEBUG_SPAM, "Remove Processing (Waiting on lock)");
-            lock (DPLock)
+            report.Log(LogFlag.DEBUG_SPAM, "RemoveProcessing (waiting on lock)");
+            lock(DPLock)
             {
                 Processing.Remove(entry);
-                report.Log(LogFlag.DEBUG_SPAM, "Removed from processing (releasing lock)");
             }
+            report.Log(LogFlag.DEBUG_SPAM, "RemoveProcessing (released lock)");
         }
         public void ReQueue(DownloadEntryBase entry)
         {
             //TODO save optimal batch settings in config
             lock (DPLock)
             {
-                Processing.Remove(entry);
-                Downloads.Add(entry);
+                Downloading.Remove(entry);
+                Queued.Add(entry);
             }
             //---
             lock(fail_lock)
             {
                 fails++;
-                BATCH_DELAY_MS += 200;
-                if (BATCH_SIZE > 5 && fails > BATCH_SIZE / 2)
+                //BATCH_DELAY_MS += 200;
+                BATCH_MIN_TIME += 200;
+                if (BATCH_SIZE > 5 && fails > (BATCH_SIZE * 3/4))
                 {
+                    BATCH_MIN_TIME -= (100 * fails);
                     BATCH_SIZE--;
                     fails = 0;
                 }
                 
                 report.Log(LogFlag.WARN,
                 $"({fails}) Batch Delay {BATCH_DELAY_MS}\t" +
-                $"Size {BATCH_SIZE}");
+                $"Size {BATCH_SIZE}\t" +
+                $"Min {BATCH_MIN_TIME}");
             }
             //---
         }
