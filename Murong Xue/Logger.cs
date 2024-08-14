@@ -56,9 +56,11 @@ namespace Murong_Xue
         public LogFlag SEVERITY => severity;
         public string IDENTIFIER => identifier;
         public string CONTENT => content;
+        public string TIMESTAMP = DateTime.Now.ToLongTimeString();
+        //TODO Prettify output here, someway 
         public override string ToString()
         {
-            return $"!{identifier} [{severity}] {content}";
+            return $"[{TIMESTAMP}]\t{identifier}\t({severity})\t{content}";
         }
     }
     //For now, just handles what is print to the console, no special stuff yet
