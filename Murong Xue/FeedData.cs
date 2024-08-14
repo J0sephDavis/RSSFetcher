@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace Murong_Xue
@@ -16,11 +10,11 @@ namespace Murong_Xue
         protected string Expression;
         protected string History;
         protected bool HasNewHistory = false;
-        protected string NewHistory  = string.Empty;
+        protected string NewHistory = string.Empty;
         private readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private readonly Config cfg = Config.GetInstance();
         private readonly Reporter report;
-  
+
 
         public FeedData(string title,
             string url, string expression,
@@ -48,7 +42,7 @@ namespace Murong_Xue
         public void QueueDownload()
         {
             report.Log(LogFlag.DEBUG_SPAM, "Queue Download");
-            DownloadEntryFeed entry = new (URL, this);
+            DownloadEntryFeed entry = new(URL, this);
             downloadHandler.QueueDownload(entry);
         }
 
@@ -77,7 +71,7 @@ namespace Murong_Xue
                 string _title = string.Empty;
                 string _url = string.Empty;
 
-                while(await reader.ReadAsync())
+                while (await reader.ReadAsync())
                 {
                     switch (reader.NodeType)
                     {
@@ -101,7 +95,7 @@ namespace Murong_Xue
                                 _url = await reader.GetValueAsync();
                             break;
                         case XmlNodeType.EndElement:
-                            switch(reader.Name)
+                            switch (reader.Name)
                             {
                                 case "title":
                                     IsTitle = false;
@@ -152,7 +146,7 @@ namespace Murong_Xue
             report.Log(LogFlag.DEBUG_SPAM, $"SetTitle {title}");
             this.Title = title;
         }
-        public void  SetURL(string URL)
+        public void SetURL(string URL)
         {
             report.Log(LogFlag.DEBUG_SPAM, $"SetURL {URL}");
             //TODO do some checks here to make sure it is a valid URL & catch any errors

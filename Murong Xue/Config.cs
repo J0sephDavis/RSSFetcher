@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Murong_Xue
+﻿namespace Murong_Xue
 {
     internal class Config
     {
@@ -46,7 +39,7 @@ namespace Murong_Xue
         }
         private static void Subscribe(Reporter reporter)
         {
-            lock(Reporters)
+            lock (Reporters)
             {
                 report.Log(LogFlag.DEBUG, $"SUBSCRIBER! {report.ReportIdentifier}");
                 Reporters.Add(reporter);

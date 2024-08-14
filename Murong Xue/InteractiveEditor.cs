@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Murong_Xue
+﻿namespace Murong_Xue
 {
     internal class InteractiveEditor
     {
@@ -58,12 +50,13 @@ namespace Murong_Xue
             }
         }
 
-         protected void PromptForInput(string prompt, out string? input, uint minLen = 3)
+        protected void PromptForInput(string prompt, out string? input, uint minLen = 3)
         {
             report.Log(LogFlag.DEBUG_SPAM, "Prompting for input");
             Console.Write(prompt);
             input = Console.ReadLine();
-            if (input != null && input.Length < minLen){
+            if (input != null && input.Length < minLen)
+            {
                 report.Log(LogFlag.FEEDBACK | LogFlag.WARN, $"input.len < {minLen} or NULL. DISCARDING");
                 input = null;
             }
@@ -90,7 +83,7 @@ namespace Murong_Xue
         static readonly string edit_prefix = @"E: ";
         protected void EditHandler(int? index)
         {
-            
+
             if (index == null || index < 0 || index >= Feeds.Count)
             {
                 report.Log(LogFlag.FEEDBACK, edit_prefix + $"Invalid index {index}");
@@ -105,8 +98,8 @@ namespace Murong_Xue
             string _history = entry.GetHistory();
             string _url = entry.GetURL();
             string _expr = entry.GetExpr();
-            
-            while(true)
+
+            while (true)
             {
                 Console.Write(edit_prefix);
                 string? input = Console.ReadLine();
@@ -147,7 +140,7 @@ namespace Murong_Xue
                         $"Current History:\t[{_history}]\n" +
                         $"{edit_prefix}History:";
 
-                    PromptForInput(history_prompt, out input,0);
+                    PromptForInput(history_prompt, out input, 0);
                     if (input == null)
                     {
                         report.Log(LogFlag.FEEDBACK, "Set history to original");
@@ -169,7 +162,7 @@ namespace Murong_Xue
                         $"Current Expression:\t[{_expr}]\n" +
                         $"{edit_prefix}Regex:";
 
-                    PromptForInput(expression_prompt, out input,0);
+                    PromptForInput(expression_prompt, out input, 0);
                     if (input == null)
                     {
                         report.Log(LogFlag.FEEDBACK, "Set expression to original");
@@ -209,7 +202,7 @@ namespace Murong_Xue
                 }
                 if (edit_cmds_conf.Contains(input))
                 {
-                    report.Log(LogFlag.FEEDBACK,"Save Changes? y/n/back(any other input)" + $"\tChanges:{edits}");
+                    report.Log(LogFlag.FEEDBACK, "Save Changes? y/n/back(any other input)" + $"\tChanges:{edits}");
                     Console.Write(edit_prefix + "?:");
                     //---
                     input = Console.ReadLine();
@@ -271,7 +264,7 @@ namespace Murong_Xue
                     continue;
                 }
                 //help cmd
-                report.Log(LogFlag.FEEDBACK,edit_help);
+                report.Log(LogFlag.FEEDBACK, edit_help);
             }
         }
         protected void DeleteHandler(int? index)
@@ -318,14 +311,14 @@ namespace Murong_Xue
             string _expr = string.Empty;
 
             string? input;
-            while(_title == string.Empty)
+            while (_title == string.Empty)
             {
                 Console.Write("Title:");
                 input = Console.ReadLine();
                 if (input == null) continue;
                 _title = input;
             }
-            while(_url == string.Empty)
+            while (_url == string.Empty)
             {
                 Console.Write("URL:");
                 input = Console.ReadLine();
@@ -336,8 +329,8 @@ namespace Murong_Xue
             input = Console.ReadLine();
             if (input != null && input.Length > 1)
                 _history = input;
-            
-            while(_expr == string.Empty)
+
+            while (_expr == string.Empty)
             {
                 Console.Write("Expression:");
                 input = Console.ReadLine();

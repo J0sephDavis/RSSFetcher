@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Murong_Xue
+﻿namespace Murong_Xue
 {
     internal sealed class DownloadHandler
     {
@@ -25,7 +18,7 @@ namespace Murong_Xue
         private readonly List<DownloadEntryBase> Downloading = [];
         private readonly List<DownloadEntryBase> Processing = [];
         private static Reporter report;
-        
+
         private DownloadHandler()
         {
             report = Config.OneReporterPlease("DownloadHandler");
@@ -58,7 +51,7 @@ namespace Murong_Xue
                     }
                 }
             }
-            lock(DPLock)
+            lock (DPLock)
             {
                 if (Queued.Count != 0 || Downloading.Count != 0 || Processing.Count != 0)
                 {
@@ -72,7 +65,7 @@ namespace Murong_Xue
         public void QueueDownload(DownloadEntryBase entry)
         {
             report.Log(LogFlag.DEBUG_SPAM, "Add to Queue (waiting on lock)");
-            lock(DPLock)
+            lock (DPLock)
             {
                 Queued.Add(entry);
             }
@@ -104,7 +97,7 @@ namespace Murong_Xue
         public void RemoveProcessing(DownloadEntryBase entry)
         {
             report.Log(LogFlag.DEBUG_SPAM, "RemoveProcessing (waiting on lock)");
-            lock(DPLock)
+            lock (DPLock)
             {
                 Processing.Remove(entry);
             }
@@ -119,7 +112,7 @@ namespace Murong_Xue
                 Queued.Add(entry);
             }
             //---
-            lock(fail_lock)
+            lock (fail_lock)
             {
                 fails++;
                 BATCH_MIN_TIME += 200;
@@ -129,7 +122,7 @@ namespace Murong_Xue
                     BATCH_SIZE--;
                     fails = 0;
                 }
-                
+
                 report.Log(LogFlag.WARN,
                 $"({fails}) Batch " +
                 $"Size {BATCH_SIZE}\t" +

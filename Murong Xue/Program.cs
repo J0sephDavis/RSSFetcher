@@ -83,13 +83,13 @@ public class Program
 
     protected static readonly string[] edit_cmds = ["-edit", "--edit"];
     protected static readonly string edit_cmd_desc = "(void) Enter interactive mode and edit the rss config";
-    
+
     protected static readonly string[] rss_cmds = ["-rsscfg", "--rsscfg"];
     protected static readonly string rss_cmd_desc = "(string) Set the path of the RSS Config file";
 
     protected static readonly string[] download_cmds = ["-downloadpath", "--downloadpath"];
     protected static readonly string download_cmd_desc = "(string) Set the download folder for all fetched files";
-    
+
     protected static readonly string[] log_cmds = ["--loglevel", "-loglevel", "-log", "--log", "--level", "-level"];
     protected static readonly string log_cmd_desc = "(int) Set the log level:\n" + //regex for converting the enum into this FIND:\s+(\w+).* REPLACE:\$\"$1\({LogFlag.$1}\)\\t\" +\n
         $"\tNONE({(int)LogFlag.NONE})\t\t" +
@@ -146,7 +146,7 @@ public class Program
             }
             if (NextIsLogLevel)
             {
-                LogFlag value = (LogFlag) int.Parse(arg); //TODO exception handling // TryParse
+                LogFlag value = (LogFlag)int.Parse(arg); //TODO exception handling // TryParse
                 report.Log(LogFlag.DEBUG, $"LOGLEVEL: Set to {value}");
                 Config.SetLogLevel(value);
                 NextIsLogLevel = false;

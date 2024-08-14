@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Murong_Xue
+﻿namespace Murong_Xue
 {
     internal class DownloadEntryBase //TODO better name?
     {
@@ -75,7 +69,7 @@ namespace Murong_Xue
         override public async void HandleDownload(Stream content)
         {
             report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
-            await Task.Run(()=>Feed.OnFeedDownloaded(content));
+            await Task.Run(() => Feed.OnFeedDownloaded(content));
             DoneProcessing();
         }
     }

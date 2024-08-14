@@ -1,11 +1,4 @@
-﻿using Murong_Xue;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.Xml;
 
 namespace Murong_Xue
 {
@@ -29,7 +22,7 @@ namespace Murong_Xue
         public async Task Process()
         {
             report.Log(LogFlag.DEBUG_SPAM, "Requesting entry data");
-            if(GetEntries() == false)
+            if (GetEntries() == false)
             {
                 report.Log(LogFlag.ERROR, "Failed to get entries");
                 return;
@@ -85,7 +78,7 @@ namespace Murong_Xue
                     switch (reader.NodeType)
                     {
                         case XmlNodeType.Element:
-                            switch(reader.Name)
+                            switch (reader.Name)
                             {
                                 case RSS_Title:
                                     InTitle = true;
@@ -158,13 +151,13 @@ namespace Murong_Xue
             report.Log(LogFlag.DEBUG, "Update Entries");
             Uri newFilePath = new(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
             Console.WriteLine($"newPath {newFilePath.LocalPath}");
-            File.Move(path.LocalPath, newFilePath.LocalPath, overwrite:true);
+            File.Move(path.LocalPath, newFilePath.LocalPath, overwrite: true);
             FileStream xStream = File.Open(path.LocalPath, FileMode.Create);
             XmlWriterSettings xSettings = new() { Async = true };
-            using (XmlWriter writer = XmlWriter.Create(xStream,xSettings))
+            using (XmlWriter writer = XmlWriter.Create(xStream, xSettings))
             {
                 //-------- ROOT
-                await writer.WriteStartElementAsync(null,"root",null);
+                await writer.WriteStartElementAsync(null, "root", null);
                 //---- item
                 foreach (FeedData feed in Feeds)
                 {
