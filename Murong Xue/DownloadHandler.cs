@@ -53,7 +53,7 @@ namespace Murong_Xue
                     if (CurrentBatch.Count >= BATCH_SIZE || Queued.Count == 0)
                     {
                         CurrentBatch.Add(Task.Delay(BATCH_MIN_TIME));
-                        report.Log(LogFlag.DEBUG, $"\t\tQ[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]\tMIN TIME{BATCH_MIN_TIME}ms");
+                        report.Log(LogFlag.DEBUG_SPAM, $"\t\tQ[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]\tMIN TIME{BATCH_MIN_TIME}ms");
                         await Task.WhenAll(CurrentBatch);
                         CurrentBatch.Clear();
                     }
@@ -76,8 +76,8 @@ namespace Murong_Xue
             lock(DPLock)
             {
                 Queued.Add(entry);
-                report.Log(LogFlag.DEBUG_SPAM, "Queued (releasing lock)");
             }
+            report.Log(LogFlag.DEBUG_SPAM, "Queued (releasing lock)");
         }
         private DownloadEntryBase PopSwapDownload()
         {
