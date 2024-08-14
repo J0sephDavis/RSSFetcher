@@ -63,21 +63,17 @@ namespace Murong_Xue
             return $"[{TIMESTAMP}]\t{identifier}\t({severity})\t{content}";
         }
     }
-    //For now, just handles what is print to the console, no special stuff yet
     internal static class Logger
     {
         private static readonly List<LogMsg> bufferedMsgs = [];
         private static readonly Object buffLock = new();
-        const int BUFFER_THRESHOLD = 5;
+        const int BUFFER_THRESHOLD = 10;
         public static void Quit()
         {
             lock (buffLock)
             {
-                if (bufferedMsgs.Count > BUFFER_THRESHOLD)
-                {
-                    ProcessBatch(bufferedMsgs);
-                    bufferedMsgs.Clear();
-                }
+                ProcessBatch(bufferedMsgs);
+                bufferedMsgs.Clear();
             }
         }
         //------------------------------------
