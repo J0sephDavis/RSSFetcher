@@ -42,7 +42,7 @@ namespace Murong_Xue
                 ReQueue();
             }
         }
-        virtual public void HandleDownload(Stream content)
+        public virtual void HandleDownload(Stream content)
         {
             report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
             DoneProcessing();
