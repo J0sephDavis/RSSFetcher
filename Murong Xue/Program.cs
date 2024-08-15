@@ -8,8 +8,8 @@ namespace Murong_Xue;
 public class Program
 {
     static readonly int MAJOR_VERSION = 1;
-    static readonly int MINOR_VERSION = 2;
-    static readonly int PATCH = 0;
+    static readonly int MINOR_VERSION = 2; //commit 99
+    static readonly int PATCH = 3;
     //---
     static readonly Config cfg = Config.GetInstance();
     static Reporter report;
@@ -78,46 +78,6 @@ public class Program
             report.Log(LogFlag.FEEDBACK, "Discarding change from interactive session");
     }
 
-    protected static readonly string[] version_cmds = ["--version", "-version", "-v", "--v"];
-    protected static readonly string version_cmd_desc = "(void) Show version information";
-
-    protected static readonly string[] edit_cmds = ["-edit", "--edit"];
-    protected static readonly string edit_cmd_desc = "(void) Enter interactive mode and edit the rss config";
-
-    protected static readonly string[] rss_cmds = ["-rsscfg", "--rsscfg"];
-    protected static readonly string rss_cmd_desc = "(string) Set the path of the RSS Config file";
-
-    protected static readonly string[] download_cmds = ["-downloadpath", "--downloadpath"];
-    protected static readonly string download_cmd_desc = "(string) Set the download folder for all fetched files";
-
-    protected static readonly string[] log_cmds = ["--loglevel", "-loglevel", "-log", "--log", "--level", "-level"];
-    protected static readonly string log_cmd_desc = "(int) Set the log level:\n" + //regex for converting the enum into this FIND:\s+(\w+).* REPLACE:\$\"$1\({LogFlag.$1}\)\\t\" +\n
-        $"\tNONE({(int)LogFlag.NONE})\t\t" +
-            $"DEBUG_SPAM({(int)LogFlag.DEBUG_SPAM})\n" +
-        $"\tDEBUG({(int)LogFlag.DEBUG})\t" +
-            $"SPAM({(int)LogFlag.SPAM})\n" +
-        $"\tWARN({(int)LogFlag.WARN})\t\t" +
-            $"NOTEWORTHY({(int)LogFlag.NOTEWORTHY})\n" +
-        $"\tFEEDBACK({(int)LogFlag.FEEDBACK})\t" +
-            $"ERROR({(int)LogFlag.ERROR})\n" +
-        "\t------- Derived Flags -------\n" +
-        $"\t_EXCEPTION({(int)LogFlag._EXCEPTION})\t" +
-            $"_DEBUG({(int)LogFlag._DEBUG})\n" +
-        $"\t_INFO({(int)LogFlag._INFO})\t" +
-            $"DEFAULT({(int)LogFlag.DEFAULT})\n" +
-        $"\tDEFAULT({(int)LogFlag.DEFAULT})\t" +
-            $"HEADLESS({(int)LogFlag.HEADLESS})\n" +
-        $"\tALL({(int)LogFlag.ALL})";
-
-    protected static readonly string[] help_cmds = ["-help", "--help", "-h", "--h"];
-    protected static readonly string help_cmd_desc = "(void) Get a brief description for each command";
-    protected static readonly string help_str =
-        $"{help_cmds[0]}:\t{help_cmd_desc}\n" +
-        $"{version_cmds[0]}:\t{version_cmd_desc}\n" +
-        $"{edit_cmds[0]}:\t{edit_cmd_desc}\n" +
-        $"{rss_cmds[0]}:\t{rss_cmd_desc}\n" +
-        $"{download_cmds[0]}:\t{download_cmd_desc}\n" +
-        $"{log_cmds[0]}:\t{log_cmd_desc}";
     protected static ArgResult HandleArgs(string[] args)
     {
         bool NextIsConfig = false;
@@ -199,4 +159,45 @@ public class Program
         report.Log(LogFlag.DEBUG, $"HandleArgs returning: {retVal}");
         return retVal;
     }
+    //---------- STATIC STRINGS -----------
+    protected static readonly string[] version_cmds = ["--version", "-version", "-v", "--v"];
+    protected static readonly string version_cmd_desc = "(void) Show version information";
+
+    protected static readonly string[] edit_cmds = ["-edit", "--edit"];
+    protected static readonly string edit_cmd_desc = "(void) Enter interactive mode and edit the rss config";
+
+    protected static readonly string[] rss_cmds = ["-rsscfg", "--rsscfg"];
+    protected static readonly string rss_cmd_desc = "(string) Set the path of the RSS Config file";
+
+    protected static readonly string[] download_cmds = ["-downloadpath", "--downloadpath"];
+    protected static readonly string download_cmd_desc = "(string) Set the download folder for all fetched files";
+
+    protected static readonly string[] log_cmds = ["--loglevel", "-loglevel", "-log", "--log", "--level", "-level"];
+    protected static readonly string log_cmd_desc = "(int) Set the log level:\n" + //regex for converting the enum into this FIND:\s+(\w+).* REPLACE:\$\"$1\({LogFlag.$1}\)\\t\" +\n
+        $"\tNONE({(int)LogFlag.NONE})\t\t" +
+            $"DEBUG_SPAM({(int)LogFlag.DEBUG_SPAM})\n" +
+        $"\tDEBUG({(int)LogFlag.DEBUG})\t" +
+            $"SPAM({(int)LogFlag.SPAM})\n" +
+        $"\tWARN({(int)LogFlag.WARN})\t\t" +
+            $"NOTEWORTHY({(int)LogFlag.NOTEWORTHY})\n" +
+        $"\tFEEDBACK({(int)LogFlag.FEEDBACK})\t" +
+            $"ERROR({(int)LogFlag.ERROR})\n" +
+        "\t------- Derived Flags -------\n" +
+        $"\t_EXCEPTION({(int)LogFlag._EXCEPTION})\t" +
+            $"_DEBUG({(int)LogFlag._DEBUG})\n" +
+        $"\t_INFO({(int)LogFlag._INFO})\t" +
+            $"DEFAULT({(int)LogFlag.DEFAULT})\n" +
+        $"\tDEFAULT({(int)LogFlag.DEFAULT})\t" +
+            $"HEADLESS({(int)LogFlag.HEADLESS})\n" +
+        $"\tALL({(int)LogFlag.ALL})";
+
+    protected static readonly string[] help_cmds = ["-help", "--help", "-h", "--h"];
+    protected static readonly string help_cmd_desc = "(void) Get a brief description for each command";
+    protected static readonly string help_str =
+        $"{help_cmds[0]}:\t{help_cmd_desc}\n" +
+        $"{version_cmds[0]}:\t{version_cmd_desc}\n" +
+        $"{edit_cmds[0]}:\t{edit_cmd_desc}\n" +
+        $"{rss_cmds[0]}:\t{rss_cmd_desc}\n" +
+        $"{download_cmds[0]}:\t{download_cmd_desc}\n" +
+        $"{log_cmds[0]}:\t{log_cmd_desc}";
 }
