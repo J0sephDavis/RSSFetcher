@@ -15,8 +15,8 @@
 
         private Config()
         {
-            string rootDir = Path.GetDirectoryName(System.AppContext.BaseDirectory) + @"\";
-            DownloadDirectory = rootDir + @"Downloads\";
+            string rootDir = Path.GetDirectoryName(System.AppContext.BaseDirectory) + Path.DirectorySeparatorChar;
+            DownloadDirectory = rootDir + @"Downloads" + Path.DirectorySeparatorChar;
             RSSConfigPath = new Uri(rootDir + "rss-config.xml");
             _Logger = Logger.GetInstance(rootDir + @"MurongLie.log");
             report.Log(LogFlag.DEBUG, $"Config(), rootDir: {rootDir}, cfgPath:{RSSConfigPath}, downloadDir:{DownloadDirectory}");
