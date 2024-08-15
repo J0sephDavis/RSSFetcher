@@ -1,6 +1,6 @@
 ﻿namespace Murong_Xue
 {
-    internal class DownloadEntryBase //TODO better name?
+    internal abstract class DownloadEntryBase
     {
         protected DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         public Uri link;
@@ -10,7 +10,7 @@
             this.link = link;
             report ??= Config.OneReporterPlease("DownloadEntryBase");
         }
-        virtual public async Task Request(HttpClient client)
+        public async Task Request(HttpClient client)
         {
             report.Log(LogFlag.DEBUG_SPAM, "Requesting data");
             Task<HttpResponseMessage> request = client.GetAsync(this.link);
@@ -18,7 +18,12 @@
             await request; //only return when the request has actually been completed
             return;
         }
-        protected async Task OnDownload(Task<HttpResponseMessage> response)
+        public abstract void HandleDownload(Stream content);
+        protected void DoneProcessing()
+        {
+            downloadHandler.RemoveProcessing(this);
+        }
+        private async Task OnDownload(Task<HttpResponseMessage> response)
         {
             report.Log(LogFlag.DEBUG_SPAM, "On Download");
             try
@@ -36,22 +41,12 @@
                 ReQueue();
             }
         }
-        public virtual void HandleDownload(Stream content)
-        {
-            report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
-            DoneProcessing();
-            return;
-        }
-        protected void SetProcessing()
+        private void SetProcessing()
         {
             report.Log(LogFlag.DEBUG_SPAM, "Remove Processing");
             downloadHandler.DownloadingToProcessing(this);
         }
-        protected void DoneProcessing()
-        {
-            downloadHandler.RemoveProcessing(this);
-        }
-        protected void ReQueue()
+        private void ReQueue()
         {
             report.Log(LogFlag.DEBUG_SPAM, "ReQueue");
             downloadHandler.ReQueue(this);

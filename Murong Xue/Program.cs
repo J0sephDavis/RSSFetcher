@@ -9,7 +9,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 2; //commit 99
-    static readonly int PATCH = 3;
+    static readonly int PATCH = 4;
     //---
     static readonly Config cfg = Config.GetInstance();
     static Reporter report;
