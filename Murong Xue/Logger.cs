@@ -18,7 +18,8 @@ namespace Murong_Xue
         _INFO = FEEDBACK | NOTEWORTHY,
         //---
 #if DEBUG
-        DEFAULT = _INFO | _EXCEPTION | DEBUG,
+        _DEFAULT = _INFO | _EXCEPTION,
+        DEFAULT = _DEFAULT | DEBUG,
 #else
         DEFAULT = _INFO | _EXCEPTION,
 #endif
@@ -47,9 +48,12 @@ namespace Murong_Xue
         /// <param name="msg">The contents of the message</param>
         public void Log(LogFlag level, string msg)
         {
-            LogMsg _msg = new(level, ReportIdentifier, msg);
+            // TODO: Whats the perf impact of having a check here, constructing the msg, &c. 
             if ((level & ReportFilter) != LogFlag.NONE)
-                Task.Run(() => Logger.Log(_msg));
+            {
+                LogMsg _msg = new(level, ReportIdentifier, msg);
+                Task.Run(() => Logger.Log(_msg)); 
+            }
         }
         //----
         /// <summary>
@@ -62,6 +66,12 @@ namespace Murong_Xue
             this.ReportFilter = flag;
         }
     }
+    /// <summary>
+    /// Class representing a message to be logged
+    /// </summary>
+    /// <param name="severity">The flags that define this msg</param>
+    /// <param name="identifier">The reporter who is sending this msg</param>
+    /// <param name="content">The content of the msg</param>
     internal sealed class LogMsg(LogFlag severity, string identifier, string content)
     {
         public LogFlag SEVERITY => severity;

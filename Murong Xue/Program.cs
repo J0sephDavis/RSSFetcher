@@ -9,7 +9,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 3; //commit 111
-    static readonly int PATCH = 1;
+    static readonly int PATCH = 2;
     //---
     static Config cfg;// = Config.GetInstance();
     static Reporter report;
@@ -32,12 +32,12 @@ public class Program
                 report.Log(LogFlag.DEBUG_SPAM, s);
 #if DEBUG
             report.Log(LogFlag.WARN, "!!!PROGRAM COMPILED IN DEBUG MODE!!!");
-            args = [
-                "--loglevel",
+            /*args = [
+                "--help",
             //$"{32}",
-            $"{((int)(LogFlag.DEBUG | LogFlag.FEEDBACK | LogFlag._EXCEPTION | LogFlag.NOTEWORTHY))}",
+            //$"{((int)(LogFlag.DEBUG | LogFlag.FEEDBACK | LogFlag._EXCEPTION | LogFlag.NOTEWORTHY))}",
             //"--help"
-        ];
+        ];*/
 #endif
             ArgResult choice = HandleArgs(args);
 
@@ -189,9 +189,12 @@ public class Program
             $"_DEBUG({(int)LogFlag._DEBUG})\n" +
         $"\t_INFO({(int)LogFlag._INFO})\t" +
             $"DEFAULT({(int)LogFlag.DEFAULT})\n" +
-        $"\tDEFAULT({(int)LogFlag.DEFAULT})\t" +
-            $"HEADLESS({(int)LogFlag.HEADLESS})\n" +
-        $"\tALL({(int)LogFlag.ALL})";
+        $"\tHEADLESS({(int)LogFlag.HEADLESS})\t" +
+            $"ALL({(int)LogFlag.ALL})" //->;
+#if DEBUG
+        + $"\n\t_DEFAULT({(int)LogFlag._DEFAULT})"
+#endif
+    ;//<-
 
     protected static readonly string[] help_cmds = ["-help", "--help", "-h", "--h"];
     protected static readonly string help_cmd_desc = "(void) Get a brief description for each command";
