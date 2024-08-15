@@ -8,8 +8,8 @@ namespace Murong_Xue;
 public class Program
 {
     static readonly int MAJOR_VERSION = 1;
-    static readonly int MINOR_VERSION = 2; //commit 99
-    static readonly int PATCH = 10;
+    static readonly int MINOR_VERSION = 3; //commit 111
+    static readonly int PATCH = 0;
     //---
     static Config cfg;// = Config.GetInstance();
     static Reporter report;

@@ -97,16 +97,30 @@ namespace Murong_Xue
         const int BUFFER_THRESHOLD = 10; // msgs
         const int BUFFER_TIMEOUT = 5; // seconds
         //----
-        private FileStream? fileHandle = null;
+        private Uri? filePath;
         public static Logger GetInstance(string? path = null)
         {
-
             s_Logger ??= new Logger(path == null ? null : new Uri(path));
             return s_Logger;
         }
         private Logger(Uri? path = null)
         {
-            batchThread = new(BatchLoop);
+            filePath = path;
+            if (path?.IsFile == true)
+            {
+                Log(new LogMsg(LogFlag.NOTEWORTHY, "Logger", $"Path to logfile: [{filePath}]"));
+                if (File.Exists(path.LocalPath))
+                {
+                    Log(new LogMsg(LogFlag.WARN, "Logger", $"!!! File already exists, deleting: [{path}]"));
+                    File.Delete(path.LocalPath);
+                }
+                batchThread = new(BatchLoopFile);
+            }
+            else
+            {
+                Log(new LogMsg(LogFlag.ERROR, "Logger", $"!!! Path is null / not a file: [{path}]"));
+                batchThread = new(BatchLoop);
+            }
             batchThread.Start();
         }
         ~Logger() { Quit(); } //Probably won't be called because its the last thing to be done. GC won't take place
@@ -137,7 +151,7 @@ namespace Murong_Xue
         /// The loggers main thread. Waits for the batchEvent flag to be set or BUFFER_TIMEOUT.
         /// Clears & creates a copy of the buffer and writes output to the console (WIP for files)
         /// </summary>
-        private void BatchLoop()
+        private void BatchLoop() //Console only
         {
             List<LogMsg> copiedBuff = [];
             while (StopLoop == false)
@@ -163,6 +177,42 @@ namespace Murong_Xue
                 foreach (LogMsg msg in bufferedMsgs)
                     Console.WriteLine(msg);
                 bufferedMsgs.Clear();
+            }
+        }
+        private void BatchLoopFile() //file & console
+        {
+            using (StreamWriter file = new StreamWriter(filePath.LocalPath)) //when this is null, what happens?
+            {
+                List<LogMsg> copiedBuff = [];
+                while (StopLoop == false)
+                {
+                    batchEvent.WaitOne(TimeSpan.FromSeconds(BUFFER_TIMEOUT));
+                    //---
+                    lock (buffLock)
+                    {
+                        copiedBuff = new(bufferedMsgs);
+                        bufferedMsgs.Clear();
+                    }
+                    if (copiedBuff != null)
+                    {
+                        foreach (LogMsg msg in copiedBuff)
+                        {
+                            Console.WriteLine(msg);
+                            file.WriteLine(msg);
+                        }
+                        copiedBuff.Clear();
+                    }
+                }
+                //--- making sure the buffer is clear on exit
+                lock (buffLock)
+                {
+                    foreach (LogMsg msg in bufferedMsgs)
+                    {
+                        Console.WriteLine(msg);
+                        file.WriteLine(msg);
+                    }
+                    bufferedMsgs.Clear();
+                }
             }
         }
     }
