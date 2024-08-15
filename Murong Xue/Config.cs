@@ -2,7 +2,7 @@
 {
     internal class Config : IDisposable
     {
-        private readonly static LogFlag ConfigDefaultLogLevel = LogFlag.ALL; //So that we can set default in LogLevel & static Reporter
+        private readonly static LogFlag ConfigDefaultLogLevel = LogFlag.DEFAULT; //So that we can set default in LogLevel & static Reporter
         //---
         private string DownloadDirectory;
         private Uri RSSConfigPath;
