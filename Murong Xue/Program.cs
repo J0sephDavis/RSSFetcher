@@ -57,7 +57,7 @@ public class Program
                 report.Log(LogFlag.DEBUG, "ArgResult.EXIT, Quitting.");
                 return;
         }
-        report.Log(LogFlag.DEBUG, "Program STOP");
+        report.Log(LogFlag.FEEDBACK, "Program STOP");
         Logger.Quit();
     }
     public static async Task StartEditor()
