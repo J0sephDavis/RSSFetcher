@@ -83,14 +83,15 @@ namespace Murong_Xue
             lock (buffLock)
             {
                 bufferedMsgs.Add(msg);
-                if (bufferedMsgs.Count > BUFFER_THRESHOLD)
+                if (bufferedMsgs.Count > BUFFER_THRESHOLD) 
                 {
                     copiedBuff = new(bufferedMsgs);
                     bufferedMsgs.Clear();
                 }
             }
             if (copiedBuff != null)
-                Task.Run(() => ProcessBatch(copiedBuff));
+                Task.Run(() => ProcessBatch(copiedBuff));   //Probably not the best way to go about this
+                                                            //Ideally we would just wake up the thread
         }
         //Process a batch of logs (SAVE & PRINT)
         private static void ProcessBatch(List<LogMsg> msgs)
