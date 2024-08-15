@@ -5,10 +5,10 @@
         protected DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         public Uri link;
         protected Reporter report;
-        public DownloadEntryBase(Uri link)
+        public DownloadEntryBase(Uri link, string reportIdentifier = "DownloadEntryBase")
         {
             this.link = link;
-            report ??= Config.OneReporterPlease("DownloadEntryBase");
+            report ??= Config.OneReporterPlease(reportIdentifier);
         }
         public async Task Request(HttpClient client)
         {
@@ -56,10 +56,9 @@
     internal class DownloadEntryFeed : DownloadEntryBase
     {
         private FeedData Feed { get; set; }
-        public DownloadEntryFeed(Uri link, FeedData _feed) : base(link)
+        public DownloadEntryFeed(Uri link, FeedData _feed) : base(link, "DownloadEntryFeed")
         {
             this.Feed = _feed;
-            report ??= Config.OneReporterPlease("DownloadEntryFeed");
         }
         override public async void HandleDownload(Stream content)
         {
@@ -72,10 +71,9 @@
     internal class DownloadEntryFile : DownloadEntryBase
     {
         private readonly Uri DownloadPath;
-        public DownloadEntryFile(Uri link, Uri DownloadPath) : base(link)
+        public DownloadEntryFile(Uri link, Uri DownloadPath) : base(link, "DownloadEntryFile")
         {
             this.DownloadPath = DownloadPath;
-            report ??= Config.OneReporterPlease("DownloadEntryFile");
         }
         override public void HandleDownload(Stream content)
         {
