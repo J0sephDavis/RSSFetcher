@@ -9,7 +9,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 2; //commit 99
-    static readonly int PATCH = 7;
+    static readonly int PATCH = 8;
     //---
     static readonly Config cfg = Config.GetInstance();
     static Reporter report;
@@ -24,6 +24,7 @@ public class Program
     };
     public static async Task Main(string[] args)
     {
+        Logger.Start();
         report ??= Config.OneReporterPlease("PROGRAM");
         report.Log(LogFlag.DEBUG, $"Started program with {args.Length}args");
         foreach (string s in args)

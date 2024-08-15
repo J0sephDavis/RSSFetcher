@@ -67,37 +67,56 @@ namespace Murong_Xue
     {
         private static readonly List<LogMsg> bufferedMsgs = [];
         private static readonly Object buffLock = new();
-        const int BUFFER_THRESHOLD = 10;
+        private static readonly AutoResetEvent batchEvent = new(false);
+        private static Thread batchThread = new(BatchLoop);
+        private static bool StopLoop = false;
+        const int BUFFER_THRESHOLD = 10; // msgs
+        const int BUFFER_TIMEOUT = 5; // seconds
         public static void Quit()
         {
-            lock (buffLock)
-            {
-                ProcessBatch(bufferedMsgs);
-                bufferedMsgs.Clear();
-            }
+            StopLoop = true;
+            batchEvent.Set();
+            batchThread.Join();
+        }
+        public static void Start()
+        {
+            batchThread.Start();
         }
         //------------------------------------
         public static void Log(LogMsg msg)
         {
-            List<LogMsg>? copiedBuff = null;
             lock (buffLock)
             {
                 bufferedMsgs.Add(msg);
-                if (bufferedMsgs.Count > BUFFER_THRESHOLD) 
+                if (bufferedMsgs.Count > BUFFER_THRESHOLD)
+                    batchEvent.Set();
+            }
+        }
+        private static  void BatchLoop()
+        {
+            List<LogMsg> copiedBuff = [];
+            while (StopLoop == false)
+            {
+                batchEvent.WaitOne(TimeSpan.FromSeconds(BUFFER_TIMEOUT));
+                //---
+                lock (buffLock)
                 {
                     copiedBuff = new(bufferedMsgs);
                     bufferedMsgs.Clear();
                 }
+                if (copiedBuff != null)
+                {
+                    foreach (LogMsg msg in copiedBuff)
+                        Console.WriteLine(msg);
+                    copiedBuff.Clear();
+                }
             }
-            if (copiedBuff != null)
-                Task.Run(() => ProcessBatch(copiedBuff));   //Probably not the best way to go about this
-                                                            //Ideally we would just wake up the thread
-        }
-        //Process a batch of logs (SAVE & PRINT)
-        private static void ProcessBatch(List<LogMsg> msgs)
-        {
-            foreach (LogMsg msg in msgs)
-                Console.WriteLine(msg);
+            lock (buffLock)
+            {
+                foreach (LogMsg msg in bufferedMsgs)
+                    Console.WriteLine(msg);
+                bufferedMsgs.Clear();
+            }
         }
     }
 }
