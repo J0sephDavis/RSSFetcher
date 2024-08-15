@@ -60,7 +60,7 @@ namespace Murong_Xue
         //TODO Prettify output here, someway 
         public override string ToString()
         {
-            return $"[{TIMESTAMP}]\t{identifier}\t({severity})\t{content}";
+            return $"[{TIMESTAMP}]{identifier}\t({severity})\t{content}";
         }
     }
     internal static class Logger
