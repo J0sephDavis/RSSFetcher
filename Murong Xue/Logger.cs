@@ -78,30 +78,46 @@ namespace Murong_Xue
             return $"[{TIMESTAMP}]{identifier}\t({severity})\t{content}";
         }
     }
-    internal static class Logger
+    internal class Logger
     {
+        /* After several iterations and changes on this class, it can only be considered sloppy.
+         * Should it be a static class?
+         * Should it be a singleton?
+         * How to ensure this is cleaned up on exit?
+         *  -> Included in the Config.Dipose() (because Garbage collection may not/wont happen)
+         */
         private static readonly List<LogMsg> bufferedMsgs = [];
         private static readonly Object buffLock = new();
+        private static Logger? s_Logger = null;
+        //----
+        private readonly Thread batchThread;
         private static readonly AutoResetEvent batchEvent = new(false);
-        private static Thread batchThread = new(BatchLoop);
-        private static bool StopLoop = false;
+        private bool StopLoop = false;
+        //----
         const int BUFFER_THRESHOLD = 10; // msgs
         const int BUFFER_TIMEOUT = 5; // seconds
-        /// <summary>
-        /// MUST be called on exit to flush the buffer and stop the batch thread from running
-        /// </summary>
-        public static void Quit()
+        //----
+        private FileStream? fileHandle = null;
+        public static Logger GetInstance(string? path = null)
         {
-            StopLoop = true;
-            batchEvent.Set();
-            batchThread.Join();
+
+            s_Logger ??= new Logger(path == null ? null : new Uri(path));
+            return s_Logger;
         }
-        /// <summary>
-        /// Must be called on start to begin the batch thread which will clear the log buffer
-        /// </summary>
-        public static void Start()
+        private Logger(Uri? path = null)
         {
+            batchThread = new(BatchLoop);
             batchThread.Start();
+        }
+        ~Logger() { Quit(); } //Probably won't be called because its the last thing to be done. GC won't take place
+        public void Quit()
+        {
+            if (batchThread.IsAlive)
+            {
+                StopLoop = true;
+                batchEvent.Set();
+                batchThread.Join();
+            }
         }
         //------------------------------------
         /// <summary>
@@ -121,7 +137,7 @@ namespace Murong_Xue
         /// The loggers main thread. Waits for the batchEvent flag to be set or BUFFER_TIMEOUT.
         /// Clears & creates a copy of the buffer and writes output to the console (WIP for files)
         /// </summary>
-        private static void BatchLoop()
+        private void BatchLoop()
         {
             List<LogMsg> copiedBuff = [];
             while (StopLoop == false)
@@ -138,6 +154,7 @@ namespace Murong_Xue
                     foreach (LogMsg msg in copiedBuff)
                         Console.WriteLine(msg);
                     copiedBuff.Clear();
+                    //TODO: write to file
                 }
             }
             //--- making sure the buffer is clear on exit

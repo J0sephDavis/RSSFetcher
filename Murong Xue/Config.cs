@@ -1,25 +1,25 @@
 ﻿namespace Murong_Xue
 {
-    internal class Config
+    internal class Config : IDisposable
     {
         private readonly static LogFlag ConfigDefaultLogLevel = LogFlag.ALL; //So that we can set default in LogLevel & static Reporter
         //---
         private string DownloadDirectory;
         private Uri RSSConfigPath;
         private static LogFlag LogLevel = ConfigDefaultLogLevel;
-        private static List<Reporter>? Reporters = null;
+        private static List<Reporter> Reporters = [];
         //---
         private static Config? s_Config = null;
-        private static readonly Reporter report = new(ConfigDefaultLogLevel, "CONFIG");
+        private static Reporter report = new(ConfigDefaultLogLevel, "CONFIG");
+        private Logger _Logger;
 
         private Config()
         {
-
             string rootDir = Path.GetDirectoryName(System.AppContext.BaseDirectory) + @"\";
             DownloadDirectory = rootDir + @"Downloads\";
             RSSConfigPath = new Uri(rootDir + "rss-config.xml");
+            _Logger = Logger.GetInstance();
             report.Log(LogFlag.DEBUG, $"Config(), rootDir: {rootDir}, cfgPath:{RSSConfigPath}, downloadDir:{DownloadDirectory}");
-            Reporters = [];
             Subscribe(report);
         }
         public static Config GetInstance()
@@ -87,6 +87,13 @@
         {
             report.Log(LogFlag.SPAM, $"Get DownloadPath: {DownloadDirectory}");
             return DownloadDirectory;
+        }
+        //----------
+        public void Dispose()
+        {
+            Reporters.Clear();
+            s_Config = null;
+            _Logger.Quit();
         }
     }
 }

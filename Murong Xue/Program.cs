@@ -9,9 +9,9 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 2; //commit 99
-    static readonly int PATCH = 9;
+    static readonly int PATCH = 10;
     //---
-    static readonly Config cfg = Config.GetInstance();
+    static Config cfg;// = Config.GetInstance();
     static Reporter report;
     static EntryData? RSSEntries = null;
     [Flags]
@@ -24,42 +24,43 @@ public class Program
     };
     public static async Task Main(string[] args)
     {
-        Logger.Start();
-        report ??= Config.OneReporterPlease("PROGRAM");
-        report.Log(LogFlag.DEBUG, $"Started program with {args.Length}args");
-        foreach (string s in args)
-            report.Log(LogFlag.DEBUG_SPAM, s);
+        using (cfg = Config.GetInstance())
+        {
+            report ??= Config.OneReporterPlease("PROGRAM");
+            report.Log(LogFlag.DEBUG, $"Started program with {args.Length}args");
+            foreach (string s in args)
+                report.Log(LogFlag.DEBUG_SPAM, s);
 #if DEBUG
-        report.Log(LogFlag.WARN, "!!!PROGRAM COMPILED IN DEBUG MODE!!!");
-        args = [
-            "--loglevel",
+            report.Log(LogFlag.WARN, "!!!PROGRAM COMPILED IN DEBUG MODE!!!");
+            args = [
+                "--loglevel",
             //$"{32}",
             $"{((int)(LogFlag.DEBUG | LogFlag.FEEDBACK | LogFlag._EXCEPTION | LogFlag.NOTEWORTHY))}",
             //"--help"
         ];
 #endif
-        ArgResult choice = HandleArgs(args);
+            ArgResult choice = HandleArgs(args);
 
-        report.Log(LogFlag.DEBUG, "Program starting");
-        RSSEntries = new EntryData(cfg.GetRSSPath());
-        switch (choice)
-        {
-            case (ArgResult.EDIT):
-                await StartEditor();
-                break;
-            case (ArgResult.RUN):
-                await RSSEntries.Process();
-                break;
-            case (ArgResult.NONE):
-            default:
-                report.Log(LogFlag.WARN | LogFlag.DEBUG, "DEFFAULT/ARG.RESLT = NONE. EXITING");
-                goto case ArgResult.EXIT;
-            case (ArgResult.EXIT):
-                report.Log(LogFlag.DEBUG, "ArgResult.EXIT, Quitting.");
-                return;
+            report.Log(LogFlag.DEBUG, "Program starting");
+            RSSEntries = new EntryData(cfg.GetRSSPath());
+            switch (choice)
+            {
+                case (ArgResult.EDIT):
+                    await StartEditor();
+                    break;
+                case (ArgResult.RUN):
+                    await RSSEntries.Process();
+                    break;
+                case (ArgResult.NONE):
+                default:
+                    report.Log(LogFlag.WARN | LogFlag.DEBUG, "DEFFAULT/ARG.RESLT = NONE. EXITING");
+                    goto case ArgResult.EXIT;
+                case (ArgResult.EXIT):
+                    report.Log(LogFlag.DEBUG, "ArgResult.EXIT, Quitting.");
+                    return;
+            }
+            report.Log(LogFlag.FEEDBACK, "Program STOP");
         }
-        report.Log(LogFlag.FEEDBACK, "Program STOP");
-        Logger.Quit();
     }
     public static async Task StartEditor()
     {
