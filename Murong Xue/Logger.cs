@@ -29,21 +29,17 @@ namespace Murong_Xue
             | SPAM,
     };
     //REPORTS to the logger when anything happens
-    internal class Reporter
+    /// <summary>
+    /// Reporter constructor, reporters handle interfacing with the logger class and scheduling messages.
+    /// Every class should have its own reporter
+    /// </summary>
+    /// <param name="logFlags">The mask/filter applied to all incoming logs (will be overriden if a new log level is set in the Config class)</param>
+    /// <param name="identifier">This reporters identity, e.g.,"Program" & "DownloadHandler"</param>
+    internal class Reporter(LogFlag logFlags, string identifier)
     {
-        private LogFlag ReportFilter;
-        public readonly string ReportIdentifier; // e.g. Program, FeedData, Config, &c
-        /// <summary>
-        /// Reporter constructor, reporters handle interfacing with the logger class and scheduling messages.
-        /// Every class should have its own reporter
-        /// </summary>
-        /// <param name="logFlags">The mask/filter applied to all incoming logs (will be overriden if a new log level is set in the Config class)</param>
-        /// <param name="identifier">This reporters identity, e.g.,"Program" & "DownloadHandler"</param>
-        public Reporter(LogFlag logFlags, string identifier)
-        {
-            ReportFilter = logFlags;
-            ReportIdentifier = "[" + identifier + "]";
-        }
+        private LogFlag ReportFilter = logFlags;
+        public readonly string ReportIdentifier = "[" + identifier + "]"; // e.g. Program, FeedData, Config, &c
+
         /// <summary>
         /// Add a message to the log
         /// </summary>
