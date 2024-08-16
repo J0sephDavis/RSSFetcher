@@ -9,9 +9,8 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 3; //commit 111
-    static readonly int PATCH = 5;
+    static readonly int PATCH = 6;
     //---
-    static Config cfg;// = Config.GetInstance();
     static Reporter report;
     static EntryData? RSSEntries = null;
     [Flags]
@@ -24,7 +23,7 @@ public class Program
     };
     public static async Task Main(string[] args)
     {
-        using (cfg = Config.GetInstance())
+        using (Config cfg = Config.GetInstance())
         {
             report ??= Config.OneReporterPlease("PROGRAM");
             report.Log(LogFlag.DEBUG, $"Started program with {args.Length}args");
@@ -39,7 +38,7 @@ public class Program
             //"--help"
         ];*/
 #endif
-            ArgResult choice = HandleArgs(args);
+            ArgResult choice = HandleArgs(cfg, args);
 
             report.Log(LogFlag.DEBUG, "Program starting");
             RSSEntries = new EntryData(cfg.GetRSSPath());
@@ -80,7 +79,7 @@ public class Program
             report.Log(LogFlag.FEEDBACK, "Discarding change from interactive session");
     }
 
-    protected static ArgResult HandleArgs(string[] args)
+    private static ArgResult HandleArgs(Config cfg, string[] args)
     {
         bool NextIsConfig = false;
         bool NextIsDownloadDir = false;
