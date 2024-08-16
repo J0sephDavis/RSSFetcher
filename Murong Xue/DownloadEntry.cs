@@ -37,7 +37,7 @@
             }
             catch (HttpRequestException e)
             {
-                report.Log(LogFlag.ERROR, $"HTTP Request Exception: {e.Message}");
+                report.Log(LogFlag.ERROR, $"HTTP Request Exception: {link} {e.Message}");
                 ReQueue();
             }
         }
@@ -77,16 +77,16 @@
         }
         override public void HandleDownload(Stream content)
         {
-            report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
+            report.Log(LogFlag.DEBUG_SPAM, $"Handle Download {link}");
             string fileName = Path.GetFileName(link.AbsolutePath);
             string destinationPath = this.DownloadPath.LocalPath + fileName;
             if (File.Exists(destinationPath))
-                report.Log(LogFlag.ERROR, $"File already exists {destinationPath}");
+                report.Log(LogFlag.ERROR, $"File already exists {link} {destinationPath}");
             else using (FileStream fs = File.Create(destinationPath))
             {
                 content.Seek(0, SeekOrigin.Begin);
                 content.CopyTo(fs);
-                report.Log(LogFlag.NOTEWORTHY, $"FILE WRITTEN TO {destinationPath}");
+                report.Log(LogFlag.NOTEWORTHY, $"FILE {link} WRITTEN TO {destinationPath}");
             }
             DoneProcessing();
         }

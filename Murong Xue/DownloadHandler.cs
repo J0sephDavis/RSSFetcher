@@ -34,9 +34,11 @@
             report.Log(LogFlag.DEBUG, "Processing Downloads");
             List<Task> CurrentBatch = [];
             report.Log(LogFlag.DEBUG, $"Before processing, Queued[{Queued.Count}] Downloading[{Downloading.Count}]");
-            while (Queued.Count != 0 || Downloading.Count != 0 || Processing.Count != 0) //these are volatile, might consider some type of sentinel/semaphore to handle this behavior
+            
+            int totalWaiting = Queued.Count + Downloading.Count + Processing.Count; // doesn't need a lock, no one is touching these arrays rn
+            while (totalWaiting != 0) //these are volatile, might consider some type of sentinel/semaphore to handle this behavior
             {
-                while (Queued.Count != 0)
+                while (Queued.Count != 0) //volatile but we do not care that much (it will be run again when totalWaiting is calculated)
                 {
                     DownloadEntryBase entry = PopSwapDownload();
                     //Add the entry to the task list
@@ -50,6 +52,12 @@
                         CurrentBatch.Clear();
                     }
                 }
+                lock(DPLock)
+                {
+                    totalWaiting = Queued.Count + Downloading.Count + Processing.Count;
+                    report.Log(LogFlag.DEBUG, $"Total waiting updated {totalWaiting} | Q[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]");
+                }
+                await Task.Delay(500); //nothing queued, may be wise to pass an autoresetevent to each of the download entries? or have some function that triggers it for them
             }
             lock (DPLock)
             {

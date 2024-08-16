@@ -55,6 +55,11 @@ namespace Murong_Xue
             }
             report.Log(LogFlag.FEEDBACK, $"Add File {title} {link}");
             Uri downloadPath = new(cfg.GetDownloadPath());
+            if (Path.Exists(downloadPath.LocalPath) == false)
+            {
+                report.Log(LogFlag.WARN, $"Specified download path did not exist, creating directory. {downloadPath}");
+                Directory.CreateDirectory(downloadPath.LocalPath);
+            }
             DownloadEntryFile entry = new(link, downloadPath);
             downloadHandler.QueueDownload(entry);
         }
