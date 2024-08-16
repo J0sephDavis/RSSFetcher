@@ -7,11 +7,11 @@
         private string DownloadDirectory;
         private Uri RSSConfigPath;
         private static LogFlag LogLevel = ConfigDefaultLogLevel;
-        private static List<Reporter> Reporters = [];
+        private static readonly List<Reporter> Reporters = [];
         //---
         private static Config? s_Config = null;
-        private static Reporter report = new(ConfigDefaultLogLevel, "CONFIG");
-        private Logger _Logger;
+        private static readonly Reporter report = new(ConfigDefaultLogLevel, "CONFIG");
+        private readonly Logger _Logger;
 
         private Config()
         {
