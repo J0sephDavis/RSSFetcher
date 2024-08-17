@@ -37,11 +37,11 @@ namespace Murong_Xue
                 $"\n\t{this.History}";
             if (HasNewHistory)
                 tmp += $"\n\tNEW-HISTORY: {NewHistory}";
-            report.Log(LogFlag.NOTEWORTHY | LogFlag.SPAM, tmp);
+            report.Spam(tmp);
         }
         public void QueueDownload()
         {
-            report.Log(LogFlag.DEBUG_SPAM, "Queue Download");
+            report.Trace("QueueDownload()");
             DownloadEntryFeed entry = new(URL, this);
             downloadHandler.QueueDownload(entry);
         }
@@ -53,11 +53,11 @@ namespace Murong_Xue
                 HasNewHistory = true;
                 NewHistory = title;
             }
-            report.Log(LogFlag.FEEDBACK, $"Add File {title} {link}");
+            report.Out($"Add File {title} {link}");
             Uri downloadPath = new(cfg.GetDownloadPath());
             if (Path.Exists(downloadPath.LocalPath) == false)
             {
-                report.Log(LogFlag.WARN, $"Specified download path did not exist, creating directory. {downloadPath}");
+                report.Warn($"Specified download path did not exist, creating directory. {downloadPath}");
                 Directory.CreateDirectory(downloadPath.LocalPath);
             }
             DownloadEntryFile entry = new(link, downloadPath);
@@ -65,7 +65,7 @@ namespace Murong_Xue
         }
         public async void OnFeedDownloaded(Stream content)
         {
-            report.Log(LogFlag.NOTEWORTHY, $"Feed Downloaded len:{content.Length}, {this.Title}");
+            report.Notice($"Feed Downloaded len:{content.Length}, {this.Title}");
             XmlReaderSettings xSettings = new();
             xSettings.Async = true;
             //
@@ -136,10 +136,10 @@ namespace Murong_Xue
         {
             if (HasNewHistory && NewHistory != string.Empty)
             {
-                report.Log(LogFlag.DEBUG_SPAM, "GetHistory (HasNewHistory && !=empty)");
+                report.Trace("GetHistory (HasNewHistory && !=empty)");
                 return NewHistory;
             }
-            report.Log(LogFlag.DEBUG_SPAM, "GetHistory");
+            report.Trace("GetHistory");
             return History;
         }
         public string GetExpr()
@@ -148,23 +148,23 @@ namespace Murong_Xue
         }
         public void SetTitle(string title)
         {
-            report.Log(LogFlag.DEBUG_SPAM, $"SetTitle {title}");
+            report.TraceVal($"SetTitle {title}");
             this.Title = title;
         }
         public void SetURL(string URL)
         {
-            report.Log(LogFlag.DEBUG_SPAM, $"SetURL {URL}");
+            report.TraceVal($"SetURL {URL}");
             //TODO do some checks here to make sure it is a valid URL & catch any errors
             this.URL = new Uri(URL);
         }
         public void SetHistory(string History)
         {
-            report.Log(LogFlag.DEBUG_SPAM, $"SetHistory {History}");
+            report.TraceVal($"SetHistory {History}");
             this.History = History;
         }
         public void SetExpr(string Expression)
         {
-            report.Log(LogFlag.DEBUG_SPAM, $"SetExpression {Expression}");
+            report.TraceVal($"SetExpression {Expression}");
             this.Expression = Expression;
         }
     }

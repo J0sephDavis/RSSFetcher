@@ -26,21 +26,17 @@ public class Program
         using (Config cfg = Config.GetInstance())
         {
             report ??= Config.OneReporterPlease("PROGRAM");
-            report.Log(LogFlag.DEBUG_V, $"Started program with {args.Length}args");
+            report.Trace($"Started program with {args.Length}args");
             foreach (string s in args)
-                report.Log(LogFlag.DEBUG_SV, s);
+                report.Trace(s);
 #if DEBUG
-            report.Log(LogFlag.WARN, "PROGRAM COMPILED IN DEBUG MODE!!!");
-            /*args = [
-                "--help",
-            //$"{32}",
-            //$"{((int)(LogFlag.DEBUG | LogFlag.FEEDBACK | LogFlag._EXCEPTION | LogFlag.NOTEWORTHY))}",
-            //"--help"
-        ];*/
+            report.Notice("PROGRAM COMPILED IN DEBUG MODE");
+            args.Append("--help");
+            //args.Append($"--loglevel {LogFlag.ALL}");
 #endif
             ArgResult choice = HandleArgs(cfg, args);
 
-            report.Log(LogFlag.CHATTER, "Program starting");
+            report.Notice("Program starting");
             RSSEntries = new EntryData(cfg.GetRSSPath());
             switch (choice)
             {
@@ -52,31 +48,31 @@ public class Program
                     break;
                 case (ArgResult.NONE):
                 default:
-                    report.Log(LogType.DEBUG, LogMod.UNIMPORTANT, "DEFFAULT/ARG.RESLT = NONE. EXITING");
+                    report.Trace("DEFFAULT/ARG.RESLT = NONE. EXITING");
                     goto case ArgResult.EXIT;
                 case (ArgResult.EXIT):
-                    report.Log(LogType.DEBUG, "ArgResult.EXIT, Quitting.");
+                    report.Trace("ArgResult.EXIT");
                     return;
             }
-            report.Log(LogFlag.CHATTER, "Program STOP");
+            report.Notice("Program STOP");
         }
     }
     public static async Task StartEditor()
     {
         if (RSSEntries == null)
         {
-            report.Log(LogType.ERROR, "RSSEntries is NULL");
+            report.Error("RSSEntries == NULL");
             return;
         }
         //---
         InteractiveEditor editor = new(RSSEntries.GetFeeds());
         if (editor.MainLoop())
         {
-            report.Log(LogType.OUTPUT, "Saving entries from interactive session");
+            report.Out("Saving entries from interactive session");
             await RSSEntries.UpdateEntries();
         }
         else
-            report.Log(LogType.OUTPUT, "Discarding change from interactive session");
+            report.Out("Discarding change from interactive session");
     }
 
     private static ArgResult HandleArgs(Config cfg, string[] args)
@@ -85,13 +81,12 @@ public class Program
         bool NextIsDownloadDir = false;
         bool NextIsLogLevel = false;
         ArgResult retVal = ArgResult.RUN;
-
-        report.Log(LogFlag.DEBUG_SV, "Processing args");
+        report.Notice("Processing Args");
         foreach (string arg in args)
         {
             if (NextIsConfig)
             {
-                report.Log(LogFlag.DEBUG_SV, $"RSSCFG: Set Path to {arg}");
+                report.Trace("Setting rss path");
                 cfg.SetRSSPath(Path.GetFullPath(arg));
                 //---
                 NextIsConfig = false;
@@ -99,7 +94,7 @@ public class Program
             }
             if (NextIsDownloadDir)
             {
-                report.Log(LogFlag.DEBUG_SV, $"RSSCFG: Set Path to {arg}");
+                report.Trace("Setting download path");
                 cfg.SetDownloadPath(Path.GetFullPath(arg));
                 //---
                 NextIsDownloadDir = false;
@@ -117,38 +112,38 @@ public class Program
             string _arg = arg.ToLower();
             if (help_cmds.Contains(_arg))
             {
-                report.Log(LogType.OUTPUT, help_str);
+                report.Out(help_str);
                 retVal = ArgResult.EXIT;
                 continue;
             }
             if (version_cmds.Contains(_arg))
             {
-                report.Log(LogType.OUTPUT, $"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
+                report.Out($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
                 retVal = ArgResult.EXIT;
                 continue;
             }
             if (edit_cmds.Contains(_arg))
             {
-                report.Log(LogFlag.DEBUG_SV, "EDIT: EditConfigs = true");
+                report.Trace("EditConfigs = true");
                 retVal = ArgResult.EDIT;
                 continue;
             }
             //-------------------------
             if (rss_cmds.Contains(_arg))
             {
-                report.Log(LogFlag.DEBUG_SV, "RSSCFG: NextIsConfig");
+                report.Trace("NextIsConfig = true");
                 NextIsConfig = true;
                 continue;
             }
             if (download_cmds.Contains(_arg))
             {
-                report.Log(LogFlag.DEBUG_SV, "DLPATH: NextIsPath");
+                report.Trace("NextIsDownloadDir = true");
                 NextIsDownloadDir = true;
                 continue;
             }
             if (log_cmds.Contains(_arg))
             {
-                report.Log(LogFlag.DEBUG_SV, "LOG LEVEL: NextIsLogLevel");
+                report.Trace("NextIsLogLevel = true");
                 NextIsLogLevel = true;
                 continue;
             }

@@ -21,29 +21,26 @@ namespace Murong_Xue
         }
         public async Task Process()
         {
-            report.Log(LogFlag.DEBUG_SPAM, "Requesting entry data");
             if (GetEntries() == false)
             {
-                report.Log(LogFlag.ERROR, "Failed to get entries");
+                report.Error("Failed to get entries");
                 return;
             }
             //
-            report.Log(LogFlag.DEBUG_SPAM, "Queueing Downloads");
+            report.Trace("Queueing Downloads");
             //Queueing feeds asynchronously saves 23ms (53ms sync, 32ms async)
             List<Task> taskList = [];
             foreach (FeedData feed in Feeds)
                 taskList.Add(Task.Run(() => feed.QueueDownload()));
             await Task.WhenAll(taskList);
             //
-            report.Log(LogFlag.DEBUG_SPAM, "Process Downloads");
             await downloadHandler.ProcessDownloads();
             //save changes
-            report.Log(LogFlag.DEBUG_SPAM, "Save Changes");
             await UpdateEntries();
         }
         public List<FeedData> GetFeeds()
         {
-            report.Log(LogFlag.DEBUG_SPAM, "Get Feeds");
+            report.Trace("GetFeeds()");
             if (Feeds.Count == 0)
                 GetEntries();
             return Feeds;
@@ -53,10 +50,10 @@ namespace Murong_Xue
         {
             /* NOTE! Running the XMLReader in Async on our config file takes 23-26ms
              * Running Synchronously it takes 13-14ms                               */
-            report.Log(LogFlag.DEBUG_SPAM, "Get Entries");
+            report.Trace("GetEntries()");
             if (File.Exists(path.LocalPath) == false)
             {
-                report.Log(LogFlag.ERROR, $"RSS Config File not found ({path})");
+                report.Error($"RSS Config File not found ({path})");
                 return false;
             }
             FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
@@ -148,7 +145,7 @@ namespace Murong_Xue
         }
         public async Task UpdateEntries()
         {
-            report.Log(LogFlag.DEBUG, "Update Entries");
+            report.Trace("UpdateEntries()");
             Uri newFilePath = new(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
             Console.WriteLine($"newPath {newFilePath.LocalPath}");
             File.Move(path.LocalPath, newFilePath.LocalPath, overwrite: true);

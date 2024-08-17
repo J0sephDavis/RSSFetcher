@@ -14,7 +14,7 @@ namespace Murong_Xue
         }
         public async Task Request(HttpClient client)
         {
-            report.Log(LogFlag.DEBUG_SPAM, "Requesting data");
+            report.Trace("Requesting data");
             Task<HttpResponseMessage> request = client.GetAsync(this.link);
             _ = request.ContinueWith(this.OnDownload);
             await request; //only return when the request has actually been completed
@@ -27,16 +27,15 @@ namespace Murong_Xue
         }
         private async Task OnDownload(Task<HttpResponseMessage> response)
         {
-            report.Log(LogFlag.DEBUG_SPAM, "On Download");
-
+            report.Trace("OnDownload");
             HttpResponseMessage msg = await response;
                 
             if (msg.IsSuccessStatusCode  == false)
             {
                 if (msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-                    report.Log(LogFlag.DEBUG_SPAM | LogFlag.WARN, $"Download failed, too many requests");
+                    report.WarnSpam("Download failed, too many requests");
                 else
-                    report.Log(LogFlag.ERROR, $"Download failed HTTP Status Code: {msg.StatusCode}");
+                    report.Warn($"Download failed HTTP Status Code: {msg.StatusCode}");
                 ReQueue();
                 return;
             }
@@ -47,12 +46,12 @@ namespace Murong_Xue
         }
         private void SetProcessing()
         {
-            report.Log(LogFlag.DEBUG_SPAM, "Remove Processing");
+            report.Trace("Remove Processing");
             downloadHandler.DownloadingToProcessing(this);
         }
         private void ReQueue()
         {
-            report.Log(LogFlag.DEBUG_SPAM, "ReQueue");
+            report.Trace("ReQueue");
             downloadHandler.ReQueue(this);
         }
     }
@@ -66,7 +65,7 @@ namespace Murong_Xue
         }
         override public async void HandleDownload(Stream content)
         {
-            report.Log(LogFlag.DEBUG_SPAM, "Handle Download");
+            report.Trace("HandleDownload");
             await Task.Run(() => Feed.OnFeedDownloaded(content));
             DoneProcessing();
         }
@@ -81,16 +80,16 @@ namespace Murong_Xue
         }
         override public void HandleDownload(Stream content)
         {
-            report.Log(LogFlag.DEBUG_SPAM, $"Handle Download {link}");
+            report.Trace($"Handle Download {link}");
             string fileName = Path.GetFileName(link.AbsolutePath);
             string destinationPath = this.DownloadPath.LocalPath + fileName;
             if (File.Exists(destinationPath))
-                report.Log(LogFlag.ERROR, $"File already exists {link} {destinationPath}");
+                report.Error($"File already exists\n\tLink:{link}\n\tPath:{destinationPath}");
             else using (FileStream fs = File.Create(destinationPath))
             {
                 content.Seek(0, SeekOrigin.Begin);
                 content.CopyTo(fs);
-                report.Log(LogFlag.NOTEWORTHY, $"FILE {link} WRITTEN TO {destinationPath}");
+                report.Out($"FILE {link} WRITTEN TO {destinationPath}");
             }
             DoneProcessing();
         }

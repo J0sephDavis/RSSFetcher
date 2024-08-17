@@ -26,14 +26,13 @@
         public static DownloadHandler GetInstance()
         {
             s_DownloadHandler ??= new DownloadHandler();
-            report.Log(LogFlag.DEBUG_SPAM, "GetInstance");
             return s_DownloadHandler;
         }
         public async Task ProcessDownloads()
         {
-            report.Log(LogFlag.DEBUG, "Processing Downloads");
+            report.Notice("Processing downloads");
             List<Task> CurrentBatch = [];
-            report.Log(LogFlag.DEBUG, $"Before processing, Queued[{Queued.Count}] Downloading[{Downloading.Count}]");
+            report.DebugVal($"Before processing, Queued[{Queued.Count}] Downloading[{Downloading.Count}]");
             
             int totalWaiting = Queued.Count + Downloading.Count + Processing.Count; // doesn't need a lock, no one is touching these arrays rn
             while (totalWaiting != 0) //these are volatile, might consider some type of sentinel/semaphore to handle this behavior
@@ -47,7 +46,7 @@
                     if (CurrentBatch.Count >= BATCH_SIZE || Queued.Count == 0)
                     {
                         CurrentBatch.Add(Task.Delay(BATCH_MIN_TIME));
-                        report.Log(LogFlag.DEBUG_SPAM, $"\t\tQ[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]\tMIN TIME{BATCH_MIN_TIME}ms");
+                        report.TraceVal($"\t\tQ[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]\tMIN TIME{BATCH_MIN_TIME}ms");
                         await Task.WhenAll(CurrentBatch);
                         CurrentBatch.Clear();
                     }
@@ -55,33 +54,26 @@
                 lock(DPLock)
                 {
                     totalWaiting = Queued.Count + Downloading.Count + Processing.Count;
-                    report.Log(LogFlag.DEBUG, $"Total waiting updated {totalWaiting} | Q[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]");
+                    report.DebugVal($"Total waiting updated {totalWaiting} | Q[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]");
                 }
+                report.Trace("Delay 500ms");
                 await Task.Delay(500); //nothing queued, may be wise to pass an autoresetevent to each of the download entries? or have some function that triggers it for them
             }
-            lock (DPLock)
-            {
-                if (Queued.Count != 0 || Downloading.Count != 0 || Processing.Count != 0)
-                {
-                    report.Log(LogFlag.ERROR, "Time to use a better method for handling this loop. " +
-                        "Either Queued/Downloading/Processing had a value after the while loop ended");
-                }
-            }
-            report.Log(LogFlag.NOTEWORTHY, "Queue Complete!");
-            report.Log(LogFlag.DEBUG, $"\t\tQ[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]");
+            report.DebugVal($"\t\tQ[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]");
+            report.Notice("Download queue exhausted");
         }
         public void QueueDownload(DownloadEntryBase entry)
         {
-            report.Log(LogFlag.DEBUG_SPAM, "Add to Queue (waiting on lock)");
+            report.Trace("Add to Queue (waiting on lock)");
             lock (DPLock)
             {
                 Queued.Add(entry);
             }
-            report.Log(LogFlag.DEBUG_SPAM, "Queued (releasing lock)");
+            report.Trace("Queued (releasing lock)");
         }
         private DownloadEntryBase PopSwapDownload()
         {
-            report.Log(LogFlag.DEBUG_SPAM, "PopSwap Q->D (waiting on lock)");
+            report.Trace("PopSwap Q->D (waiting on lock)");
             DownloadEntryBase? entry = null;
             lock (DPLock)
             {
@@ -89,27 +81,27 @@
                 Queued.Remove(entry);
                 Downloading.Add(entry);
             }
-            report.Log(LogFlag.DEBUG_SPAM, "PopSwapped (released lock)");
+            report.Trace("PopSwapped (released lock)");
             return entry;
         }
         public void DownloadingToProcessing(DownloadEntryBase entry)
         {
-            report.Log(LogFlag.DEBUG_SPAM, "DownloadingToProcessing (Waiting on lock)");
+            report.Trace("DownloadingToProcessing (Waiting on lock)");
             lock (DPLock)
             {
                 Downloading.Remove(entry);
                 Processing.Add(entry);
             }
-            report.Log(LogFlag.DEBUG_SPAM, "DownloadingToProcessing (released lock)");
+            report.Trace("DownloadingToProcessing (released lock)");
         }
         public void RemoveProcessing(DownloadEntryBase entry)
         {
-            report.Log(LogFlag.DEBUG_SPAM, "RemoveProcessing (waiting on lock)");
+            report.Trace("RemoveProcessing (waiting on lock)");
             lock (DPLock)
             {
                 Processing.Remove(entry);
             }
-            report.Log(LogFlag.DEBUG_SPAM, "RemoveProcessing (released lock)");
+            report.Trace("RemoveProcessing (released lock)");
         }
         public void ReQueue(DownloadEntryBase entry)
         {
@@ -131,12 +123,12 @@
                     fails = 0;
                 }
 
-                report.Log(LogFlag.WARN,
-                $"({fails}) Batch " +
-                $"Size {BATCH_SIZE}\t" +
-                $"Min {BATCH_MIN_TIME}");
+                report.WarnSpam(
+                    $"({fails}) Batch " +
+                    $"Size {BATCH_SIZE}\t" +
+                    $"Min {BATCH_MIN_TIME}"
+                );
             }
-            //---
         }
     }
 }

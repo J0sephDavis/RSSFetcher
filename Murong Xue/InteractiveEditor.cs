@@ -52,15 +52,16 @@
 
         protected void PromptForInput(string prompt, out string? input, uint minLen = 3)
         {
-            report.Log(LogFlag.DEBUG_SPAM, "Prompting for input");
+            report.Trace("Prompting for input");
             Console.Write(prompt);
             input = Console.ReadLine();
             if (input != null && input.Length < minLen)
             {
-                report.Log(LogFlag.FEEDBACK | LogFlag.WARN, $"input.len < {minLen} or NULL. DISCARDING");
+                report.Warn("input len < minimum or NULL.");
+                report.Out("Input discarded");
                 input = null;
             }
-            report.Log(LogFlag.DEBUG_SPAM, $"[Input:{input}]");
+            report.TraceVal($"[Input:{input}]");
         }
 
         static readonly string[] edit_cmds_title = ["title", "t"];
@@ -86,7 +87,7 @@
 
             if (index == null || index < 0 || index >= Feeds.Count)
             {
-                report.Log(LogFlag.FEEDBACK, edit_prefix + $"Invalid index {index}");
+                report.Log(LogType.OUTPUT | LogType.ERROR, LogMod.NORMAL, "Index out of bounds"); //output + warn
                 return;
             }
             FeedData entry = Feeds[(int)index];
@@ -106,7 +107,7 @@
                 if (input == null || input == string.Empty)
                 {
                     //help cmd
-                    report.Log(LogFlag.FEEDBACK, edit_help);
+                    report.Out(edit_help);
                     continue;
                 }
                 else
@@ -121,17 +122,17 @@
                     PromptForInput(title_prompt, out input);
                     if (input == null)
                     {
-                        report.Log(LogFlag.FEEDBACK, "Set title back to original");
+                        report.Out("Reset title back to original");
                         _title = entry.GetTitle();
                         if ((edits & EditFlag.TITLE) != EditFlag.NONE)
                             edits -= EditFlag.TITLE;
-                        report.Log(LogFlag.DEBUG, $"Post-EditFlag: {edits}");
+                        report.TraceVal($"Post-EditFlag: {edits}");
                         continue;
                     }
                     edits |= EditFlag.TITLE;
                     _title = input;
 
-                    report.Log(LogFlag.NOTEWORTHY, $"New Title: {_title}");
+                    report.Out($"New Title: {_title}");
                     continue;
                 }
                 if (edit_cmds_history.Contains(input))
@@ -143,17 +144,17 @@
                     PromptForInput(history_prompt, out input, 0);
                     if (input == null)
                     {
-                        report.Log(LogFlag.FEEDBACK, "Set history to original");
+                        report.Out("Set history to original");
                         _title = entry.GetTitle();
                         if ((edits & EditFlag.HISTORY) != EditFlag.NONE)
                             edits -= EditFlag.HISTORY;
-                        report.Log(LogFlag.DEBUG, $"Post-EditFlag: {edits}");
+                        report.TraceVal($"Post-EditFlag: {edits}");
                         continue;
                     }
                     edits |= EditFlag.HISTORY;
                     _history = input;
 
-                    report.Log(LogFlag.NOTEWORTHY, $"New History: {_history}");
+                    report.Out($"New History: {_history}");
                     continue;
                 }
                 if (edit_cmds_expr.Contains(input))
@@ -165,17 +166,17 @@
                     PromptForInput(expression_prompt, out input, 0);
                     if (input == null)
                     {
-                        report.Log(LogFlag.FEEDBACK, "Set expression to original");
+                        report.Out("Set expression to original");
                         _title = entry.GetTitle();
                         if ((edits & EditFlag.EXPR) != EditFlag.NONE)
                             edits -= EditFlag.EXPR;
-                        report.Log(LogFlag.DEBUG, $"Post-EditFlag: {edits}");
+                        report.TraceVal($"Post-EditFlag: {edits}");
                         continue;
                     }
                     edits |= EditFlag.EXPR;
                     _expr = input;
 
-                    report.Log(LogFlag.NOTEWORTHY, $"New Regex: {_expr}");
+                    report.Out($"New Regex: {_expr}");
                     continue;
                 }
                 if (edit_cmds_url.Contains(input))
@@ -187,22 +188,22 @@
                     PromptForInput(url_prompt, out input);
                     if (input == null)
                     {
-                        report.Log(LogFlag.FEEDBACK, "Set URL to original");
+                        report.Out("Set URL to original");
                         _title = entry.GetTitle();
                         if ((edits & EditFlag.URL) != EditFlag.NONE)
                             edits -= EditFlag.URL;
-                        report.Log(LogFlag.DEBUG, $"Post-EditFlag: {edits}");
+                        report.TraceVal($"Post-EditFlag: {edits}");
                         continue;
                     }
                     edits |= EditFlag.URL;
                     _url = input;
 
-                    report.Log(LogFlag.NOTEWORTHY, $"New URL: {_url}");
+                    report.Out($"New URL: {_url}");
                     continue;
                 }
                 if (edit_cmds_conf.Contains(input))
                 {
-                    report.Log(LogFlag.FEEDBACK, "Save Changes? y/n/back(any other input)" + $"\tChanges:{edits}");
+                    report.Out("Save Changes? y/n/back(any other input)" + $"\tChanges:{edits}");
                     Console.Write(edit_prefix + "?:");
                     //---
                     input = Console.ReadLine();
@@ -214,7 +215,7 @@
                     switch (input[0])
                     {
                         case 'y':
-                            report.Log(LogFlag.FEEDBACK, "Entry saved");
+                            report.Out("Entry saved");
 
                             if ((edits & EditFlag.TITLE) > 0)
                                 entry.SetTitle(_title);
@@ -229,10 +230,10 @@
                             }
                             catch (System.UriFormatException e)
                             {
-                                report.Log(LogFlag.ERROR, $"{e.Message}");
-                                report.Log(LogFlag.WARN, "Change to URL DISCARDED");
+                                report.Error($"{e.Message}");
+                                report.Warn("Change to URL DISCARDED");
                             }
-                            report.Log(LogFlag.FEEDBACK, "SAVED");
+                            report.Out("SAVED");
                             return;
                         case 'n':
                             Console.WriteLine("DISCARDED");
@@ -259,12 +260,12 @@
                         if ((edits & EditFlag.URL) > 0)
                             response += $"\n_URL:{_url}";
                         //----
-                        report.Log(LogFlag.FEEDBACK, response);
+                        report.Out(response);
                     }
                     continue;
                 }
                 //help cmd
-                report.Log(LogFlag.FEEDBACK, edit_help);
+                report.Out(edit_help);
             }
         }
         protected void DeleteHandler(int? index)
