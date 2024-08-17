@@ -2,16 +2,15 @@
 {
     internal class Config : IDisposable
     {
-        private readonly static LogFlag ConfigDefaultLogLevel = LogFlag.DEFAULT; //So that we can set default in LogLevel & static Reporter
-        //---
         private string DownloadDirectory;
         private Uri RSSConfigPath;
-        private static LogFlag LogLevel = ConfigDefaultLogLevel;
-        private static readonly List<Reporter> Reporters = [];
+        private static LogType logType  = LogType.DEFAULT;
+        private static LogMod logMod    = LogMod.DEFAULT;
         //---
         private static Config? s_Config = null;
-        private static readonly Reporter report = new(ConfigDefaultLogLevel, "CONFIG");
+        private static readonly Reporter report = new(logType,logMod, "CONFIG");
         private readonly Logger _Logger;
+        private static readonly List<Reporter> Reporters = [ report ];
 
         private Config()
         {
@@ -19,21 +18,24 @@
             DownloadDirectory = rootDir + @"Downloads" + Path.DirectorySeparatorChar;
             RSSConfigPath = new Uri(rootDir + "rss-config.xml");
             _Logger = Logger.GetInstance(rootDir + @"MurongLie.log");
-            report.Log(LogFlag.DEBUG, $"Config(), rootDir: {rootDir}, cfgPath:{RSSConfigPath}, downloadDir:{DownloadDirectory}");
+            report.Trace($"Config(), rootDir: {rootDir}, cfgPath:{RSSConfigPath}, downloadDir:{DownloadDirectory}");
             Subscribe(report);
         }
         public static Config GetInstance()
         {
             s_Config ??= new Config();
-            report.Log(LogFlag.DEBUG, "GetInstance");
             return s_Config;
         }
         //--------
-        public static Reporter OneReporterPlease(string ModuleName, LogFlag flag = LogFlag.NONE)
+        public static Reporter OneReporterPlease(string ModuleName, LogType type = LogType.NONE, LogMod mod = LogMod.NONE)
         {
-            if (flag == LogFlag.NONE)
-                flag = LogLevel;
-            Reporter _r = new(flag, ModuleName);
+            if (type == LogType.NONE)
+                type = logType;
+            if (mod == LogMod.NONE)
+                mod = logMod;
+
+            Reporter _r = new(type, mod, ModuleName);
+            report.Trace($"Reporter {report.ReportIdentifier} created");
             Subscribe(_r);
             return _r;
         }
@@ -41,51 +43,45 @@
         {
             lock (Reporters)
             {
-                report.Log(LogFlag.DEBUG, $"SUBSCRIBER! {report.ReportIdentifier}");
+                report.Trace($"Reporter {report.ReportIdentifier} subscribed");
                 Reporters.Add(reporter);
             }
         }
         protected static void NotifySubscribers()
         {
-            //update loglevels
+            report.Trace("Propagate loglevel to subscribers");
             lock (Reporters)
             {
                 foreach (Reporter r in Reporters)
                 {
-                    r.SetLogLevel(LogLevel);
+                    r.SetLogLevel(logType, logMod);
                 }
             }
         }
         //----------
-        public static void SetLogLevel(LogFlag level)
+        public static void SetLogLevel(LogType type, LogMod mod)
         {
-            LogLevel = level;
-            report.Log(LogFlag.DEBUG_SPAM, $"New LogLevel {LogLevel}");
+            logType = type;
+            logMod = mod;
+            report.DebugVal($"New LogLevel: {type} | {mod}");
             NotifySubscribers();
-        }
-        public static LogFlag GetLogLevel()
-        {
-            report.Log(LogFlag.DEBUG_SPAM, $"Get LogLevel {LogLevel}");
-            return LogLevel;
         }
         public void SetRSSPath(string path)
         {
             RSSConfigPath = new Uri(path);
-            report.Log(LogFlag.SPAM, $"RSS Path changed: {RSSConfigPath}");
+            report.DebugVal($"RSS Path changed: {RSSConfigPath}");
         }
         public Uri GetRSSPath()
         {
-            report.Log(LogFlag.SPAM, $"Get RSSPath: {RSSConfigPath}");
             return RSSConfigPath;
         }
         public void SetDownloadPath(string path)
         {
             DownloadDirectory = path;
-            report.Log(LogFlag.SPAM, $"Download Path changed: {DownloadDirectory}");
+            report.DebugVal($"Download Path changed: {DownloadDirectory}");
         }
         public string GetDownloadPath()
         {
-            report.Log(LogFlag.SPAM, $"Get DownloadPath: {DownloadDirectory}");
             return DownloadDirectory;
         }
         //----------
