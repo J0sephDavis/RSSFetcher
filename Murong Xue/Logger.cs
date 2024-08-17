@@ -1,45 +1,46 @@
+using System.Reflection.Emit;
+
 namespace Murong_Xue
 {
     [Flags]
+    enum LogMod
+    {
+        NONE = 0,
+        NORMAL = 1 << 0,
+        SPAM = 1 << 1,
+        VERBOSE = 1 << 2,
+        UNIMPORTANT = 1 << 3,
+        INTERACTIVE = 1 << 4,
+
+        ALL = SPAM | VERBOSE | UNIMPORTANT | NORMAL,
+        _VS = VERBOSE | SPAM,
+    }
+    [Flags]
+    enum LogType
+    {
+        NONE = 0,
+        NORMAL = 1 << 0,
+        DEBUG = 1 << 1,
+        ERROR = 1 << 2,
+        OUTPUT = 1 << 3,
+
+        ALL = DEBUG | ERROR | OUTPUT,
+    }
+    [Flags]
     enum LogFlag
     {
-        //---
-        NONE = 0,
-        NORMAL = 0,
-        //--- Modifiers
-        SPAM            = 1 << 0,
-        VERBOSE         = 1 << 1,
-        UNIMPORTANT     = 1 << 2,
-        INTERACTIVE     = 1 << 3,
-        
-        _ALL_MODS = SPAM | VERBOSE | UNIMPORTANT | NORMAL,
-        //--- Types
-        DEBUG           = 1 << 4,
-        ERROR           = 1 << 5,
-        OUTPUT          = 1 << 6,
-
-        _ALL_TYPES = DEBUG | ERROR | OUTPUT,
-        //derived base
-        _SETVAL = VERBOSE | SPAM,
-        //Derived debug
-        DEBUG_SPAM      = DEBUG | SPAM,
-        DEBUG_WARN      = DEBUG | WARN,
-        DEBUG_OBLIG     = DEBUG | UNIMPORTANT,
-        DEBUG_SETVAL    = DEBUG | _SETVAL,
-        //Derived error
-        WARN            = ERROR | UNIMPORTANT,
-        //Derived output
-        CHATTER         = OUTPUT | UNIMPORTANT,
-
-        //---
-        _DEFAULT_MODS   = NORMAL,
+        WARN            = LogType.ERROR | LogMod.UNIMPORTANT,
+        CHATTER         = LogType.OUTPUT | LogMod.UNIMPORTANT,
+        DEBUG_S         = LogType.DEBUG | LogMod.SPAM,
+        DEBUG_SV        = LogType.DEBUG | LogMod._VS,
+        DEBUG_V         = LogType.DEBUG | LogMod.VERBOSE,
 #if DEBUG
-        _DEFAULT = OUTPUT | ERROR | _DEFAULT_MODS,
-        DEFAULT = _DEFAULT | DEBUG,
+        _DEFAULT = LogType.OUTPUT | LogType.ERROR | LogMod.NORMAL,
+        DEFAULT = _DEFAULT | LogType.DEBUG,
 #else
-        DEFAULT = OUTPUT | ERROR | _DEFAULT_MODS,
+        DEFAULT = LogType.OUTPUT | LogType.ERROR | LogMod.NORMAL,
 #endif
-        ALL = _ALL_MODS | _ALL_TYPES,
+        ALL = LogMod.ALL | LogType.ALL,
     };
     //REPORTS to the logger when anything happens
     /// <summary>
@@ -50,8 +51,8 @@ namespace Murong_Xue
     /// <param name="identifier">This reporters identity, e.g.,"Program" & "DownloadHandler"</param>
     internal class Reporter(LogFlag logFlags, string identifier)
     {
-        private LogFlag LogModifiers = logFlags & LogFlag._ALL_MODS;
-        private LogFlag LogTypes = logFlags & LogFlag._ALL_TYPES; 
+        private LogMod LogModifiers = (LogMod)logFlags & LogMod.ALL;
+        private LogType LogTypes = (LogType)logFlags & LogType.ALL; 
         public readonly string ReportIdentifier = "[" + identifier + "]"; // e.g. Program, FeedData, Config, &c
 
         /// <summary>
@@ -61,12 +62,15 @@ namespace Murong_Xue
         /// <param name="msg">The contents of the message</param>
         public void Log(LogFlag level, string msg)
         {
-            var modifier = level & LogModifiers;
-            var type = level & LogTypes;
+        }
+        public void Log(LogType type, LogMod mod, string msg)
+        {
+            var _modifier = mod & LogModifiers;
+            var _type = type & LogTypes;
             //= logModifier when
-            if ((modifier > 0 || modifier == LogModifiers) && type > 0)
+            if ((_modifier > 0 || _modifier == LogModifiers) && _type > 0)
             {
-                LogMsg _msg = new(level, ReportIdentifier, msg);
+                LogMsg _msg = new((LogFlag)type | (LogFlag)mod, ReportIdentifier, msg);
                 Task.Run(() => Logger.Log(_msg));
             }
         }
@@ -77,9 +81,9 @@ namespace Murong_Xue
         /// <param name="flag">the new report filter</param>
         public void SetLogLevel(LogFlag flag)
         {
-            Log(LogFlag.DEBUG, $"Loglevel Set {flag}");
-            this.LogModifiers = flag & LogFlag._ALL_MODS;
-            this.LogTypes = flag & LogFlag._ALL_TYPES;
+            Log(LogFlag.DEBUG_SV, $"Loglevel Set {flag}");
+            this.LogModifiers = (LogMod)flag & LogMod.ALL;
+            this.LogTypes = (LogType)flag & LogType.ALL;
         }
     }
     /// <summary>
@@ -88,16 +92,35 @@ namespace Murong_Xue
     /// <param name="severity">The flags that define this msg</param>
     /// <param name="identifier">The reporter who is sending this msg</param>
     /// <param name="content">The content of the msg</param>
-    internal sealed class LogMsg(LogFlag severity, string identifier, string content)
+    internal class LogMsg
     {
-        public LogFlag SEVERITY => severity;
-        public string IDENTIFIER => identifier;
-        public string CONTENT => content;
+        public LogFlag SEVERITY;
+        public string IDENTIFIER;
+        public string CONTENT;
         public string TIMESTAMP = DateTime.Now.ToLongTimeString();
+        public LogMsg(LogFlag severity, string identifier, string content)
+        {
+            SEVERITY = severity;
+            IDENTIFIER = identifier;
+            CONTENT = content;
+        }
+        public LogMsg(LogType type, LogMod mod, string identifier, string content)
+        {
+            SEVERITY = (LogFlag)type | (LogFlag)mod;//for now.. make dedicated vars for em;
+            IDENTIFIER = identifier;
+            CONTENT = content;
+        }
+        public LogMsg(LogType type, string identifier, string content)
+        {
+            LogFlag mod = (LogFlag)LogMod.NORMAL;
+            SEVERITY = (LogFlag)type | mod;
+            IDENTIFIER = identifier;
+            CONTENT = content;
+        }
         //TODO Prettify output here, someway 
         public override string ToString()
         {
-            return $"[{TIMESTAMP}]{identifier}\t({severity})\t{content}";
+            return $"[{TIMESTAMP}]{IDENTIFIER}\t({SEVERITY})\t{CONTENT}";
         }
     }
     internal class Logger
@@ -130,17 +153,18 @@ namespace Murong_Xue
             filePath = path;
             if (path?.IsFile == true)
             {
-                Log(new LogMsg(LogFlag.OUTPUT | LogFlag._SETVAL, "Logger", $"Log file: [{filePath}]"));
+                LogFlag flag = (LogFlag)LogType.OUTPUT | (LogFlag)LogMod._VS;
+                Log(new LogMsg(flag, "Logger", $"Log file: [{filePath}]"));
                 if (File.Exists(path.LocalPath))
                 {
-                    Log(new LogMsg(LogFlag.OUTPUT | LogFlag.UNIMPORTANT, "Logger", $"Deleting previous {Path.GetFileName(path.LocalPath)}"));
+                    Log(new LogMsg(((LogFlag)LogType.OUTPUT | (LogFlag)LogMod.UNIMPORTANT), "Logger", $"Deleting previous {Path.GetFileName(path.LocalPath)}"));
                     File.Delete(path.LocalPath);
                 }
                 batchThread = new(BatchLoopFile);
             }
             else
             {
-                Log(new LogMsg(LogFlag.ERROR, "Logger", $"Path does not lead to a file:\n\t[{(path == null ? "null" : path.LocalPath)}]"));
+                Log(new LogMsg(LogType.ERROR, "Logger", $"Path does not lead to a file:\n\t[{(path == null ? "null" : path.LocalPath)}]"));
                 batchThread = new(BatchLoop);
             }
             batchThread.Start();
