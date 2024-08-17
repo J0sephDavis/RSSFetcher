@@ -19,11 +19,13 @@ namespace Murong_Xue
         OUTPUT          = 1 << 6,
 
         _ALL_TYPES = DEBUG | ERROR | OUTPUT,
+        //derived base
+        _SETVAL = VERBOSE | SPAM,
         //Derived debug
         DEBUG_SPAM      = DEBUG | SPAM,
         DEBUG_WARN      = DEBUG | WARN,
         DEBUG_OBLIG     = DEBUG | UNIMPORTANT,
-        DEBUG_SETVAL    = DEBUG | VERBOSE | SPAM,
+        DEBUG_SETVAL    = DEBUG | _SETVAL,
         //Derived error
         WARN            = ERROR | UNIMPORTANT,
         //Derived output
@@ -48,7 +50,8 @@ namespace Murong_Xue
     /// <param name="identifier">This reporters identity, e.g.,"Program" & "DownloadHandler"</param>
     internal class Reporter(LogFlag logFlags, string identifier)
     {
-        private LogFlag ReportFilter = logFlags;
+        private LogFlag LogModifiers = logFlags & LogFlag._ALL_MODS;
+        private LogFlag LogTypes = logFlags & LogFlag._ALL_TYPES; 
         public readonly string ReportIdentifier = "[" + identifier + "]"; // e.g. Program, FeedData, Config, &c
 
         /// <summary>
@@ -58,11 +61,13 @@ namespace Murong_Xue
         /// <param name="msg">The contents of the message</param>
         public void Log(LogFlag level, string msg)
         {
-            // TODO: Whats the perf impact of having a check here, constructing the msg, &c. 
-            if ((level & ReportFilter) != LogFlag.NONE)
+            var modifier = level & LogModifiers;
+            var type = level & LogTypes;
+            //= logModifier when
+            if ((modifier > 0 || modifier == LogModifiers) && type > 0)
             {
                 LogMsg _msg = new(level, ReportIdentifier, msg);
-                Task.Run(() => Logger.Log(_msg)); 
+                Task.Run(() => Logger.Log(_msg));
             }
         }
         //----
@@ -72,8 +77,9 @@ namespace Murong_Xue
         /// <param name="flag">the new report filter</param>
         public void SetLogLevel(LogFlag flag)
         {
-            Log(LogFlag.DEBUG, "Loglevel Set");
-            this.ReportFilter = flag;
+            Log(LogFlag.DEBUG, $"Loglevel Set {flag}");
+            this.LogModifiers = flag & LogFlag._ALL_MODS;
+            this.LogTypes = flag & LogFlag._ALL_TYPES;
         }
     }
     /// <summary>
@@ -124,17 +130,17 @@ namespace Murong_Xue
             filePath = path;
             if (path?.IsFile == true)
             {
-                Log(new LogMsg(LogFlag.NOTEWORTHY, "Logger", $"Path to logfile: [{filePath}]"));
+                Log(new LogMsg(LogFlag.OUTPUT | LogFlag._SETVAL, "Logger", $"Log file: [{filePath}]"));
                 if (File.Exists(path.LocalPath))
                 {
-                    Log(new LogMsg(LogFlag.WARN, "Logger", $"!!! File already exists, deleting: [{path}]"));
+                    Log(new LogMsg(LogFlag.OUTPUT | LogFlag.UNIMPORTANT, "Logger", $"Deleting previous {Path.GetFileName(path.LocalPath)}"));
                     File.Delete(path.LocalPath);
                 }
                 batchThread = new(BatchLoopFile);
             }
             else
             {
-                Log(new LogMsg(LogFlag.ERROR, "Logger", $"!!! Path is null / not a file: [{path}]"));
+                Log(new LogMsg(LogFlag.ERROR, "Logger", $"Path does not lead to a file:\n\t[{(path == null ? "null" : path.LocalPath)}]"));
                 batchThread = new(BatchLoop);
             }
             batchThread.Start();
