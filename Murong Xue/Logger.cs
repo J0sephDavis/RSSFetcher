@@ -60,8 +60,13 @@ namespace Murong_Xue
         /// </summary>
         /// <param name="level">The level/flags applied to the message</param>
         /// <param name="msg">The contents of the message</param>
+        public void Log(LogType type, string msg)
+        {
+            Log(type, LogMod.NORMAL, msg);
+        }
         public void Log(LogFlag level, string msg)
         {
+            Log((LogType)level & LogType.ALL, (LogMod)level & LogMod.ALL, msg);
         }
         public void Log(LogType type, LogMod mod, string msg)
         {
