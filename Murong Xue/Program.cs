@@ -102,9 +102,10 @@ public class Program
             }
             if (NextIsLogLevel)
             {
-                LogFlag value = (LogFlag)int.Parse(arg); //TODO exception handling // TryParse
-                report.Log(LogFlag.DEBUG_SV, $"LOGLEVEL: Set to {value}");
-                Config.SetLogLevel(value);
+                /*LogFlag value = (LogFlag)int.Parse(arg); //TODO exception handling // TryParse
+                report.Trace("Setting log level");
+                Config.SetLogLevel(value);*/
+                report.Error("LOG LEVEL HANDLING WIP");
                 NextIsLogLevel = false;
                 continue;
             }
