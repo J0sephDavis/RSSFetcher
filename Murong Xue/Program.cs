@@ -172,25 +172,36 @@ public class Program
 
     protected static readonly string[] log_cmds = ["--loglevel", "-loglevel", "-log", "--log", "--level", "-level"];
     protected static readonly string log_cmd_desc = "(int) Set the log level:\n" + //regex for converting the enum into this FIND:\s+(\w+).* REPLACE:\$\"$1\({LogFlag.$1}\)\\t\" +\n
-        $"\tNONE({(int)LogFlag.NONE})\t\t" +
-            $"DEBUG_SPAM({(int)LogFlag.DEBUG_SPAM})\n" +
-        $"\tDEBUG({(int)LogFlag.DEBUG})\t" +
-            $"SPAM({(int)LogFlag.SPAM})\n" +
-        $"\tWARN({(int)LogFlag.WARN})\t\t" +
-            $"NOTEWORTHY({(int)LogFlag.NOTEWORTHY})\n" +
-        $"\tFEEDBACK({(int)LogFlag.FEEDBACK})\t" +
-            $"ERROR({(int)LogFlag.ERROR})\n" +
-        "\t------- Derived Flags -------\n" +
-        $"\t_EXCEPTION({(int)LogFlag._EXCEPTION})\t" +
-            $"_DEBUG({(int)LogFlag._DEBUG})\n" +
-        $"\t_INFO({(int)LogFlag._INFO})\t" +
-            $"DEFAULT({(int)LogFlag.DEFAULT})\n" +
-        $"\tHEADLESS({(int)LogFlag.HEADLESS})\t" +
-            $"ALL({(int)LogFlag.ALL})" //->;
-#if DEBUG
-        + $"\n\t_DEFAULT({(int)LogFlag._DEFAULT})"
-#endif
-    ;//<-
+        @"//---
+        NONE = 0,
+        NORMAL = 0,
+        //--- Modifiers
+        SPAM            = 1 << 0,
+        VERBOSE         = 1 << 1,
+        UNIMPORTANT     = 1 << 2,
+        INTERACTIVE     = 1 << 3,
+        
+        _ALL_MODS = SPAM | VERBOSE | UNIMPORTANT | NORMAL,
+        //--- Types
+        DEBUG           = 1 << 4,
+        ERROR           = 1 << 5,
+        OUTPUT          = 1 << 6,
+
+        _ALL_TYPES = DEBUG | ERROR | OUTPUT,
+        //Derived debug
+        DEBUG_SPAM      = DEBUG | SPAM,
+        DEBUG_WARN      = DEBUG | WARN,
+        DEBUG_OBLIG     = DEBUG | UNIMPORTANT,
+        DEBUG_SETVAL    = DEBUG | VERBOSE | SPAM,
+        //Derived error
+        WARN            = ERROR | UNIMPORTANT,
+        //Derived output
+        CHATTER         = OUTPUT | UNIMPORTANT,
+
+        //---
+        _DEFAULT_MODS   = NORMAL,
+        DEFAULT = OUTPUT | ERROR | _DEFAULT_MODS,
+        ALL = _ALL_MODS | _ALL_TYPES,";// ....
 
     protected static readonly string[] help_cmds = ["-help", "--help", "-h", "--h"];
     protected static readonly string help_cmd_desc = "(void) Get a brief description for each command";

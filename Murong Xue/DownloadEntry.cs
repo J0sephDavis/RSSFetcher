@@ -44,8 +44,6 @@ namespace Murong_Xue
             Stream content = await msg.Content.ReadAsStreamAsync();
             SetProcessing();
             _ = Task.Run(() => HandleDownload(content));
-
-            report.Log(LogFlag.ERROR, $"HTTP Request Exception: {link} {e.Message}");
         }
         private void SetProcessing()
         {
