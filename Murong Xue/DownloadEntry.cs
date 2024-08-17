@@ -1,4 +1,6 @@
-﻿namespace Murong_Xue
+﻿using System.Net;
+
+namespace Murong_Xue
 {
     internal abstract class DownloadEntryBase
     {
@@ -26,20 +28,24 @@
         private async Task OnDownload(Task<HttpResponseMessage> response)
         {
             report.Log(LogFlag.DEBUG_SPAM, "On Download");
-            try
-            {
-                HttpResponseMessage msg = await response;
-                msg.EnsureSuccessStatusCode();
 
-                Stream content = await msg.Content.ReadAsStreamAsync();
-                SetProcessing();
-                _ = Task.Run(() => HandleDownload(content));
-            }
-            catch (HttpRequestException e)
+            HttpResponseMessage msg = await response;
+                
+            if (msg.IsSuccessStatusCode  == false)
             {
-                report.Log(LogFlag.ERROR, $"HTTP Request Exception: {link} {e.Message}");
+                if (msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                    report.Log(LogFlag.DEBUG_SPAM | LogFlag.WARN, $"Download failed, too many requests");
+                else
+                    report.Log(LogFlag.ERROR, $"Download failed HTTP Status Code: {msg.StatusCode}");
                 ReQueue();
+                return;
             }
+
+            Stream content = await msg.Content.ReadAsStreamAsync();
+            SetProcessing();
+            _ = Task.Run(() => HandleDownload(content));
+
+            report.Log(LogFlag.ERROR, $"HTTP Request Exception: {link} {e.Message}");
         }
         private void SetProcessing()
         {

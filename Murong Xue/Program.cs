@@ -9,7 +9,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 3; //commit 111
-    static readonly int PATCH = 7;
+    static readonly int PATCH = 8;
     //---
     static Reporter report;
     static EntryData? RSSEntries = null;
