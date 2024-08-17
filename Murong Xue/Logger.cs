@@ -174,18 +174,17 @@ namespace Murong_Xue
             filePath = path;
             if (path?.IsFile == true)
             {
-                LogFlag flag = (LogFlag)LogType.OUTPUT | (LogFlag)LogMod._VS;
-                Log(new LogMsg(flag, "Logger", $"Log file: [{filePath}]"));
+                report.TraceVal($"Log file: [{filePath}]");
                 if (File.Exists(path.LocalPath))
                 {
-                    Log(new LogMsg(((LogFlag)LogType.OUTPUT | (LogFlag)LogMod.UNIMPORTANT), "Logger", $"Deleting previous {Path.GetFileName(path.LocalPath)}"));
+                    report.WarnSpam($"Deleting previous {Path.GetFileName(path.LocalPath)}");
                     File.Delete(path.LocalPath);
                 }
                 batchThread = new(BatchLoopFile);
             }
             else
             {
-                Log(new LogMsg(LogType.ERROR, "Logger", $"Path does not lead to a file:\n\t[{(path == null ? "null" : path.LocalPath)}]"));
+                Log(new LogMsg(LogType.ERROR, LogMod.NORMAL, "Logger", $"Path does not lead to a file:\n\t[{(path == null ? "null" : path.LocalPath)}]"));
                 batchThread = new(BatchLoop);
             }
             batchThread.Start();
@@ -235,7 +234,6 @@ namespace Murong_Xue
                     foreach (LogMsg msg in copiedBuff)
                         Console.WriteLine(msg);
                     copiedBuff.Clear();
-                    //TODO: write to file
                 }
             }
             //--- making sure the buffer is clear on exit
