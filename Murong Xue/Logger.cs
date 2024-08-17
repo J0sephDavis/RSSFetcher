@@ -3,31 +3,41 @@ namespace Murong_Xue
     [Flags]
     enum LogFlag
     {
-        //--- TRUE
-        NONE        = 0,
-        DEBUG_SPAM  = 1 << 0,
-        DEBUG       = 1 << 1,
-        SPAM        = 1 << 2,
-        WARN        = 1 << 3,
-        NOTEWORTHY  = 1 << 4,
-        FEEDBACK    = 1 << 5,
-        ERROR       = 1 << 6,
         //---
-        _EXCEPTION = ERROR | WARN,
-        _DEBUG = DEBUG | DEBUG_SPAM,
-        _INFO = FEEDBACK | NOTEWORTHY,
+        NONE = 0,
+        NORMAL = 0,
+        //--- Modifiers
+        SPAM            = 1 << 0,
+        VERBOSE         = 1 << 1,
+        UNIMPORTANT     = 1 << 2,
+        INTERACTIVE     = 1 << 3,
+        
+        _ALL_MODS = SPAM | VERBOSE | UNIMPORTANT | NORMAL,
+        //--- Types
+        DEBUG           = 1 << 4,
+        ERROR           = 1 << 5,
+        OUTPUT          = 1 << 6,
+
+        _ALL_TYPES = DEBUG | ERROR | OUTPUT,
+        //Derived debug
+        DEBUG_SPAM      = DEBUG | SPAM,
+        DEBUG_WARN      = DEBUG | WARN,
+        DEBUG_OBLIG     = DEBUG | UNIMPORTANT,
+        DEBUG_SETVAL    = DEBUG | VERBOSE | SPAM,
+        //Derived error
+        WARN            = ERROR | UNIMPORTANT,
+        //Derived output
+        CHATTER         = OUTPUT | UNIMPORTANT,
+
         //---
+        _DEFAULT_MODS   = NORMAL,
 #if DEBUG
-        _DEFAULT = _INFO | _EXCEPTION,
+        _DEFAULT = OUTPUT | ERROR | _DEFAULT_MODS,
         DEFAULT = _DEFAULT | DEBUG,
 #else
-        DEFAULT = _INFO | _EXCEPTION,
+        DEFAULT = OUTPUT | ERROR | _DEFAULT_MODS,
 #endif
-        HEADLESS = FEEDBACK | ERROR | WARN,
-        ALL = _DEBUG        //| DEBUG | DEBUG_SPAM
-            | _EXCEPTION    //| ERROR | WARN
-            | _INFO         //| NOTEWORTHY | FEEDBACK,
-            | SPAM,
+        ALL = _ALL_MODS | _ALL_TYPES,
     };
     //REPORTS to the logger when anything happens
     /// <summary>
