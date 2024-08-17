@@ -1,5 +1,3 @@
-using System.Reflection.Emit;
-
 namespace Murong_Xue
 {
     [Flags]
@@ -12,36 +10,29 @@ namespace Murong_Xue
         UNIMPORTANT = 1 << 3,
         INTERACTIVE = 1 << 4,
 
-        ALL = SPAM | VERBOSE | UNIMPORTANT | NORMAL,
-        _VS = VERBOSE | SPAM,
+        ALL = SPAM | VERBOSE | UNIMPORTANT | NORMAL | INTERACTIVE,
+#if DEBUG
+        DEFAULT = NORMAL | UNIMPORTANT,
+#else
+        DEFAULT = NORMAL,
+#endif
     }
     [Flags]
     enum LogType
     {
         NONE = 0,
-        NORMAL = 1 << 0,
-        DEBUG = 1 << 1,
-        ERROR = 1 << 2,
-        OUTPUT = 1 << 3,
+        DEBUG = 1 << 0,
+        ERROR = 1 << 1,
+        OUTPUT = 1 << 2,
 
         ALL = DEBUG | ERROR | OUTPUT,
-    }
-    [Flags]
-    enum LogFlag
-    {
-        WARN            = LogType.ERROR | LogMod.UNIMPORTANT,
-        CHATTER         = LogType.OUTPUT | LogMod.UNIMPORTANT,
-        DEBUG_S         = LogType.DEBUG | LogMod.SPAM,
-        DEBUG_SV        = LogType.DEBUG | LogMod._VS,
-        DEBUG_V         = LogType.DEBUG | LogMod.VERBOSE,
 #if DEBUG
-        _DEFAULT = LogType.OUTPUT | LogType.ERROR | LogMod.NORMAL,
-        DEFAULT = _DEFAULT | LogType.DEBUG,
+        _DEFAULT = OUTPUT | ERROR,
+        DEFAULT = _DEFAULT | DEBUG
 #else
-        DEFAULT = LogType.OUTPUT | LogType.ERROR | LogMod.NORMAL,
+        DEFAULT = OUTPUT | ERROR
 #endif
-        ALL = LogMod.ALL | LogType.ALL,
-    };
+    }
     //REPORTS to the logger when anything happens
     /// <summary>
     /// Reporter constructor, reporters handle interfacing with the logger class and scheduling messages.
@@ -49,46 +40,77 @@ namespace Murong_Xue
     /// </summary>
     /// <param name="logFlags">The mask/filter applied to all incoming logs (will be overriden if a new log level is set in the Config class)</param>
     /// <param name="identifier">This reporters identity, e.g.,"Program" & "DownloadHandler"</param>
-    internal class Reporter(LogFlag logFlags, string identifier)
+    internal class Reporter(LogType type, LogMod mod, string identifier)
     {
-        private LogMod LogModifiers = (LogMod)logFlags & LogMod.ALL;
-        private LogType LogTypes = (LogType)logFlags & LogType.ALL; 
+        private LogMod LogModifiers = mod;
+        private LogType LogTypes = type;
         public readonly string ReportIdentifier = "[" + identifier + "]"; // e.g. Program, FeedData, Config, &c
-
-        /// <summary>
-        /// Add a message to the log
-        /// </summary>
-        /// <param name="level">The level/flags applied to the message</param>
-        /// <param name="msg">The contents of the message</param>
-        public void Log(LogType type, string msg)
+        // <--- DEBUG --->
+        public void Debug(string msg)
         {
-            Log(type, LogMod.NORMAL, msg);
+            Log(LogType.DEBUG, LogMod.NORMAL, msg);
         }
-        public void Log(LogFlag level, string msg)
+        public void DebugVal(string msg)
         {
-            Log((LogType)level & LogType.ALL, (LogMod)level & LogMod.ALL, msg);
+            Log(LogType.DEBUG, LogMod.VERBOSE, msg);
+        }
+        public void Trace(string msg)
+        {
+            Log(LogType.DEBUG, LogMod.SPAM | LogMod.VERBOSE, msg);
+        }
+        public void TraceVal(string msg)
+        {
+            Log(LogType.DEBUG, LogMod.SPAM | LogMod.VERBOSE, msg);
+        }
+        // <--- ERROR --->
+        public void Error(string msg)
+        {
+            Log(LogType.ERROR, LogMod.NORMAL, msg);
+        }
+        public void Warn(string msg)
+        {
+            Log(LogType.ERROR, LogMod.UNIMPORTANT, msg);
+        }
+        public void WarnSpam(string msg)
+        {
+            Log(LogType.ERROR, LogMod.UNIMPORTANT | LogMod.SPAM, msg);
+        }
+        // <--- OUTPUT --->
+        public void Spam(string msg)
+        {
+            Log(LogType.OUTPUT, LogMod.SPAM, msg);
+        }
+        //! Events that are bound to happen and output might be wanted. e.g., Feed downloaded
+        public void Notice(string msg)
+        {
+            Log(LogType.OUTPUT, LogMod.UNIMPORTANT, msg); //Verbose?
+        }
+        public void Out(string msg)
+        {
+            Log(LogType.OUTPUT, LogMod.NORMAL, msg);
         }
         public void Log(LogType type, LogMod mod, string msg)
         {
             var _modifier = mod & LogModifiers;
             var _type = type & LogTypes;
-            //= logModifier when
-            if ((_modifier > 0 || _modifier == LogModifiers) && _type > 0)
-            {
-                LogMsg _msg = new((LogFlag)type | (LogFlag)mod, ReportIdentifier, msg);
-                Task.Run(() => Logger.Log(_msg));
-            }
+            //mod == LogModifiers when LogModifiers = LogMod.NONE
+            if ((_modifier > LogMod.NONE || mod == LogModifiers) && _type > LogType.NONE)
+                SendLog(new(type, mod, ReportIdentifier, msg));
+        }
+        private static void SendLog(LogMsg msg)
+        {
+            Task.Run(() => Logger.Log(msg));
         }
         //----
         /// <summary>
         /// Set the log filter for the reporter
         /// </summary>
         /// <param name="flag">the new report filter</param>
-        public void SetLogLevel(LogFlag flag)
+        public void SetLogLevel(LogType type, LogMod mod)
         {
-            Log(LogFlag.DEBUG_SV, $"Loglevel Set {flag}");
-            this.LogModifiers = (LogMod)flag & LogMod.ALL;
-            this.LogTypes = (LogType)flag & LogType.ALL;
+            TraceVal($"Set logging flags {type}, {mod}");
+            this.LogModifiers = mod;
+            this.LogTypes = type;
         }
     }
     /// <summary>
@@ -97,35 +119,28 @@ namespace Murong_Xue
     /// <param name="severity">The flags that define this msg</param>
     /// <param name="identifier">The reporter who is sending this msg</param>
     /// <param name="content">The content of the msg</param>
-    internal class LogMsg
+    internal class LogMsg(LogType type, LogMod mod, string identifier, string content)
     {
-        public LogFlag SEVERITY;
-        public string IDENTIFIER;
-        public string CONTENT;
+        public LogType TYPE = type;
+        public LogMod MODIFIER = mod;
+        public string IDENTIFIER = identifier;
+        public string CONTENT = content;
         public string TIMESTAMP = DateTime.Now.ToLongTimeString();
-        public LogMsg(LogFlag severity, string identifier, string content)
+        
+        private static string Mod_ToString(LogMod mod)
         {
-            SEVERITY = severity;
-            IDENTIFIER = identifier;
-            CONTENT = content;
-        }
-        public LogMsg(LogType type, LogMod mod, string identifier, string content)
-        {
-            SEVERITY = (LogFlag)type | (LogFlag)mod;//for now.. make dedicated vars for em;
-            IDENTIFIER = identifier;
-            CONTENT = content;
-        }
-        public LogMsg(LogType type, string identifier, string content)
-        {
-            LogFlag mod = (LogFlag)LogMod.NORMAL;
-            SEVERITY = (LogFlag)type | mod;
-            IDENTIFIER = identifier;
-            CONTENT = content;
+            string test = string.Empty;
+            test += (mod & LogMod.NORMAL) > 0       ? "N" : "_";
+            test += (mod & LogMod.SPAM) > 0         ? "S" : "_";
+            test += (mod & LogMod.VERBOSE) > 0      ? "V" : "_";
+            test += (mod & LogMod.UNIMPORTANT) > 0  ? "U" : "_";
+            test += (mod & LogMod.INTERACTIVE) > 0  ? "I" : "_";
+            return test;
         }
         //TODO Prettify output here, someway 
         public override string ToString()
         {
-            return $"[{TIMESTAMP}]{IDENTIFIER}\t({SEVERITY})\t{CONTENT}";
+            return $"[{TIMESTAMP}] {IDENTIFIER}\t[{TYPE}({Mod_ToString(MODIFIER)})]\t{CONTENT}";
         }
     }
     internal class Logger
@@ -139,6 +154,7 @@ namespace Murong_Xue
         private static readonly List<LogMsg> bufferedMsgs = [];
         private static readonly Object buffLock = new();
         private static Logger? s_Logger = null;
+        private static Reporter report = Config.OneReporterPlease("LOGGER");
         //----
         private readonly Thread batchThread;
         private static readonly AutoResetEvent batchEvent = new(false);
