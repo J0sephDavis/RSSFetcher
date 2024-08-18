@@ -136,6 +136,8 @@ namespace Murong_Xue
                                     InDate = false;
                                     break;
                                 case RSS_Item:
+                                    if (_date == string.Empty)
+                                        _date = DateTime.UnixEpoch.ToString();
                                     Feeds.Add(new FeedData(
                                         title:      _title,
                                         url:        _url,
