@@ -71,8 +71,16 @@ namespace Murong_Xue
             //
             using (XmlReader reader = XmlReader.Create(content, xSettings))
             {
+                const string title_element = "title";
+                const string link_element = "link";
+                const string item_element = "item";
+                const string date_element = "pubDate";
+
                 bool IsTitle = false;
                 bool IsUrl = false;
+                bool IsDate = false;
+                bool DateAlreadySet = false;
+                
                 string _title = string.Empty;
                 string _url = string.Empty;
 
@@ -83,11 +91,15 @@ namespace Murong_Xue
                         case XmlNodeType.Element:
                             switch (reader.Name)
                             {
-                                case "title":
+                                case title_element:
                                     IsTitle = true;
                                     break;
-                                case "link":
+                                case link_element:
                                     IsUrl = true;
+                                    break;
+                                case date_element:
+                                    if (DateAlreadySet == false)
+                                        IsDate = true;
                                     break;
                                 default:
                                     break;
@@ -95,20 +107,20 @@ namespace Murong_Xue
                             break;
                         case XmlNodeType.Text:
                             if (IsTitle)
+                            {
                                 _title = await reader.GetValueAsync();
+                                IsTitle = false;
+                            }
                             else if (IsUrl)
+                            {
                                 _url = await reader.GetValueAsync();
+                                IsUrl = false;
+                            }
                             break;
                         case XmlNodeType.EndElement:
                             switch (reader.Name)
                             {
-                                case "title":
-                                    IsTitle = false;
-                                    break;
-                                case "link":
-                                    IsUrl = false;
-                                    break;
-                                case "item":
+                                case item_element:
                                     if (History == _title)
                                         return;
                                     if (Regex.IsMatch(_title, this.Expression))
