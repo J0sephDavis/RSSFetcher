@@ -9,6 +9,7 @@ namespace Murong_Xue
         protected Uri URL; //TODO how to use this Uri data type
         protected string Expression;
         protected string History;
+        protected string Date;
         protected bool HasNewHistory = false;
         protected string NewHistory = string.Empty;
         private static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
@@ -83,6 +84,7 @@ namespace Murong_Xue
                 
                 string _title = string.Empty;
                 string _url = string.Empty;
+                string _date = string.Empty;
 
                 while (await reader.ReadAsync())
                 {
@@ -115,6 +117,14 @@ namespace Murong_Xue
                             {
                                 _url = await reader.GetValueAsync();
                                 IsUrl = false;
+                            }
+                            else if (IsDate)
+                            {
+                                _date = await reader.GetValueAsync();
+                                DateAlreadySet = true;
+                                IsDate = false;
+                                SetDate(DateTime.Parse(_date).ToString());
+                                report.TraceVal("XML DATE: " + GetDate());
                             }
                             break;
                         case XmlNodeType.EndElement:

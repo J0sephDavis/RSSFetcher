@@ -13,6 +13,7 @@ namespace Murong_Xue
         private const string RSS_Expression = "expr";
         private const string RSS_History = "history";
         private const string RSS_Item = "item";
+        private const string RSS_Date = "date";
         public EntryData(Uri RSSPath)
         {
             this.path = RSSPath;
@@ -160,22 +161,26 @@ namespace Murong_Xue
                 //---- item
                 foreach (FeedData feed in Feeds)
                 {
-                    writer.WriteStartElement(null, RSS_Item, null);
+                    writer.WriteStartElement(RSS_Item);
                     // 1. Title
-                    writer.WriteStartElement(null, RSS_Title, null);
+                    writer.WriteStartElement(RSS_Title);
                     writer.WriteString(feed.GetTitle());
                     writer.WriteEndElement();
                     // 2. feed-url
-                    writer.WriteStartElement(null, RSS_URL, null);
+                    writer.WriteStartElement(RSS_URL);
                     writer.WriteCData(feed.GetURL());
                     writer.WriteEndElement();
                     // 3. expr
-                    writer.WriteStartElement(null, RSS_Expression, null);
+                    writer.WriteStartElement(RSS_Expression);
                     writer.WriteString(feed.GetExpr());
                     writer.WriteEndElement();
                     // 4. history
-                    writer.WriteStartElement(null, RSS_History, null);
+                    writer.WriteStartElement(RSS_History);
                     writer.WriteString(feed.GetHistory());
+                    writer.WriteEndElement();
+                    // 5. LastEntry date
+                    writer.WriteStartElement(RSS_Date);
+                    writer.WriteString(feed.GetDate());
                     writer.WriteEndElement();
                     //---- end item
                     writer.WriteEndElement();
