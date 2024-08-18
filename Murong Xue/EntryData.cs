@@ -66,11 +66,13 @@ namespace Murong_Xue
                 string _url = string.Empty;
                 string _expr = string.Empty;
                 string _history = string.Empty;
+                string _date = string.Empty;
 
                 bool InTitle = false;
                 bool InUrl = false;
                 bool InExpr = false;
                 bool InHistory = false;
+                bool InDate = false;
                 while (reader.Read())
                 {
                     switch (reader.NodeType)
@@ -90,41 +92,45 @@ namespace Murong_Xue
                                 case RSS_History:
                                     InHistory = true;
                                     break;
+                                case RSS_Date:
+                                    InDate = true;
+                                    break;
                                 default:
                                     break;
                             }
                             break;
                         case XmlNodeType.Text:
                             if (InTitle)
+                            {
                                 _title = reader.Value;
-                            else if (InUrl)
-                                _url = reader.Value;
+                                InTitle = false;
+                            }
                             else if (InExpr)
+                            {
                                 _expr = reader.Value;
+                                InExpr = false;
+                            }
                             else if (InHistory)
+                            {
                                 _history = reader.Value;
+                                InHistory = false;
+                            }
+                            else if (InDate)
+                            {
+                                _date = reader.Value;
+                                InDate = false;
+                            }
                             break;
                         case XmlNodeType.EndElement:
                             switch (reader.Name)
                             {
-                                case RSS_Title:
-                                    InTitle = false;
-                                    break;
-                                case RSS_URL:
-                                    InUrl = false;
-                                    break;
-                                case RSS_Expression:
-                                    InExpr = false;
-                                    break;
-                                case RSS_History:
-                                    InHistory = false;
-                                    break;
                                 case RSS_Item:
                                     Feeds.Add(new FeedData(
                                         title:      _title,
                                         url:        _url,
                                         expression: _expr,
-                                        history:    _history)
+                                        history:    _history,
+                                        date:       _date)
                                     );
                                     Feeds.Last().Print();
                                     break;
@@ -134,7 +140,10 @@ namespace Murong_Xue
                             break;
                         case XmlNodeType.CDATA:
                             if (InUrl)
+                            {
                                 _url = reader.Value;
+                                InUrl = false;
+                            }
                             break;
                         default:
                             break;
