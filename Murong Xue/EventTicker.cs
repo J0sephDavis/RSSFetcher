@@ -48,7 +48,7 @@
         public string GetSummary()
         {
             return "Event Summary:" +
-                $"\n\tFeeds Downloaded: {feedsDownloaded}" +
+                $"\n\tFeeds Checked: {feedsDownloaded}" +
                 $"\n\tFiles Downloaded: {filesDownloaded}" +
                 $"\n\tDownloads Retrived: {downloadsRetried}" +
                 $"\n\tDuration: {DateTime.Now - start}";
