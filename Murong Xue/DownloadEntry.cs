@@ -7,6 +7,7 @@ namespace Murong_Xue
         protected DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         public Uri link;
         protected Reporter report;
+        static protected EventTicker events = EventTicker.GetInstance();
         public DownloadEntryBase(Uri link, string reportIdentifier = "DownloadEntryBase")
         {
             this.link = link;
@@ -39,7 +40,6 @@ namespace Murong_Xue
                 ReQueue();
                 return;
             }
-
             Stream content = await msg.Content.ReadAsStreamAsync();
             SetProcessing();
             _ = Task.Run(() => HandleDownload(content));
@@ -65,6 +65,7 @@ namespace Murong_Xue
         }
         override public async void HandleDownload(Stream content)
         {
+            events.OnFeedDownloaded();
             report.Trace("HandleDownload");
             await Task.Run(() => Feed.OnFeedDownloaded(content));
             DoneProcessing();
@@ -80,6 +81,7 @@ namespace Murong_Xue
         }
         override public void HandleDownload(Stream content)
         {
+            events.OnFileDownloaded();
             report.Trace($"Handle Download {link}");
             string fileName = Path.GetFileName(link.AbsolutePath);
             string destinationPath = this.DownloadPath.LocalPath + fileName;
