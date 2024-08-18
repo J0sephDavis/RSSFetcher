@@ -9,7 +9,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 4; //commit 142
-    static readonly int PATCH = 21;
+    static readonly int PATCH = 22;
     //---
     static Reporter report;
     static EntryData? RSSEntries = null;
@@ -27,11 +27,12 @@ public class Program
     {
         using (Config cfg = Config.GetInstance())
         {
-            //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
             report ??= Config.OneReporterPlease("PROGRAM");
+            report.Debug($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
             report.Trace($"Started program with {args.Length}args");
 #if DEBUG
             report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
+            //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
             args = [
                 //"--edit"
                 //"--help"
