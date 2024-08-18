@@ -5,11 +5,11 @@
     /// </summary>
     internal class EventTicker
     {
-        private class statLock
+        private class StatLock
         {
             private int stat;
             public object padlock = new();
-            public static statLock operator --(statLock a)
+            public static StatLock operator --(StatLock a)
             {
                 lock (a.padlock)
                 {
@@ -17,7 +17,7 @@
                 }
                 return a;
             }
-            public static statLock operator ++(statLock a)
+            public static StatLock operator ++(StatLock a)
             {
                 lock (a.padlock)
                 {
@@ -30,9 +30,9 @@
                 return stat.ToString();
             }
         }
-        private statLock feedsDownloaded = new();
-        private statLock filesDownloaded = new();
-        private statLock downloadsRetried = new();
+        private StatLock feedsDownloaded = new();
+        private StatLock filesDownloaded = new();
+        private StatLock downloadsRetried = new();
         DateTime start = DateTime.Now;
         //---
         static EventTicker? s_EventTicker = null;
