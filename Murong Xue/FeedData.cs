@@ -123,7 +123,6 @@ namespace Murong_Xue
                                 _date = await reader.GetValueAsync();
                                 DateAlreadySet = true;
                                 SetDate(DateTime.Parse(_date).ToString());
-                                report.TraceVal("XML DATE: " + GetDate());
                             }
                             break;
                         case XmlNodeType.EndElement:

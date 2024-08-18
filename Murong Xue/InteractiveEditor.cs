@@ -23,30 +23,47 @@
         protected void PrintHandler(int? index)
         {
             FeedData? entry;
+            DateTime _today = DateTime.Now;
+            DateTime _date;
+            int daysSince;
             if (index != null && index > -1 && index < Feeds.Count)
             {
                 entry = Feeds[(int)index];
+                if (DateTime.TryParse(entry.GetDate(), out _date))
+                {
+                    daysSince = (_today - _date).Days;
+                }
+                else daysSince = -1;
+
                 Console.WriteLine(
                     "----------\n" +
                     "{0}\tTITLE:{1}\n" +
                     "\tHistory:{2}\n" +
                     "\tExpression:{3}\n" +
                     "\tURL:{4}\n" +
+                    "\tDays Since:{5}\n" +
                     "----------",
                     index,
                     entry.GetTitle(),
                     entry.GetHistory(),
                     entry.GetExpr(),
-                    entry.GetURL()
+                    entry.GetURL(),
+                    daysSince
                 );
                 return;
             }
             int totalFeeds = Feeds.Count;
+            Console.WriteLine("ID\tDays\tTitle");
             for (int idx = 0; idx < totalFeeds; idx++)
             {
                 entry = Feeds[idx];
-                Console.WriteLine("{0}\t{1}",
-                    idx, entry.GetTitle());
+                if (DateTime.TryParse(entry.GetDate(), out _date))
+                {
+                    daysSince = (_today - _date).Days;
+                }
+                else daysSince = -1;
+
+                Console.WriteLine($"{idx}\t{daysSince}\t{entry.GetTitle()}");
             }
         }
 

@@ -9,7 +9,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 4; //commit 142
-    static readonly int PATCH = 8;
+    static readonly int PATCH = 19;
     //---
     static Reporter report;
     static EntryData? RSSEntries = null;
@@ -33,6 +33,7 @@ public class Program
 #if DEBUG
             report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
             args = [
+                "--edit"
                 //"--help"
                 //"--SPAM",
                 //"--VERBOSE",
