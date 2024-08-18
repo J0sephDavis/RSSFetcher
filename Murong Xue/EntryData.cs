@@ -163,6 +163,7 @@ namespace Murong_Xue
             
             //NOTICE: async saving takes ~4ms longer than just saving syncronously (6ms -> 1-2ms)
             XmlWriterSettings xSettings = new() { Async = false };
+            DateTime _date;
             using (XmlWriter writer = XmlWriter.Create(xStream, xSettings))
             {
                 //-------- ROOT
@@ -170,6 +171,17 @@ namespace Murong_Xue
                 //---- item
                 foreach (FeedData feed in Feeds)
                 {
+                    //----
+                    if (DateTime.TryParse(feed.GetDate(), out _date))
+                    {
+                        report.Out("Datetime parsed:" + _date);
+                        TimeSpan SinceLast = DateTime.Now - _date;
+                        if (SinceLast.Days > 10)
+                        {
+                            report.Out($"{feed.GetTitle()} has not received an update in {SinceLast.Days} days");
+                        }
+                    }
+                    //----
                     writer.WriteStartElement(RSS_Item);
                     // 1. Title
                     writer.WriteStartElement(RSS_Title);
