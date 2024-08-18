@@ -87,6 +87,9 @@ public class Program
         bool NextIsConfig = false;
         bool NextIsDownloadDir = false;
         bool NextIsLogLevel = false;
+        bool SetLogLevel = false;
+        LogMod mod = LogMod.DEFAULT;
+        LogType type = LogType.DEFAULT;
         ArgResult retVal = ArgResult.RUN;
         report.Notice("Processing Args");
         foreach (string arg in args)
@@ -109,10 +112,8 @@ public class Program
             }
             if (NextIsLogLevel)
             {
-                /*LogFlag value = (LogFlag)int.Parse(arg); //TODO exception handling // TryParse
-                report.Trace("Setting log level");
-                Config.SetLogLevel(value);*/
-                report.Error("LOG LEVEL HANDLING WIP");
+                type = (LogType)int.Parse(arg);
+                report.TraceVal("LOG LEVEL: " + type.ToString());
                 NextIsLogLevel = false;
                 continue;
             }
@@ -136,6 +137,30 @@ public class Program
                 retVal = ArgResult.EDIT;
                 continue;
             }
+            switch(_arg)
+            {
+                case ("--spam"):
+                    report.Trace("--SPAM");
+                    mod |= LogMod.SPAM;
+                    SetLogLevel = true;
+                    break;
+                case ("--verbose"):
+                    report.Trace("--VERBOSE");
+                    mod |= LogMod.VERBOSE;
+                    SetLogLevel = true;
+                    break;
+                case ("--unimportant"):
+                    report.Trace("--UNIMPORTANT");
+                    mod |= LogMod.UNIMPORTANT;
+                    SetLogLevel = true;
+                    break;
+                case ("--debug"):
+                    report.Trace("--DEBUG");
+                    type |= LogType.DEBUG;
+                    break;
+                default:
+                    break;
+            }
             //-------------------------
             if (rss_cmds.Contains(_arg))
             {
@@ -157,6 +182,11 @@ public class Program
             }
         }
         //---
+        if (SetLogLevel)
+        {
+            report.Out($"Masking log level {type} | {mod}");
+            Config.MaskLogLevel(type, mod);
+        }
         report.Log(LogType.DEBUG, LogMod.UNIMPORTANT, $"HandleArgs returning: {retVal}");
         return retVal;
     }
@@ -175,36 +205,7 @@ public class Program
 
     protected static readonly string[] log_cmds = ["--loglevel", "-loglevel", "-log", "--log", "--level", "-level"];
     protected static readonly string log_cmd_desc = "(int) Set the log level:\n" + //regex for converting the enum into this FIND:\s+(\w+).* REPLACE:\$\"$1\({LogFlag.$1}\)\\t\" +\n
-        @"//---
-        NONE = 0,
-        NORMAL = 0,
-        //--- Modifiers
-        SPAM            = 1 << 0,
-        VERBOSE         = 1 << 1,
-        UNIMPORTANT     = 1 << 2,
-        INTERACTIVE     = 1 << 3,
-        
-        _ALL_MODS = SPAM | VERBOSE | UNIMPORTANT | NORMAL,
-        //--- Types
-        DEBUG           = 1 << 4,
-        ERROR           = 1 << 5,
-        OUTPUT          = 1 << 6,
-
-        _ALL_TYPES = DEBUG | ERROR | OUTPUT,
-        //Derived debug
-        DEBUG_SPAM      = DEBUG | SPAM,
-        DEBUG_WARN      = DEBUG | WARN,
-        DEBUG_OBLIG     = DEBUG | UNIMPORTANT,
-        DEBUG_SETVAL    = DEBUG | VERBOSE | SPAM,
-        //Derived error
-        WARN            = ERROR | UNIMPORTANT,
-        //Derived output
-        CHATTER         = OUTPUT | UNIMPORTANT,
-
-        //---
-        _DEFAULT_MODS   = NORMAL,
-        DEFAULT = OUTPUT | ERROR | _DEFAULT_MODS,
-        ALL = _ALL_MODS | _ALL_TYPES,";// ....
+        @"wip";// ....
 
     protected static readonly string[] help_cmds = ["-help", "--help", "-h", "--h"];
     protected static readonly string help_cmd_desc = "(void) Get a brief description for each command";
