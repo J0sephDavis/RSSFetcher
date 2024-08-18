@@ -36,7 +36,7 @@ namespace Murong_Xue
             //
             await downloadHandler.ProcessDownloads();
             //save changes
-            await UpdateEntries();
+            UpdateEntries();
         }
         public List<FeedData> GetFeeds()
         {

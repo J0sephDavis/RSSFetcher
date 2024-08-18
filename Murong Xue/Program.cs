@@ -79,7 +79,7 @@ public class Program
         if (editor.MainLoop())
         {
             report.Out("Saving entries from interactive session");
-            await RSSEntries.UpdateEntries();
+            RSSEntries.UpdateEntries();
         }
         else
             report.Out("Discarding change from interactive session");
