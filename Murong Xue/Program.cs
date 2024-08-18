@@ -9,7 +9,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 4; //commit 142
-    static readonly int PATCH = 22;
+    static readonly int PATCH = 23;
     //---
     static Reporter report;
     static EntryData? RSSEntries = null;
@@ -25,49 +25,47 @@ public class Program
     };
     public static async Task Main(string[] args)
     {
-        using (Config cfg = Config.GetInstance())
-        {
-            report ??= Config.OneReporterPlease("PROGRAM");
-            report.Debug($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
-            report.Trace($"Started program with {args.Length}args");
+        using Config cfg = Config.GetInstance();
+        report ??= Config.OneReporterPlease("PROGRAM");
+        report.Debug($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
+        report.Trace($"Started program with {args.Length}args");
 #if DEBUG
-            report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
-            //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
-            args = [
-                //"--edit"
-                //"--help"
-                //"--SPAM",
-                //"--VERBOSE",
-                //"--UNIMPORTANT",
-                //"--DEBUG",
-                //"--edit",
-            ];
+        report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
+        //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
+        args = [
+            //"--edit"
+            //"--help"
+            //"--SPAM",
+            //"--VERBOSE",
+            //"--UNIMPORTANT",
+            //"--DEBUG",
+            //"--edit",
+        ];
 #endif
-            foreach (string s in args)
-                report.Trace(s);
-            ArgResult choice = HandleArgs(cfg, args);
+        foreach (string s in args)
+            report.Trace(s);
+        ArgResult choice = HandleArgs(cfg, args);
 
-            report.Notice("Program starting");
-            RSSEntries = new EntryData(cfg.GetRSSPath());
-            switch (choice)
-            {
-                case (ArgResult.EDIT):
-                    await StartEditor();
-                    break;
-                case (ArgResult.RUN):
-                    await RSSEntries.Process();
-                    break;
-                case (ArgResult.NONE):
-                default:
-                    report.Trace("DEFFAULT/ARG.RESLT = NONE. EXITING");
-                    goto case ArgResult.EXIT;
-                case (ArgResult.EXIT):
-                    report.Trace("ArgResult.EXIT");
-                    return;
-            }
-            report.Out(events.GetSummary());
-            report.Notice("Program STOP");
+        report.Notice("Program starting");
+        RSSEntries = new EntryData(cfg.GetRSSPath());
+        switch (choice)
+        {
+            case (ArgResult.EDIT):
+                await StartEditor();
+                break;
+            case (ArgResult.RUN):
+                await RSSEntries.Process();
+                break;
+            case (ArgResult.NONE):
+            default:
+                report.Trace("DEFFAULT/ARG.RESLT = NONE. EXITING");
+                goto case ArgResult.EXIT;
+            case (ArgResult.EXIT):
+                report.Trace("ArgResult.EXIT");
+                return;
         }
+        report.Out(events.GetSummary());
+        report.Notice("Program STOP");
     }
     public static async Task StartEditor()
     {
