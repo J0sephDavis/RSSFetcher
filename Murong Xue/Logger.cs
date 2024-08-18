@@ -237,7 +237,7 @@ namespace Murong_Xue
         /// </summary>
         /// <param name="type">ignored if NONE</param>
         /// <param name="mod">ignored if NONE</param>
-        public void SetLogLevel(LogType type, LogMod mod)
+        public void SetLogLevel(LogLevel _level)
         {
             TraceVal($"Set logging flags {_level}");
             if (_level != LogMod.NONE)
