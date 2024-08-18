@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace Murong_Xue
@@ -83,7 +82,7 @@ namespace Murong_Xue
                 bool IsUrl = false;
                 bool IsDate = false;
                 bool DateAlreadySet = false;
-                
+
                 string _title = string.Empty;
                 string _url = string.Empty;
                 string _date = string.Empty;
