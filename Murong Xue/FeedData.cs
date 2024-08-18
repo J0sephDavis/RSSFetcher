@@ -13,7 +13,7 @@ namespace Murong_Xue
         protected string NewHistory = string.Empty;
         private static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private static readonly Config cfg = Config.GetInstance();
-        private static Reporter? report = null;
+        private static Reporter report;
 
 
         public FeedData(string title,
