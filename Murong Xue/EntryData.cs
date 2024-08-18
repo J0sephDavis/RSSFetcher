@@ -150,39 +150,40 @@ namespace Murong_Xue
             Console.WriteLine($"newPath {newFilePath.LocalPath}");
             File.Move(path.LocalPath, newFilePath.LocalPath, overwrite: true);
             FileStream xStream = File.Open(path.LocalPath, FileMode.Create);
-            XmlWriterSettings xSettings = new() { Async = true };
+            
+            //NOTICE: async saving takes ~4ms longer than just saving syncronously (6ms -> 1-2ms)
+            XmlWriterSettings xSettings = new() { Async = false };
             using (XmlWriter writer = XmlWriter.Create(xStream, xSettings))
             {
                 //-------- ROOT
-                await writer.WriteStartElementAsync(null, "root", null);
+                writer.WriteStartElement(null, "root", null);
                 //---- item
                 foreach (FeedData feed in Feeds)
                 {
-                    await writer.WriteStartElementAsync(null, RSS_Item, null);
+                    writer.WriteStartElement(null, RSS_Item, null);
                     // 1. Title
-                    await writer.WriteStartElementAsync(null, RSS_Title, null);
-                    await writer.WriteStringAsync(feed.GetTitle());
-                    await writer.WriteEndElementAsync();
+                    writer.WriteStartElement(null, RSS_Title, null);
+                    writer.WriteString(feed.GetTitle());
+                    writer.WriteEndElement();
                     // 2. feed-url
-                    await writer.WriteStartElementAsync(null, RSS_URL, null);
-                    await writer.WriteCDataAsync(feed.GetURL());
-                    await writer.WriteEndElementAsync();
+                    writer.WriteStartElement(null, RSS_URL, null);
+                    writer.WriteCData(feed.GetURL());
+                    writer.WriteEndElement();
                     // 3. expr
-                    await writer.WriteStartElementAsync(null, RSS_Expression, null);
-                    await writer.WriteStringAsync(feed.GetExpr());
-                    await writer.WriteEndElementAsync();
+                    writer.WriteStartElement(null, RSS_Expression, null);
+                    writer.WriteString(feed.GetExpr());
+                    writer.WriteEndElement();
                     // 4. history
-                    await writer.WriteStartElementAsync(null, RSS_History, null);
-                    await writer.WriteStringAsync(feed.GetHistory());
-                    await writer.WriteEndElementAsync();
+                    writer.WriteStartElement(null, RSS_History, null);
+                    writer.WriteString(feed.GetHistory());
+                    writer.WriteEndElement();
                     //---- end item
-                    await writer.WriteEndElementAsync();
+                    writer.WriteEndElement();
                 }
                 //------- ROOT
-                await writer.WriteEndElementAsync();
-                await writer.FlushAsync();
+                writer.WriteEndElement();
+                writer.Flush();
             }
-
         }
     }
 }
