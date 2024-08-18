@@ -13,6 +13,8 @@ public class Program
     //---
     static Reporter report;
     static EntryData? RSSEntries = null;
+    static EventTicker events = EventTicker.GetInstance();
+
     [Flags]
     protected enum ArgResult
     {
@@ -32,9 +34,9 @@ public class Program
             report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
             args = [
                 //"--SPAM",
-                "--VERBOSE",
-                "--UNIMPORTANT",
-                "--DEBUG",
+                //"--VERBOSE",
+                //"--UNIMPORTANT",
+                //"--DEBUG",
                 //"--edit",
             ];
 
@@ -61,6 +63,7 @@ public class Program
                     report.Trace("ArgResult.EXIT");
                     return;
             }
+            report.Out(events.GetSummary());
             report.Notice("Program STOP");
         }
     }
