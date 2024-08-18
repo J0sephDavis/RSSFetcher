@@ -50,7 +50,7 @@
             return "Event Summary:" +
                 $"\n\tFeeds Checked: {feedsDownloaded}" +
                 $"\n\tFiles Downloaded: {filesDownloaded}" +
-                $"\n\tDownloads Retrived: {downloadsRetried}" +
+                $"\n\tDownloads ReQueued: {downloadsRetried}" +
                 $"\n\tDuration: {DateTime.Now - start}";
         }
 
