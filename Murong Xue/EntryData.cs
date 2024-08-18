@@ -178,7 +178,7 @@ namespace Murong_Xue
                         TimeSpan SinceLast = _today - _date;
                         if (SinceLast.Days > 10)
                         {
-                            report.Out($"{feed.GetTitle()} has not received an update in {SinceLast.Days} days");
+                            report.Out($"{feed.GetTitle()} / {feed.GetURL()} has not received an update in {SinceLast.Days} days");
                         }
                     }
                     //----
