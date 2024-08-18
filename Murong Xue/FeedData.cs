@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Data;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace Murong_Xue
@@ -19,12 +20,13 @@ namespace Murong_Xue
 
         public FeedData(string title,
             string url, string expression,
-            string history)
+            string history, string date)
         {
             this.Title = title;
             this.URL = new Uri(url); //TODO add checks on URL validity
             this.Expression = expression;
             this.History = history;
+            this.Date = date;
 
             report ??= Config.OneReporterPlease("FeedData");
         }
@@ -195,6 +197,7 @@ namespace Murong_Xue
         }
         public void SetDate(string date)
         {
+            report.TraceVal("DATE SET:" + date);
             this.Date = date;
         }
     }
