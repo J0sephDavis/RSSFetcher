@@ -189,5 +189,13 @@ namespace Murong_Xue
             report.TraceVal($"SetExpression {Expression}");
             this.Expression = Expression;
         }
+        public string GetDate()
+        {
+            return this.Date;
+        }
+        public void SetDate(string date)
+        {
+            this.Date = date;
+        }
     }
 }
