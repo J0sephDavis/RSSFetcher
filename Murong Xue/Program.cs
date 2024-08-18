@@ -8,8 +8,8 @@ namespace Murong_Xue;
 public class Program
 {
     static readonly int MAJOR_VERSION = 1;
-    static readonly int MINOR_VERSION = 3; //commit 111
-    static readonly int PATCH = 30;
+    static readonly int MINOR_VERSION = 4; //commit 142
+    static readonly int PATCH = 0;
     //---
     static Reporter report;
     static EntryData? RSSEntries = null;
@@ -33,6 +33,7 @@ public class Program
 #if DEBUG
             report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
             args = [
+                "--help"
                 //"--SPAM",
                 //"--VERBOSE",
                 //"--UNIMPORTANT",
@@ -191,9 +192,11 @@ public class Program
     protected static readonly string[] download_cmds = ["-downloadpath", "--downloadpath"];
     protected static readonly string download_cmd_desc = "(string) Set the download folder for all fetched files";
 
-    protected static readonly string[] log_cmds = ["--loglevel", "-loglevel", "-log", "--log", "--level", "-level"];
-    protected static readonly string log_cmd_desc = "(int) Set the log level:\n" + //regex for converting the enum into this FIND:\s+(\w+).* REPLACE:\$\"$1\({LogFlag.$1}\)\\t\" +\n
-        @"wip";// ....
+    protected static readonly string log_cmd_desc = "Enable the following log flags:" +
+        "\n\t--SPAM" +
+        "\n\t--VERBOSE" +
+        "\n\t--UNIMPORTANT" +
+        "\n\t--DEBUG";
 
     protected static readonly string[] help_cmds = ["-help", "--help", "-h", "--h"];
     protected static readonly string help_cmd_desc = "(void) Get a brief description for each command";
@@ -203,5 +206,5 @@ public class Program
         $"{edit_cmds[0]}:\t{edit_cmd_desc}\n" +
         $"{rss_cmds[0]}:\t{rss_cmd_desc}\n" +
         $"{download_cmds[0]}:\t{download_cmd_desc}\n" +
-        $"{log_cmds[0]}:\t{log_cmd_desc}";
+        $"{log_cmd_desc}";
 }
