@@ -11,9 +11,9 @@ namespace Murong_Xue
         protected string History;
         protected bool HasNewHistory = false;
         protected string NewHistory = string.Empty;
-        private readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
-        private readonly Config cfg = Config.GetInstance();
-        private readonly Reporter report;
+        private static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
+        private static readonly Config cfg = Config.GetInstance();
+        private static Reporter? report = null;
 
 
         public FeedData(string title,
@@ -25,7 +25,7 @@ namespace Murong_Xue
             this.Expression = expression;
             this.History = history;
 
-            report = Config.OneReporterPlease("FeedData");
+            report ??= Config.OneReporterPlease("FeedData");
         }
 
         public void Print()

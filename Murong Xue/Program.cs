@@ -33,7 +33,7 @@ public class Program
 #if DEBUG
             report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
             args = [
-                "--help"
+                //"--help"
                 //"--SPAM",
                 //"--VERBOSE",
                 //"--UNIMPORTANT",
