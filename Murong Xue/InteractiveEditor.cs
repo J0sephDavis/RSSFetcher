@@ -345,7 +345,7 @@
                 $"\tExpression:\t{_expr}\n" +
                 $"\tURL:\t\t{_url}"
             );
-            FeedData newEntry = new(_title, _url, _expr, _history);
+            FeedData newEntry = new(_title, _url, _expr, _history, "interactive-editor");
             Feeds.Add(newEntry);
         }
         public bool MainLoop()
