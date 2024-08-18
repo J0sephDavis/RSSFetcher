@@ -18,6 +18,8 @@
         private readonly List<DownloadEntryBase> Downloading = [];
         private readonly List<DownloadEntryBase> Processing = [];
         private static Reporter report;
+        //----
+        EventTicker events = EventTicker.GetInstance();
 
         private DownloadHandler()
         {
@@ -105,6 +107,7 @@
         }
         public void ReQueue(DownloadEntryBase entry)
         {
+            events.OnDownloadReQueued();
             //TODO save optimal batch settings in config
             lock (DPLock)
             {
