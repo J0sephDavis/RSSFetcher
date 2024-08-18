@@ -89,10 +89,8 @@ public class Program
     {
         bool NextIsConfig = false;
         bool NextIsDownloadDir = false;
-        bool NextIsLogLevel = false;
         bool SetLogLevel = false;
-        LogMod mod = LogMod.DEFAULT;
-        LogType type = LogType.DEFAULT;
+        LogLevel level = new(LogType.DEFAULT, LogMod.DEFAULT);
         ArgResult retVal = ArgResult.RUN;
         report.Notice("Processing Args");
         foreach (string arg in args)
@@ -111,13 +109,6 @@ public class Program
                 cfg.SetDownloadPath(Path.GetFullPath(arg));
                 //---
                 NextIsDownloadDir = false;
-                continue;
-            }
-            if (NextIsLogLevel)
-            {
-                type = (LogType)int.Parse(arg);
-                report.TraceVal("LOG LEVEL: " + type.ToString());
-                NextIsLogLevel = false;
                 continue;
             }
             //-------------------------
@@ -140,26 +131,27 @@ public class Program
                 retVal = ArgResult.EDIT;
                 continue;
             }
-            switch(_arg)
+            //-------------------------
+            switch (_arg)
             {
                 case ("--spam"):
                     report.Trace("--SPAM");
-                    mod |= LogMod.SPAM;
+                    level |= LogMod.SPAM;
                     SetLogLevel = true;
                     break;
                 case ("--verbose"):
                     report.Trace("--VERBOSE");
-                    mod |= LogMod.VERBOSE;
+                    level |= LogMod.VERBOSE;
                     SetLogLevel = true;
                     break;
                 case ("--unimportant"):
                     report.Trace("--UNIMPORTANT");
-                    mod |= LogMod.UNIMPORTANT;
+                    level |= LogMod.UNIMPORTANT;
                     SetLogLevel = true;
                     break;
                 case ("--debug"):
                     report.Trace("--DEBUG");
-                    type |= LogType.DEBUG;
+                    level |= LogType.DEBUG;
                     break;
                 default:
                     break;
@@ -177,18 +169,12 @@ public class Program
                 NextIsDownloadDir = true;
                 continue;
             }
-            if (log_cmds.Contains(_arg))
-            {
-                report.Trace("NextIsLogLevel = true");
-                NextIsLogLevel = true;
-                continue;
-            }
         }
         //---
         if (SetLogLevel)
         {
-            report.Out($"Masking log level {type} | {mod}");
-            Config.MaskLogLevel(type, mod);
+            report.Out($"Masking log level {level}");
+            Config.MaskLogLevel(level);
         }
         report.Log(LogType.DEBUG, LogMod.UNIMPORTANT, $"HandleArgs returning: {retVal}");
         return retVal;
