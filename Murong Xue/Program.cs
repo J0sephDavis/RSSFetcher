@@ -25,15 +25,22 @@ public class Program
     {
         using (Config cfg = Config.GetInstance())
         {
+            //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
             report ??= Config.OneReporterPlease("PROGRAM");
             report.Trace($"Started program with {args.Length}args");
+#if DEBUG
+            report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
+            args = [
+                //"--SPAM",
+                "--VERBOSE",
+                "--UNIMPORTANT",
+                "--DEBUG",
+                //"--edit",
+            ];
+
+#endif
             foreach (string s in args)
                 report.Trace(s);
-#if DEBUG
-            report.Notice("PROGRAM COMPILED IN DEBUG MODE");
-            args.Append("--help");
-            //args.Append($"--loglevel {LogFlag.ALL}");
-#endif
             ArgResult choice = HandleArgs(cfg, args);
 
             report.Notice("Program starting");
