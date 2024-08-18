@@ -39,6 +39,16 @@ namespace Murong_Xue
     {
         protected LogMod _modifier = mod;
         protected LogType _type = type;
+        //------ getters/setters
+        public LogMod GetLMod()
+        {
+            return _modifier;
+        }
+        public LogType GetLType()
+        {
+            return _type;
+        }
+        //------ string formatting
         protected static string Mod_ToString(LogMod mod)
         {
             string test = string.Empty;
@@ -49,6 +59,11 @@ namespace Murong_Xue
             test += (mod & LogMod.INTERACTIVE) > 0  ? "I" : "_";
             return test;
         }
+        override public string ToString()
+        {
+            return $"[{_type}({Mod_ToString(_modifier)})]";
+        }
+        //------ Set
         public void Set(LogMod mod)
         {
             _modifier = mod;
@@ -57,6 +72,12 @@ namespace Murong_Xue
         {
             _type = type;
         }
+        public void  Set(LogLevel level)
+        {
+            _type = level._type;
+            _modifier = level._modifier;
+        }
+        //----- Mask
         public void Mask(LogMod mod)
         {
             _modifier |= mod;
@@ -64,6 +85,11 @@ namespace Murong_Xue
         public void Mask(LogType type)
         {
             _type |= type;
+        }
+        public void Mask(LogLevel level)
+        {
+            _type |= level._type;
+            _modifier |= level._modifier;
         }
         //---- bitewise AND
         public static LogMod operator &(LogLevel a, LogMod b)
@@ -75,19 +101,24 @@ namespace Murong_Xue
             return a._type & b;
         }
         //---- bitewise OR
-        public static LogMod operator |(LogLevel a, LogMod b)
-        {
-            return a._modifier | b;
-        }
-        public static LogType operator |(LogLevel a, LogType b)
-        {
-            return a._type | b;
-        }
         public static LogLevel operator |(LogLevel a, LogLevel b)
         {
             return new LogLevel( //should `new` be used here?
                 a._type | b._type,
                 a._modifier | b._modifier);
+        }
+        public static LogLevel operator |(LogLevel a, LogMod b)
+        {
+            //TODO, reevaluate this, seems improper
+            LogLevel tmp = new(a._type, a._modifier);
+            tmp.Mask(b);
+            return tmp;
+        }
+        public static LogLevel operator |(LogLevel a, LogType b)
+        {
+            LogLevel tmp = new LogLevel(a._type, a._modifier);
+            tmp.Mask(b);
+            return tmp;
         }
         //---- comparisons
         // We double up on these because implicit conversions
@@ -116,6 +147,23 @@ namespace Murong_Xue
             return ((a._modifier & m._modifier) != m._modifier)
                 && ((a._type & m._type) != m._type);
         }
+        //---- comparisons to base types
+        public static bool operator ==(LogLevel a, LogMod m)
+        {
+            return a._modifier == m;
+        }
+        public static bool operator !=(LogLevel a, LogMod m)
+        {
+            return a._modifier != m;
+        }
+        public static bool operator ==(LogLevel a, LogType t)
+        {
+            return a._type == t;
+        }
+        public static bool operator !=(LogLevel a, LogType t)
+        {
+            return a._type != t;
+        }
     }
     //REPORTS to the logger when anything happens
     /// <summary>
@@ -124,9 +172,9 @@ namespace Murong_Xue
     /// </summary>
     /// <param name="logFlags">The mask/filter applied to all incoming logs (will be overriden if a new log level is set in the Config class)</param>
     /// <param name="identifier">This reporters identity, e.g.,"Program" & "DownloadHandler"</param>
-    internal class Reporter(LogType type, LogMod mod, string identifier)
+    internal class Reporter(LogLevel level, string identifier)
     {
-        private readonly LogLevel logLevel = new(type, mod);
+        private readonly LogLevel logLevel = level;
         public readonly string ReportIdentifier = "[" + identifier + "]"; // e.g. Program, FeedData, Config, &c
         // <--- DEBUG --->
         public void Debug(string msg)
@@ -191,11 +239,11 @@ namespace Murong_Xue
         /// <param name="mod">ignored if NONE</param>
         public void SetLogLevel(LogType type, LogMod mod)
         {
-            TraceVal($"Set logging flags {type}, {mod}");
-            if (mod != LogMod.NONE)
-                logLevel.Set(mod);
-            if (type != LogType.NONE)
-                logLevel.Set(type);
+            TraceVal($"Set logging flags {_level}");
+            if (_level != LogMod.NONE)
+                logLevel.Set(_level.GetLMod());
+            if (_level != LogType.NONE)
+                logLevel.Set(_level.GetLType());
             TraceVal($"Current flags {logLevel}");
         }
         public void MaskLogLevel(LogType type, LogMod mod)
@@ -218,11 +266,10 @@ namespace Murong_Xue
         public string CONTENT = content;
         public string TIMESTAMP = DateTime.Now.ToLongTimeString();
         
-
         //TODO Prettify output here, someway 
         public override string ToString()
         {
-            return $"[{TIMESTAMP}] {IDENTIFIER}\t[{type}({Mod_ToString(mod)})]\t{CONTENT}";
+            return $"[{TIMESTAMP}] {IDENTIFIER}\t{base.ToString()}\t{CONTENT}";
         }
     }
     internal class Logger

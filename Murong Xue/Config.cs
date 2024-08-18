@@ -4,11 +4,10 @@
     {
         private string DownloadDirectory;
         private Uri RSSConfigPath;
-        private static LogType logType  = LogType.DEFAULT;
-        private static LogMod logMod    = LogMod.DEFAULT;
+        private static LogLevel level = new(LogType.DEFAULT, LogMod.DEFAULT);
         //---
         private static Config? s_Config = null;
-        private static readonly Reporter report = new(logType,logMod, "CONFIG");
+        private static readonly Reporter report = new(level, "CONFIG");
         private readonly Logger _Logger;
         private static readonly List<Reporter> Reporters = [ report ];
 
@@ -30,11 +29,10 @@
         public static Reporter OneReporterPlease(string ModuleName, LogType type = LogType.NONE, LogMod mod = LogMod.NONE)
         {
             if (type == LogType.NONE)
-                type = logType;
+                type = level.GetLType();
             if (mod == LogMod.NONE)
-                mod = logMod;
-
-            Reporter _r = new(type, mod, ModuleName);
+                mod = level.GetLMod();
+            Reporter _r = new(new(type, mod), ModuleName);
             report.Trace($"Reporter {report.ReportIdentifier} created");
             Subscribe(_r);
             return _r;
@@ -54,23 +52,21 @@
             {
                 foreach (Reporter r in Reporters)
                 {
-                    r.SetLogLevel(logType, logMod);
+                    r.SetLogLevel(level);
                 }
             }
         }
         //----------
-        public static void SetLogLevel(LogType type, LogMod mod)
+        public static void SetLogLevel(LogLevel _level)
         {
-            logType = type;
-            logMod = mod;
-            report.DebugVal($"New LogLevel: {logType}{logMod}");
+            level.Set(_level);
+            report.DebugVal($"New LogLevel: {level}");
             NotifySubscribers();
         }
-        public static void MaskLogLevel(LogType type, LogMod mod)
+        public static void MaskLogLevel(LogLevel _level)
         {
-            logType |= type;
-            logMod |= mod;
-            report.DebugVal($"New LogLevel: {logType}{logMod}");
+            level.Mask(_level);
+            report.DebugVal($"New LogLevel: {level}");
         }
         public void SetRSSPath(string path)
         {
