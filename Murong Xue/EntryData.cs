@@ -143,7 +143,7 @@ namespace Murong_Xue
             xStream.Dispose();
             return true;
         }
-        public async Task UpdateEntries()
+        public void UpdateEntries()
         {
             report.Trace("UpdateEntries()");
             Uri newFilePath = new(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
