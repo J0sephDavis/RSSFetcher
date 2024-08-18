@@ -103,27 +103,38 @@ namespace Murong_Xue
                             if (InTitle)
                             {
                                 _title = reader.Value;
-                                InTitle = false;
                             }
                             else if (InExpr)
                             {
                                 _expr = reader.Value;
-                                InExpr = false;
                             }
                             else if (InHistory)
                             {
                                 _history = reader.Value;
-                                InHistory = false;
                             }
                             else if (InDate)
                             {
                                 _date = reader.Value;
-                                InDate = false;
                             }
                             break;
                         case XmlNodeType.EndElement:
                             switch (reader.Name)
                             {
+                                case RSS_Title:
+                                    InTitle = false;
+                                    break;
+                                case RSS_URL:
+                                    InUrl = false;
+                                    break;
+                                case RSS_Expression:
+                                    InExpr = false;
+                                    break;
+                                case RSS_History:
+                                    InHistory = false;
+                                    break;
+                                case RSS_Date:
+                                    InDate = false;
+                                    break;
                                 case RSS_Item:
                                     Feeds.Add(new FeedData(
                                         title:      _title,
@@ -142,7 +153,6 @@ namespace Murong_Xue
                             if (InUrl)
                             {
                                 _url = reader.Value;
-                                InUrl = false;
                             }
                             break;
                         default:

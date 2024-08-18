@@ -113,18 +113,15 @@ namespace Murong_Xue
                             if (IsTitle)
                             {
                                 _title = await reader.GetValueAsync();
-                                IsTitle = false;
                             }
                             else if (IsUrl)
                             {
                                 _url = await reader.GetValueAsync();
-                                IsUrl = false;
                             }
                             else if (IsDate)
                             {
                                 _date = await reader.GetValueAsync();
                                 DateAlreadySet = true;
-                                IsDate = false;
                                 SetDate(DateTime.Parse(_date).ToString());
                                 report.TraceVal("XML DATE: " + GetDate());
                             }
@@ -132,6 +129,15 @@ namespace Murong_Xue
                         case XmlNodeType.EndElement:
                             switch (reader.Name)
                             {
+                                case title_element:
+                                    IsTitle = false;
+                                    break;
+                                case link_element:
+                                    IsUrl = false;
+                                    break;
+                                case date_element:
+                                    IsDate = false;
+                                    break;
                                 case item_element:
                                     if (History == _title)
                                         return;
