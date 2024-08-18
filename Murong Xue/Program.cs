@@ -9,7 +9,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 3; //commit 111
-    static readonly int PATCH = 13;
+    static readonly int PATCH = 30;
     //---
     static Reporter report;
     static EntryData? RSSEntries = null;
@@ -39,7 +39,6 @@ public class Program
                 //"--DEBUG",
                 //"--edit",
             ];
-
 #endif
             foreach (string s in args)
                 report.Trace(s);

@@ -14,9 +14,10 @@ namespace Murong_Xue
 
         ALL = SPAM | VERBOSE | UNIMPORTANT | NORMAL | INTERACTIVE,
 #if DEBUG
-        DEFAULT = NORMAL | UNIMPORTANT,
+        _DEFAULT = NORMAL | INTERACTIVE,
+        DEFAULT = _DEFAULT | UNIMPORTANT,
 #else
-        DEFAULT = NORMAL,
+        DEFAULT = NORMAL | INTERACTIVE,
 #endif
     }
     [Flags]
