@@ -63,8 +63,14 @@
         {
             logType = type;
             logMod = mod;
-            report.DebugVal($"New LogLevel: {type} | {mod}");
+            report.DebugVal($"New LogLevel: {logType}{logMod}");
             NotifySubscribers();
+        }
+        public static void MaskLogLevel(LogType type, LogMod mod)
+        {
+            logType |= type;
+            logMod |= mod;
+            report.DebugVal($"New LogLevel: {logType}{logMod}");
         }
         public void SetRSSPath(string path)
         {
