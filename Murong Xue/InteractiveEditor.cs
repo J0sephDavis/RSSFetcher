@@ -33,25 +33,19 @@
                 }
                 else daysSince = -1;
 
-                Console.WriteLine(
+                report.Out(
                     "----------\n" +
-                    "{0}\tTITLE:{1}\n" +
-                    "\tHistory:{2}\n" +
-                    "\tExpression:{3}\n" +
-                    "\tURL:{4}\n" +
-                    "\tDays Since:{5}\n" +
-                    "----------",
-                    index,
-                    entry.GetTitle(),
-                    entry.GetHistory(),
-                    entry.GetExpr(),
-                    entry.GetURL(),
-                    daysSince
+                    $"{index}\tTITLE:{entry.GetTitle()}\n" +
+                    $"\tHistory:{entry.GetHistory()}\n" +
+                    $"\tExpression:{entry.GetExpr()}\n" +
+                    $"\tURL:{entry.GetURL()}\n" +
+                    $"\tDays Since:{daysSince}\n" +
+                    "----------"
                 );
                 return;
             }
             int totalFeeds = Feeds.Count;
-            Console.WriteLine("ID\tDays\tTitle");
+            report.Out("ID\tDays\tTitle");
             for (int idx = 0; idx < totalFeeds; idx++)
             {
                 entry = Feeds[idx];
@@ -61,14 +55,14 @@
                 }
                 else daysSince = -1;
 
-                Console.WriteLine($"{idx}\t{daysSince}\t{entry.GetTitle()}");
+                report.Out($"{idx}\t{daysSince}\t{entry.GetTitle()}");
             }
         }
 
         protected void PromptForInput(string prompt, out string? input, uint minLen = 3)
         {
             report.Trace("Prompting for input");
-            Console.Write(prompt);
+            report.Interactive(prompt);
             input = Console.ReadLine();
             if (input != null && input.Length < minLen)
             {
@@ -96,7 +90,6 @@
         };
 
         static readonly string edit_help = @"Title / History / Expr / Url / Confirm (X) / Help (default) / Print";
-        static readonly string edit_prefix = @"E: ";
         protected void EditHandler(int? index)
         {
 
@@ -107,7 +100,7 @@
             }
             FeedData entry = Feeds[(int)index];
             PrintHandler(index);
-            Console.WriteLine(edit_help);
+            report.Out(edit_help);
             //----
             EditFlag edits = EditFlag.NONE;
             string _title = entry.GetTitle();
@@ -117,7 +110,7 @@
 
             while (true)
             {
-                Console.Write(edit_prefix);
+                report.Interactive("");
                 string? input = Console.ReadLine();
                 if (input == null || input == string.Empty)
                 {
@@ -130,10 +123,8 @@
                 //---
                 if (edit_cmds_title.Contains(input))
                 {
-                    string title_prompt =
-                        $"Current Title:\t[{_title}]\n" +
-                        $"{edit_prefix}Title:";
-
+                    const string title_prompt = "Title:";
+                    report.Out($"Current Title:\t[{_title}]");
                     PromptForInput(title_prompt, out input);
                     if (input == null)
                     {
@@ -152,9 +143,8 @@
                 }
                 if (edit_cmds_history.Contains(input))
                 {
-                    string history_prompt =
-                        $"Current History:\t[{_history}]\n" +
-                        $"{edit_prefix}History:";
+                    const string history_prompt = "History:";
+                    report.Out($"Current History:\t[{_history}]");
 
                     PromptForInput(history_prompt, out input, 0);
                     if (input == null)
@@ -174,9 +164,8 @@
                 }
                 if (edit_cmds_expr.Contains(input))
                 {
-                    string expression_prompt =
-                        $"Current Expression:\t[{_expr}]\n" +
-                        $"{edit_prefix}Regex:";
+                    const string expression_prompt = "Regex:";
+                    report.Out($"Current Expression:\t[{_expr}]");
 
                     PromptForInput(expression_prompt, out input, 0);
                     if (input == null)
@@ -196,9 +185,8 @@
                 }
                 if (edit_cmds_url.Contains(input))
                 {
-                    string url_prompt =
-                        $"Current URL:\t[{_url}]\n" +
-                        $"{edit_prefix}URL:";
+                    const string url_prompt = "URL:";
+                    report.Out($"Current URL:\t[{_url}]");
 
                     PromptForInput(url_prompt, out input);
                     if (input == null)
@@ -218,8 +206,8 @@
                 }
                 if (edit_cmds_conf.Contains(input))
                 {
-                    report.Out("Save Changes? y/n/back(any other input)" + $"\tChanges:{edits}");
-                    Console.Write(edit_prefix + "?:");
+                    report.Out($"Changes made to fields: {edits}");
+                    report.Interactive("Save? y/n Back(any)");
                     //---
                     input = Console.ReadLine();
                     if (input == null || input == string.Empty)
@@ -230,8 +218,6 @@
                     switch (input[0])
                     {
                         case 'y':
-                            report.Out("Entry saved");
-
                             if ((edits & EditFlag.TITLE) > 0)
                                 entry.SetTitle(_title);
                             if ((edits & EditFlag.HISTORY) > 0)
@@ -251,10 +237,10 @@
                             report.Out("SAVED");
                             return;
                         case 'n':
-                            Console.WriteLine("DISCARDED");
+                            report.Out("DISCARDED");
                             return;
                         default:
-                            Console.WriteLine("BACK");
+                            report.Out("BACK");
                             break;
                     }
                     continue;
@@ -287,7 +273,7 @@
         {
             if (index == null || index < 0 || index > Feeds.Count)
             {
-                Console.WriteLine("DELETE: Invalid index {0}", index);
+                report.Out($"DELETE: Invalid index {index}");
                 return;
             }
             //----
@@ -297,10 +283,10 @@
             string? input;
             do
             {
-                Console.Write("D> DELETE? (Y/N):");
+                report.Interactive("DELETE? (Y/N): ");
                 //-----
                 input = Console.ReadLine();
-                if (input == null)
+                if (input == null || input == string.Empty)
                     continue;
                 input = input.ToLower();
                 input_char = input[0];
@@ -308,11 +294,11 @@
                 switch (input_char)
                 {
                     case 'y':
-                        Console.WriteLine("DELETED");
+                        report.Out("DELETED");
                         Feeds.Remove(Feeds[(int)index]);
                         return;
                     case 'n':
-                        Console.WriteLine("CANCELLED");
+                        report.Out("CANCELLED");
                         return;
                     default:
                         continue;
@@ -329,19 +315,19 @@
             string? input;
             while (_title == string.Empty)
             {
-                Console.Write("Title:");
+                report.Out("Title:");
                 input = Console.ReadLine();
                 if (input == null) continue;
                 _title = input;
             }
             while (_url == string.Empty)
             {
-                Console.Write("URL:");
+                report.Out("URL:");
                 input = Console.ReadLine();
                 if (input == null) continue;
                 _url = input;
             }
-            Console.Write("History(can be null):");
+            report.Out("History(can be null):");
             input = Console.ReadLine();
             if (input != null && input.Length > 1)
                 _history = input;
@@ -354,7 +340,7 @@
                 _expr = input;
             }
 
-            Console.WriteLine("NEW ENTRY:\n" +
+            report.Out("NEW ENTRY:\n" +
                 $"\tTitle:\t\t{_title}\n" +
                 $"\tHistory:\t{_history}\n" +
                 $"\tExpression:\t{_expr}\n" +
@@ -368,7 +354,7 @@
             int totalFeeds = Feeds.Count;
             if (totalFeeds == 0)
             {
-                Console.WriteLine("no feeds!");
+                report.Error("No feeds found");
                 return false;
             }
             
@@ -381,7 +367,7 @@
             while (true)
             {
                 INTERACTIVE_OPTIONS op = INTERACTIVE_OPTIONS.NONE;
-                Console.Write("!");
+                report.Interactive("");
                 input = Console.ReadLine();
                 if (input != null)
                     input_args = input.Split(" ");
@@ -397,7 +383,7 @@
                 switch (input_args[0])
                 {
                     case "help":
-                        Console.WriteLine("print #?/Edit #/Delete #/Create/Save/Exit/Help");
+                        report.Out("print #?/Edit #/Delete #/Create/Save/Exit/Help");
                         break;
                     case "print":
                         op = INTERACTIVE_OPTIONS.PRINT;
