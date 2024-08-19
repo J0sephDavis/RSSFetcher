@@ -41,6 +41,21 @@ namespace Murong_Xue
                 tmp += $"\n\tNEW-HISTORY: {NewHistory}";
             report.Spam(tmp);
         }
+        public string ToLongString()
+        {
+            StringBuilder builder = new();
+            const string sep = "----------";
+            //
+            builder.AppendLine(sep);
+            builder.AppendLine("TITLE: " + GetTitle());
+            builder.AppendLine("History: " + GetHistory());
+            builder.AppendLine("Expression: " + GetExpr());
+            builder.AppendLine("URL: " + GetURL());
+            builder.AppendLine("Date: " + GetDate());
+            builder.Append(sep); //don't end with a new line (append, not AppendLine)
+            //
+            return builder.ToString();
+        }
         public void QueueDownload()
         {
             report.Trace("QueueDownload()");
