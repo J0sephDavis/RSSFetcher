@@ -18,6 +18,7 @@
 	b. Create an algorithm that allows rewards size+/- & time +/-
 3. FeedData
 	a. Better handling for invalid URLs
+	b. [X] Compare dates & history?
 4. DownloadEntry
 	a. [ ] in downloadentryFile.HandleDownload,
 		- The prints statements that show link & path are redundant. No extra information is given by having both
