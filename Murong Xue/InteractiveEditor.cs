@@ -99,7 +99,6 @@
 
             while (true)
             {
-                Task.Delay(10);
                 report.Interactive("");
                 string? input = Console.ReadLine();
                 if (input == null || input == string.Empty)
