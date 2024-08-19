@@ -15,20 +15,17 @@ namespace Murong_Xue
         protected string NewHistory = string.Empty;
         private static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private static readonly Config cfg = Config.GetInstance();
-        private static Reporter report;
+        private static Reporter report = Config.OneReporterPlease("FeedData");
 
 
-        public FeedData(string title,
-            string url, string expression,
-            string history, string date)
+        public FeedData(string title, string url,
+            string expression, string history, string date)
         {
-            this.Title = title;
-            this.URL = new Uri(url);
-            this.Expression = expression;
-            this.History = history;
-            this.Date = date;
-
-            report ??= Config.OneReporterPlease("FeedData");
+            Title = title;
+            URL = new Uri(url);
+            Expression = expression;
+            History = history;
+            Date = date;
         }
 
         public void Print()
