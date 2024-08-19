@@ -86,13 +86,16 @@ namespace Murong_Xue
             XmlReaderSettings xSettings = new();
             xSettings.Async = false;
             //
+            const string title_element = "title";
+            const string link_element = "link";
+            const string item_element = "item";
+            const string date_element = "pubDate";
+            //---
             using (XmlReader reader = XmlReader.Create(content, xSettings))
+            //aynsc:avg: 00:00:00.0004290
+            //sync: avg: 00:00:00.0001597
+            //sync is 2.7x faster
             {
-                const string title_element = "title";
-                const string link_element = "link";
-                const string item_element = "item";
-                const string date_element = "pubDate";
-
                 bool IsTitle = false;
                 bool IsUrl = false;
                 bool IsDate = false;
@@ -102,9 +105,6 @@ namespace Murong_Xue
                 string _url = string.Empty;
                 string _date = string.Empty;
 
-                //aynsc:avg: 00:00:00.0004290
-                //sync: avg: 00:00:00.0001597
-                //sync is 2.7x faster
                 while (reader.Read())
                 {
                     switch (reader.NodeType)
