@@ -1,19 +1,17 @@
 ﻿1. Logging:
 	a.[ ] interactive mode
-		- Suppress all Console output that isn't flagged with INTERACTIVE
-		- Those that are flagged, will be printed with just the content.
-		- Give a visually distinct marker to avoid hardcoding prefixes?
-			- >msg<
-			- >msg
-			- {firstCharIdentifier/Acronym}: msg
+		[X] Suppress all Console output that isn't flagged with INTERACTIVE | NORMAL
+		[X] Prints only show content, no identifiers or log levels (maybe change ERROR & whatnot?)
+		[X] Give a visually distinct marker to avoid hardcoding prefixes?
+			[X] - >msg
+		[ ] {firstCharIdentifier/Acronym}: msg
 			?- "CFG: Interact Mode!!!"
 			?- "C: ..."
-			- [msg]
 	b. [ ] Possibly making a new object when we don't need to?
 		- ALL bitewise| operators!!!
 		- 1. [ ] LogLevel operator |(LogLevel a, LogMod b)
 		- 2. [ ] LogLevel operator |(LogLevel a, LogLevel b)
-        - 3. [ ] LogLevel operator |(LogLevel a, LogType b)
+		- 3. [ ] LogLevel operator |(LogLevel a, LogType b)
 	c. [ ] search about using Action<Log>() for buffer? Saw online
 2. Download Handler + Config?
 	a. record batch settings (mintime / size)

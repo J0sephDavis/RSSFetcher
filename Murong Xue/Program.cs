@@ -27,7 +27,7 @@ public class Program
         report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
         //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
         args = [
-            //"--edit"
+            "--edit"
             //"--help"
             //"--SPAM",
             //"--VERBOSE",
