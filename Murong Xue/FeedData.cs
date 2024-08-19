@@ -6,7 +6,7 @@ namespace Murong_Xue
     internal class FeedData
     {
         protected string Title;
-        protected Uri URL; //TODO how to use this Uri data type
+        protected Uri URL;
         protected string Expression;
         protected string History;
         protected string Date;
@@ -22,7 +22,7 @@ namespace Murong_Xue
             string history, string date)
         {
             this.Title = title;
-            this.URL = new Uri(url); //TODO add checks on URL validity
+            this.URL = new Uri(url);
             this.Expression = expression;
             this.History = history;
             this.Date = date;
@@ -182,7 +182,6 @@ namespace Murong_Xue
         public void SetURL(string URL)
         {
             report.TraceVal($"SetURL {URL}");
-            //TODO do some checks here to make sure it is a valid URL & catch any errors
             this.URL = new Uri(URL);
         }
         public void SetHistory(string History)

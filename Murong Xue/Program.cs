@@ -1,10 +1,4 @@
-﻿/* TODO
- * Create a cron/headless option that will minimize output to include:
- * 1. Total files scanned
- * 2. Total files added/fetched
- * 3. Running time
-*/
-namespace Murong_Xue;
+﻿namespace Murong_Xue;
 public class Program
 {
     static readonly int MAJOR_VERSION = 1;

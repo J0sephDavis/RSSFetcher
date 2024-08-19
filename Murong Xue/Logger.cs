@@ -104,13 +104,12 @@ namespace Murong_Xue
         //---- bitewise OR
         public static LogLevel operator |(LogLevel a, LogLevel b)
         {
-            return new LogLevel( //should `new` be used here?
+            return new LogLevel(
                 a._type | b._type,
                 a._modifier | b._modifier);
         }
         public static LogLevel operator |(LogLevel a, LogMod b)
         {
-            //TODO, reevaluate this, seems improper
             LogLevel tmp = new(a._type, a._modifier);
             tmp.Mask(b);
             return tmp;
@@ -266,8 +265,7 @@ namespace Murong_Xue
         public string IDENTIFIER = identifier;
         public string CONTENT = content;
         public string TIMESTAMP = DateTime.Now.ToLongTimeString();
-        
-        //TODO Prettify output here, someway 
+
         public override string ToString()
         {
             return $"[{TIMESTAMP}] {IDENTIFIER}\t{base.ToString()}\t{CONTENT}";

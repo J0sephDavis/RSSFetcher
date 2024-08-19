@@ -4,9 +4,7 @@
     {
         readonly List<FeedData> Feeds;
         readonly Reporter report;
-        // TODO either edit the base functionality for the logger or inherit the class & make on specifically for the editor
-        //The editor should be able to hide all the prefixes for printout (but keep them in the saved logfile)
-        //Maybe this is just how FEEDBACK works
+
         public InteractiveEditor(List<FeedData> Feeds)
         {
             this.Feeds = Feeds;

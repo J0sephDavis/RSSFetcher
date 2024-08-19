@@ -108,7 +108,6 @@
         public void ReQueue(DownloadEntryBase entry)
         {
             events.OnDownloadReQueued();
-            //TODO save optimal batch settings in config
             lock (DPLock)
             {
                 Downloading.Remove(entry);
