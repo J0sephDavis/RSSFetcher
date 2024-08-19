@@ -85,6 +85,7 @@ namespace Murong_Xue
             report.Notice($"Feed Downloaded len:{content.Length}, {this.Title}");
             XmlReaderSettings xSettings = new();
             xSettings.Async = false;
+            DateTime lastDownload = DateTime.Parse(Date);
             //
             const string title_element = "title";
             const string link_element = "link";
@@ -104,7 +105,7 @@ namespace Murong_Xue
                 string _title = string.Empty;
                 string _url = string.Empty;
                 string _date = string.Empty;
-
+                DateTime tmpDate;
                 while (reader.Read())
                 {
                     switch (reader.NodeType)
@@ -140,8 +141,21 @@ namespace Murong_Xue
                             else if (IsDate)
                             {
                                 _date = reader.Value;
+                                tmpDate = DateTime.Parse(_date);
+                                SetDate(_date.ToString());
+                                if (tmpDate < lastDownload)
+                                {
+            /* This should solve the problem where an older version of the
+            * feed looks like: 07,06,05,04,...
+            * But, the newest verssion becomes 07v2,06,05,04,..
+            * or even 06,05,04,..
+            * Our last "History" entry would be "07", but with
+            * 07 having been deleted or renamed we lose our guide for when to stop
+            * However, by comparing dates we avoid this. */
+                                    report.Out("OLDER DATE (TAKE NOTE!!)");
+                                    return;
+                                }
                                 DateAlreadySet = true;
-                                SetDate(DateTime.Parse(_date).ToString());
                             }
                             break;
                         case XmlNodeType.EndElement:
