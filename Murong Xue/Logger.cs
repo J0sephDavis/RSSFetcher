@@ -220,6 +220,10 @@ namespace Murong_Xue
         {
             Log(LogType.OUTPUT, LogMod.NORMAL, msg);
         }
+        public void Interactive(string msg)
+        {
+            Log(LogType.OUTPUT, LogMod.INTERACTIVE, msg);
+        }
         public void Log(LogType type, LogMod mod, string msg)
         {
             LogMsg log = new(type, mod, ReportIdentifier, msg);
@@ -270,6 +274,14 @@ namespace Murong_Xue
         {
             return $"[{TIMESTAMP}] {IDENTIFIER}\t{base.ToString()}\t{CONTENT}";
         }
+        public string GetContent()
+        {
+            return CONTENT;
+        }
+        public string ToInteractiveString()
+        {
+            return "> " + CONTENT;
+        }
     }
     internal class Logger
     {
@@ -287,6 +299,7 @@ namespace Murong_Xue
         private readonly Thread batchThread;
         private static readonly AutoResetEvent batchEvent = new(false);
         private bool StopLoop = false;
+        private bool InteractiveMode = false;
         //----
         const int BUFFER_THRESHOLD = 10; // msgs
         const int BUFFER_TIMEOUT = 5; // seconds
@@ -341,16 +354,36 @@ namespace Murong_Xue
                     batchEvent.Set();
             }
         }
+
+        public void SetInteractiveMode(bool val)
+        {
+            InteractiveMode = val;
+        }
         /// <summary>
         /// The loggers main thread. Waits for the batchEvent flag to be set or BUFFER_TIMEOUT.
         /// Clears & creates a copy of the buffer and writes output to the console (WIP for files)
         /// </summary>
         private void BatchLoop() //Console only
         {
+            bool changeTimeOut = !InteractiveMode;
             List<LogMsg> copiedBuff = [];
+            TimeSpan waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT);
+
             while (StopLoop == false)
             {
-                batchEvent.WaitOne(TimeSpan.FromSeconds(BUFFER_TIMEOUT));
+                //assuming changeTimeOut is actuallythe state
+                //of InteractiveMode before the loop ended
+                changeTimeOut = changeTimeOut != InteractiveMode;
+                if (changeTimeOut)
+                {
+                    if (InteractiveMode)
+                        waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT / 10);
+                    else
+                        waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT);
+                }
+                changeTimeOut = InteractiveMode;
+                //---
+                batchEvent.WaitOne(waitTimeOut);
                 //---
                 lock (buffLock)
                 {
@@ -360,7 +393,17 @@ namespace Murong_Xue
                 if (copiedBuff != null)
                 {
                     foreach (LogMsg msg in copiedBuff)
-                        Console.WriteLine(msg);
+                    {
+                        if (InteractiveMode)
+                        {
+                            if ((msg & LogMod.INTERACTIVE) != LogMod.NONE)
+                                Console.WriteLine(msg.ToInteractiveString());
+                            else if ((msg & LogMod.NORMAL) != LogMod.NONE)
+                                Console.WriteLine(msg);
+                        }
+                        else
+                            Console.WriteLine(msg);
+                    }
                     copiedBuff.Clear();
                 }
             }
@@ -376,10 +419,21 @@ namespace Murong_Xue
         {
             using (StreamWriter file = new StreamWriter(filePath.LocalPath)) //when this is null, what happens?
             {
+                bool changeTimeOut = !InteractiveMode; //force an update on first cycle
+                TimeSpan waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT);
                 List<LogMsg> copiedBuff = [];
                 while (StopLoop == false)
                 {
-                    batchEvent.WaitOne(TimeSpan.FromSeconds(BUFFER_TIMEOUT));
+                    changeTimeOut = changeTimeOut != InteractiveMode;
+                    if (changeTimeOut)
+                    {
+                        if (InteractiveMode)
+                            waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT / 10);
+                        else
+                            waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT);
+                    }
+                    changeTimeOut = InteractiveMode;
+                    batchEvent.WaitOne(waitTimeOut);
                     //---
                     lock (buffLock)
                     {
@@ -390,8 +444,15 @@ namespace Murong_Xue
                     {
                         foreach (LogMsg msg in copiedBuff)
                         {
-                            Console.WriteLine(msg);
-                            file.WriteLine(msg);
+                            if (InteractiveMode)
+                            {
+                                if ((msg & LogMod.INTERACTIVE) != LogMod.NONE)
+                                    Console.Write(msg.ToInteractiveString());
+                                else if ((msg & LogMod.NORMAL) != LogMod.NONE)
+                                    Console.WriteLine(msg.GetContent());
+                            }
+                            else
+                                Console.WriteLine(msg);
                         }
                         copiedBuff.Clear();
                     }

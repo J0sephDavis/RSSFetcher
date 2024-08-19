@@ -57,6 +57,11 @@
             }
         }
         //----------
+        public static void EnableInteractiveMode()
+        {
+            report.Trace("Enabling interactive mode");
+            Config.GetInstance()._Logger.SetInteractiveMode(true);
+        }
         public static void SetLogLevel(LogLevel _level)
         {
             level.Set(_level);

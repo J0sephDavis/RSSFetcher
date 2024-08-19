@@ -348,7 +348,7 @@
 
             while (_expr == string.Empty)
             {
-                Console.Write("Expression:");
+                report.Out("Expression:");
                 input = Console.ReadLine();
                 if (input == null) continue;
                 _expr = input;
@@ -371,7 +371,9 @@
                 Console.WriteLine("no feeds!");
                 return false;
             }
-            Console.WriteLine("\n!!!---INTERACTIVE MODE---!!!");
+            
+            report.Debug("\n!!!---INTERACTIVE MODE---!!!");
+            Config.EnableInteractiveMode();
             string? input;
             string[] input_args;
             int value = -1;
