@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace Murong_Xue
@@ -84,7 +85,7 @@ namespace Murong_Xue
         {
             report.Notice($"Feed Downloaded len:{content.Length}, {this.Title}");
             XmlReaderSettings xSettings = new();
-            xSettings.Async = true;
+            xSettings.Async = false;
             //
             using (XmlReader reader = XmlReader.Create(content, xSettings))
             {
@@ -102,7 +103,10 @@ namespace Murong_Xue
                 string _url = string.Empty;
                 string _date = string.Empty;
 
-                while (await reader.ReadAsync())
+                //aynsc:avg: 00:00:00.0004290
+                //sync: avg: 00:00:00.0001597
+                //sync is 2.7x faster
+                while (reader.Read())
                 {
                     switch (reader.NodeType)
                     {
@@ -126,15 +130,15 @@ namespace Murong_Xue
                         case XmlNodeType.Text:
                             if (IsTitle)
                             {
-                                _title = await reader.GetValueAsync();
+                                _title = reader.Value;
                             }
                             else if (IsUrl)
                             {
-                                _url = await reader.GetValueAsync();
+                                _url = reader.Value;
                             }
                             else if (IsDate)
                             {
-                                _date = await reader.GetValueAsync();
+                                _date = reader.Value;
                                 DateAlreadySet = true;
                                 SetDate(DateTime.Parse(_date).ToString());
                             }
@@ -182,7 +186,6 @@ namespace Murong_Xue
                 report.Trace("GetHistory (HasNewHistory && !=empty)");
                 return NewHistory;
             }
-            report.Trace("GetHistory");
             return History;
         }
         public string GetExpr()
@@ -191,22 +194,18 @@ namespace Murong_Xue
         }
         public void SetTitle(string title)
         {
-            report.TraceVal($"SetTitle {title}");
             this.Title = title;
         }
         public void SetURL(string URL)
         {
-            report.TraceVal($"SetURL {URL}");
             this.URL = new Uri(URL);
         }
         public void SetHistory(string History)
         {
-            report.TraceVal($"SetHistory {History}");
             this.History = History;
         }
         public void SetExpr(string Expression)
         {
-            report.TraceVal($"SetExpression {Expression}");
             this.Expression = Expression;
         }
         public string GetDate()
@@ -215,7 +214,6 @@ namespace Murong_Xue
         }
         public void SetDate(string date)
         {
-            report.TraceVal("DATE SET:" + date);
             this.Date = date;
         }
     }
