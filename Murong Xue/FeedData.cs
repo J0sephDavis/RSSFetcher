@@ -59,7 +59,6 @@ namespace Murong_Xue
         }
         public void QueueDownload()
         {
-            report.Trace("QueueDownload()");
             DownloadEntryFeed entry = new(URL, this);
             downloadHandler.QueueDownload(entry);
         }
@@ -183,7 +182,7 @@ namespace Murong_Xue
         {
             if (HasNewHistory && NewHistory != string.Empty)
             {
-                report.Trace("GetHistory (HasNewHistory && !=empty)");
+                report.TraceVal("GetHistory (HasNewHistory && !=empty)");
                 return NewHistory;
             }
             return History;

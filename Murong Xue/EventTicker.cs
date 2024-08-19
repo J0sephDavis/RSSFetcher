@@ -58,17 +58,14 @@ namespace Murong_Xue
 
         public void OnFeedDownloaded()
         {
-            report.TraceVal("OnFeedDownloaded " + feedsDownloaded);
             feedsDownloaded++;
         }
         public void OnFileDownloaded()
         {
-            report.TraceVal("OnFileDownloaded " + filesDownloaded);
             filesDownloaded++;
         }
         public void OnDownloadReQueued()
         {
-            report.TraceVal("OnDownloadeReQueued " + downloadsRetried);
             downloadsRetried++;
         }
 #if false

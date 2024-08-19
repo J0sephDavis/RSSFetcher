@@ -41,7 +41,6 @@ namespace Murong_Xue
         }
         public List<FeedData> GetFeeds()
         {
-            report.Trace("GetFeeds()");
             if (Feeds.Count == 0)
                 GetEntries();
             return Feeds;
@@ -51,7 +50,6 @@ namespace Murong_Xue
         {
             /* NOTE! Running the XMLReader in Async on our config file takes 23-26ms
              * Running Synchronously it takes 13-14ms                               */
-            report.Trace("GetEntries()");
             if (File.Exists(path.LocalPath) == false)
             {
                 report.Error($"RSS Config File not found ({path})");
@@ -167,7 +165,6 @@ namespace Murong_Xue
         }
         public void UpdateEntries()
         {
-            report.Trace("UpdateEntries()");
             Uri newFilePath = new(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
             Console.WriteLine($"newPath {newFilePath.LocalPath}");
             File.Move(path.LocalPath, newFilePath.LocalPath, overwrite: true);

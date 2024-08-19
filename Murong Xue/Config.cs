@@ -33,7 +33,6 @@
             if (mod == LogMod.NONE)
                 mod = level.GetLMod();
             Reporter _r = new(new(type, mod), ModuleName);
-            report.Trace($"Reporter {report.ReportIdentifier} created");
             Subscribe(_r);
             return _r;
         }
@@ -41,13 +40,11 @@
         {
             lock (Reporters)
             {
-                report.Trace($"Reporter {report.ReportIdentifier} subscribed");
                 Reporters.Add(reporter);
             }
         }
         protected static void NotifySubscribers()
         {
-            report.Trace("Propagate loglevel to subscribers");
             lock (Reporters)
             {
                 foreach (Reporter r in Reporters)
@@ -59,7 +56,6 @@
         //----------
         public static void EnableInteractiveMode()
         {
-            report.Trace("Enabling interactive mode");
             Config.GetInstance()._Logger.SetInteractiveMode(true);
         }
         public static void SetLogLevel(LogLevel _level)

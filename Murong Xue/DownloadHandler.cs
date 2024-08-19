@@ -56,9 +56,7 @@
                 lock(DPLock)
                 {
                     totalWaiting = Queued.Count + Downloading.Count + Processing.Count;
-                    report.DebugVal($"Total waiting updated {totalWaiting} | Q[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]");
                 }
-                report.Trace("Delay 500ms");
                 await Task.Delay(500); //nothing queued, may be wise to pass an autoresetevent to each of the download entries? or have some function that triggers it for them
             }
             report.DebugVal($"\t\tQ[{Queued.Count}]  D[{Downloading.Count}]  P[{Processing.Count}]");
@@ -66,16 +64,13 @@
         }
         public void QueueDownload(DownloadEntryBase entry)
         {
-            report.Trace("Add to Queue (waiting on lock)");
             lock (DPLock)
             {
                 Queued.Add(entry);
             }
-            report.Trace("Queued (releasing lock)");
         }
         private DownloadEntryBase PopSwapDownload()
         {
-            report.Trace("PopSwap Q->D (waiting on lock)");
             DownloadEntryBase? entry = null;
             lock (DPLock)
             {
@@ -83,27 +78,22 @@
                 Queued.Remove(entry);
                 Downloading.Add(entry);
             }
-            report.Trace("PopSwapped (released lock)");
             return entry;
         }
         public void DownloadingToProcessing(DownloadEntryBase entry)
         {
-            report.Trace("DownloadingToProcessing (Waiting on lock)");
             lock (DPLock)
             {
                 Downloading.Remove(entry);
                 Processing.Add(entry);
             }
-            report.Trace("DownloadingToProcessing (released lock)");
         }
         public void RemoveProcessing(DownloadEntryBase entry)
         {
-            report.Trace("RemoveProcessing (waiting on lock)");
             lock (DPLock)
             {
                 Processing.Remove(entry);
             }
-            report.Trace("RemoveProcessing (released lock)");
         }
         public void ReQueue(DownloadEntryBase entry)
         {

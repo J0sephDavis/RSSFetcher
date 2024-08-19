@@ -15,7 +15,6 @@ namespace Murong_Xue
         }
         public async Task Request(HttpClient client)
         {
-            report.Trace("Requesting data");
             Task<HttpResponseMessage> request = client.GetAsync(this.link);
             _ = request.ContinueWith(this.OnDownload);
             await request; //only return when the request has actually been completed
@@ -28,7 +27,6 @@ namespace Murong_Xue
         }
         private async Task OnDownload(Task<HttpResponseMessage> response)
         {
-            report.Trace("OnDownload");
             HttpResponseMessage msg = await response;
                 
             if (msg.IsSuccessStatusCode  == false)
@@ -46,12 +44,10 @@ namespace Murong_Xue
         }
         private void SetProcessing()
         {
-            report.Trace("Remove Processing");
             downloadHandler.DownloadingToProcessing(this);
         }
         private void ReQueue()
         {
-            report.Trace("ReQueue");
             downloadHandler.ReQueue(this);
         }
     }
@@ -66,7 +62,6 @@ namespace Murong_Xue
         override public async void HandleDownload(Stream content)
         {
             events.OnFeedDownloaded();
-            report.Trace("HandleDownload");
             await Task.Run(() => Feed.OnFeedDownloaded(content));
             DoneProcessing();
         }
@@ -82,7 +77,6 @@ namespace Murong_Xue
         override public void HandleDownload(Stream content)
         {
             events.OnFileDownloaded();
-            report.Trace($"Handle Download {link}");
             string fileName = Path.GetFileName(link.AbsolutePath);
             string destinationPath = this.DownloadPath.LocalPath + fileName;
             if (File.Exists(destinationPath))

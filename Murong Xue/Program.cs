@@ -27,7 +27,7 @@ public class Program
         report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
         //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
         args = [
-            //"--edit"
+            "--edit"
             //"--help"
             //"--SPAM",
             //"--VERBOSE",
@@ -37,7 +37,7 @@ public class Program
         ];
 #endif
         foreach (string s in args)
-            report.Trace(s);
+            report.TraceVal(s);
         ArgResult choice = HandleArgs(cfg, args);
 
         report.Notice("Program starting");
@@ -52,7 +52,6 @@ public class Program
                 break;
             case (ArgResult.NONE):
             default:
-                report.Trace("DEFFAULT/ARG.RESLT = NONE. EXITING");
                 goto case ArgResult.EXIT;
             case (ArgResult.EXIT):
                 report.Trace("ArgResult.EXIT");
@@ -91,7 +90,6 @@ public class Program
         {
             if (NextIsConfig)
             {
-                report.Trace("Setting rss path");
                 cfg.SetRSSPath(Path.GetFullPath(arg));
                 //---
                 NextIsConfig = false;
@@ -99,7 +97,6 @@ public class Program
             }
             if (NextIsDownloadDir)
             {
-                report.Trace("Setting download path");
                 cfg.SetDownloadPath(Path.GetFullPath(arg));
                 //---
                 NextIsDownloadDir = false;
@@ -121,7 +118,6 @@ public class Program
             }
             if (edit_cmds.Contains(_arg))
             {
-                report.Trace("EditConfigs = true");
                 retVal = ArgResult.EDIT;
                 continue;
             }
@@ -129,22 +125,18 @@ public class Program
             switch (_arg)
             {
                 case ("--spam"):
-                    report.Trace("--SPAM");
                     level |= LogMod.SPAM;
                     SetLogLevel = true;
                     break;
                 case ("--verbose"):
-                    report.Trace("--VERBOSE");
                     level |= LogMod.VERBOSE;
                     SetLogLevel = true;
                     break;
                 case ("--unimportant"):
-                    report.Trace("--UNIMPORTANT");
                     level |= LogMod.UNIMPORTANT;
                     SetLogLevel = true;
                     break;
                 case ("--debug"):
-                    report.Trace("--DEBUG");
                     level |= LogType.DEBUG;
                     break;
                 default:
@@ -153,13 +145,11 @@ public class Program
             //-------------------------
             if (rss_cmds.Contains(_arg))
             {
-                report.Trace("NextIsConfig = true");
                 NextIsConfig = true;
                 continue;
             }
             if (download_cmds.Contains(_arg))
             {
-                report.Trace("NextIsDownloadDir = true");
                 NextIsDownloadDir = true;
                 continue;
             }

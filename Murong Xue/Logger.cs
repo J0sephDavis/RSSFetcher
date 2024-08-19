@@ -243,19 +243,17 @@ namespace Murong_Xue
         /// <param name="mod">ignored if NONE</param>
         public void SetLogLevel(LogLevel _level)
         {
-            TraceVal($"Set logging flags {_level}");
             if (_level != LogMod.NONE)
                 logLevel.Set(_level.GetLMod());
             if (_level != LogType.NONE)
                 logLevel.Set(_level.GetLType());
-            TraceVal($"Current flags {logLevel}");
+            TraceVal($"New flags {logLevel}");
         }
         public void MaskLogLevel(LogType type, LogMod mod)
         {
-            TraceVal($"Mask logging flags {type}, {mod}");
             logLevel.Mask(mod);
             logLevel.Mask(type);
-            TraceVal($"Current flags {logLevel}");
+            TraceVal($"New flags {logLevel}");
         }
     }
     /// <summary>
@@ -318,7 +316,7 @@ namespace Murong_Xue
                 report.TraceVal($"Log file: [{filePath}]");
                 if (File.Exists(path.LocalPath))
                 {
-                    report.WarnSpam($"Deleting previous {Path.GetFileName(path.LocalPath)}");
+                    report.WarnSpam("Deleting previous logfile");
                     File.Delete(path.LocalPath);
                 }
                 batchThread = new(BatchLoopFile);

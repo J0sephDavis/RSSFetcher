@@ -52,7 +52,6 @@
 
         protected void PromptForInput(string prompt, out string? input, uint minLen = 3)
         {
-            report.Trace("Prompting for input");
             report.Interactive(prompt);
             input = Console.ReadLine();
             if (input != null && input.Length < minLen)
@@ -61,7 +60,6 @@
                 report.Out("Input discarded");
                 input = null;
             }
-            report.TraceVal($"[Input:{input}]");
         }
 
         static readonly string[] edit_cmds_title = ["title", "t"];
@@ -101,6 +99,7 @@
 
             while (true)
             {
+                Task.Delay(10);
                 report.Interactive("");
                 string? input = Console.ReadLine();
                 if (input == null || input == string.Empty)
@@ -123,7 +122,6 @@
                         _title = entry.GetTitle();
                         if ((edits & EditFlag.TITLE) != EditFlag.NONE)
                             edits -= EditFlag.TITLE;
-                        report.TraceVal($"Post-EditFlag: {edits}");
                         continue;
                     }
                     edits |= EditFlag.TITLE;
@@ -144,7 +142,6 @@
                         _title = entry.GetTitle();
                         if ((edits & EditFlag.HISTORY) != EditFlag.NONE)
                             edits -= EditFlag.HISTORY;
-                        report.TraceVal($"Post-EditFlag: {edits}");
                         continue;
                     }
                     edits |= EditFlag.HISTORY;
@@ -165,7 +162,6 @@
                         _title = entry.GetTitle();
                         if ((edits & EditFlag.EXPR) != EditFlag.NONE)
                             edits -= EditFlag.EXPR;
-                        report.TraceVal($"Post-EditFlag: {edits}");
                         continue;
                     }
                     edits |= EditFlag.EXPR;
@@ -186,7 +182,6 @@
                         _title = entry.GetTitle();
                         if ((edits & EditFlag.URL) != EditFlag.NONE)
                             edits -= EditFlag.URL;
-                        report.TraceVal($"Post-EditFlag: {edits}");
                         continue;
                     }
                     edits |= EditFlag.URL;
