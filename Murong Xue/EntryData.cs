@@ -178,13 +178,14 @@ namespace Murong_Xue
             {
                 //-------- ROOT
                 writer.WriteStartElement(null, "root", null);
+                TimeSpan SinceLast;
                 //---- item
                 foreach (FeedData feed in Feeds)
                 {
                     //----
                     if (DateTime.TryParse(feed.GetDate(), out _date))
                     {
-                        TimeSpan SinceLast = _today - _date;
+                        SinceLast = _today - _date;
                         if (SinceLast.Days > 10)
                         {
                             report.Out($"{feed.GetTitle()} / {feed.GetURL()} has not received an update in {SinceLast.Days} days");
