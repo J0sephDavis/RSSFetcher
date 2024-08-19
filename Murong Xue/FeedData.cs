@@ -130,6 +130,8 @@ namespace Murong_Xue
                             if (IsTitle)
                             {
                                 _title = reader.Value;
+                                if (History == _title)
+                                    return;
                             }
                             else if (IsUrl)
                             {
@@ -155,8 +157,6 @@ namespace Murong_Xue
                                     IsDate = false;
                                     break;
                                 case item_element:
-                                    if (History == _title)
-                                        return;
                                     if (Regex.IsMatch(_title, this.Expression))
                                         AddFile(_title, new Uri(_url));
                                     break;
