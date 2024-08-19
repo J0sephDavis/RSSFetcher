@@ -187,7 +187,7 @@ namespace Murong_Xue
         }
         public void Trace(string msg)
         {
-            Log(LogType.DEBUG, LogMod.SPAM | LogMod.VERBOSE, msg);
+            Log(LogType.DEBUG, LogMod.SPAM, msg);
         }
         public void TraceVal(string msg)
         {
