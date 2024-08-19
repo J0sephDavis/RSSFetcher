@@ -1,4 +1,6 @@
-﻿namespace Murong_Xue
+﻿using System.Diagnostics;
+
+namespace Murong_Xue
 {
     /// <summary>
     /// To keep counts for each event that has happened & print at the end
@@ -69,5 +71,26 @@
             report.TraceVal("OnDownloadeReQueued " + downloadsRetried);
             downloadsRetried++;
         }
+#if false
+        List<TimeSpan> sw_record = [];
+        public void HandleStopWatch(TimeSpan elapsed_t)
+        {
+            lock (sw_record)
+            {
+                sw_record.Add(elapsed_t);
+            }
+            /*Used in GetSummary():
+            foreach (var t in sw_record)
+            {
+                report.Out(t.ToString());
+            }
+            TimeSpan avg_time =
+                sw_record.Aggregate((accumulated, current) => accumulated + current)
+                / sw_record.Count;
+            report.Out("AVERAGE STOPWATCH TIME: " + avg_time);
+            */
+            //events.HandleStopWatch(stopwatch.Elapsed);
+        }
+#endif
     }
 }
