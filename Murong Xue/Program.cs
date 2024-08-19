@@ -3,7 +3,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 4; //commit 142
-    static readonly int PATCH = 23;
+    static readonly int PATCH = 31;
     //---
     static Reporter report;
     static EntryData? RSSEntries = null;
@@ -27,7 +27,7 @@ public class Program
         report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
         //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
         args = [
-            "--edit"
+            //"--edit"
             //"--help"
             //"--SPAM",
             //"--VERBOSE",

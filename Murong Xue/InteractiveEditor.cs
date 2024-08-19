@@ -32,16 +32,7 @@
                     daysSince = (_today - _date).Days;
                 }
                 else daysSince = -1;
-
-                report.Out(
-                    "----------\n" +
-                    $"{index}\tTITLE:{entry.GetTitle()}\n" +
-                    $"\tHistory:{entry.GetHistory()}\n" +
-                    $"\tExpression:{entry.GetExpr()}\n" +
-                    $"\tURL:{entry.GetURL()}\n" +
-                    $"\tDays Since:{daysSince}\n" +
-                    "----------"
-                );
+                report.Out(entry.ToLongString());
                 return;
             }
             int totalFeeds = Feeds.Count;
