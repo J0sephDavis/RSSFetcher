@@ -19,7 +19,7 @@ namespace Murong_Xue.DownloadHandling
         //Not in download, but also not done.
         private readonly List<DownloadEntryBase> Downloading = [];
         private readonly List<DownloadEntryBase> Processing = [];
-        private static Reporter report = Config.OneReporterPlease("DLHAND");
+        private readonly static Reporter report = Config.OneReporterPlease("DLHAND");
         //----
         EventTicker events = EventTicker.GetInstance();
 
