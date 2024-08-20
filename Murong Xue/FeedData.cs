@@ -66,7 +66,7 @@ namespace Murong_Xue
             DownloadEntryFile entry = new(link, downloadPath);
             downloadHandler.QueueDownload(entry);
         }
-        override public async void HandleDownload(Stream content)
+        override public void HandleDownload(Stream content)
         {
             events.OnFeedDownloaded();
             report.Notice($"Feed Downloaded len:{content.Length}, {this.Title}");
