@@ -7,7 +7,7 @@ namespace Murong_Xue
     internal class EntryData
     {
         private readonly Uri path;
-        private readonly List<FeedData> Feeds;
+        private readonly List<FeedEntry> Feeds;
         private readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private readonly Reporter report;// = new Reporter(LogFlag.DEFAULT, "EntryData");
         private const string RSS_Title = "title";
@@ -34,19 +34,19 @@ namespace Murong_Xue
             //OLD: Queueing feeds asynchronously saves 23ms (53ms sync, 32ms async)
             //NEW: Seems to be  faster to queue syncronously again,
             //previously we were creating objects every time, this time its just adding to a list
-            foreach (FeedData feed in Feeds)
+            foreach (FeedEntry feed in Feeds)
                 feed.Queue();
             await downloadHandler.ProcessDownloads();
             //save changes
             UpdateEntries();
         }
-        public List<FeedData> GetFeeds()
+        public List<FeedEntry> GetFeeds()
         {
             if (Feeds.Count == 0)
                 GetEntries();
             return Feeds;
         }
-        //! Reads the XML files and populated the FeedData list
+        //! Reads the XML files and populated the FeedEntry list
         private bool GetEntries()
         {
             /* NOTE! Running the XMLReader in Async on our config file takes 23-26ms
@@ -181,7 +181,7 @@ namespace Murong_Xue
                 writer.WriteStartElement(null, "root", null);
                 TimeSpan SinceLast;
                 //---- item
-                foreach (FeedData feed in Feeds)
+                foreach (FeedEntry feed in Feeds)
                 {
                     //----
                     if (DateTime.TryParse(feed.Date, out _date))

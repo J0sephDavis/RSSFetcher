@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace Murong_Xue
 {
-    internal class FeedData(string Title, Uri URL,
+    internal class FeedEntry(string Title, Uri URL,
         string Expression, string History, string Date) : DownloadEntryBase(URL)
     {
         public string Title { get; set; } = Title;
@@ -25,7 +25,7 @@ namespace Murong_Xue
 
         public void Print()
         {
-            string tmp = "FeedData Obj:" +
+            string tmp = "FeedEntry Obj:" +
                 $"\n\t{this.Title}" +
                 $"\n\t{this.URL}" +
                 $"\n\t{this.Expression}" +

@@ -11,7 +11,7 @@ namespace Murong_Xue.Logging
     internal class Reporter(LogLevel level, string identifier)
     {
         private readonly LogLevel logLevel = level;
-        public readonly string ReportIdentifier = "[" + identifier + "]"; // e.g. Program, FeedData, Config, &c
+        public readonly string ReportIdentifier = "[" + identifier + "]"; // e.g. Program, FeedEntry, Config, &c
         // <--- DEBUG --->
         [Conditional("DEBUG")]
         public void Debug(string msg)

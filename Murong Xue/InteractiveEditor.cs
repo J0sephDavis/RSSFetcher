@@ -4,10 +4,10 @@ namespace Murong_Xue
 {
     internal class InteractiveEditor
     {
-        readonly List<FeedData> Feeds;
+        readonly List<FeedEntry> Feeds;
         readonly Reporter report;
 
-        public InteractiveEditor(List<FeedData> Feeds)
+        public InteractiveEditor(List<FeedEntry> Feeds)
         {
             this.Feeds = Feeds;
             report = Config.OneReporterPlease("EDITOR");
@@ -22,7 +22,7 @@ namespace Murong_Xue
         };
         protected void PrintHandler(int? index)
         {
-            FeedData? entry;
+            FeedEntry? entry;
             DateTime _today = DateTime.Now;
             DateTime _date;
             int daysSince;
@@ -89,7 +89,7 @@ namespace Murong_Xue
                 report.Log(LogType.OUTPUT | LogType.ERROR, LogMod.NORMAL, "Index out of bounds"); //output + warn
                 return;
             }
-            FeedData entry = Feeds[(int)index];
+            FeedEntry entry = Feeds[(int)index];
             PrintHandler(index);
             report.Out(edit_help);
             //----
@@ -334,7 +334,7 @@ namespace Murong_Xue
                 $"\tURL:\t\t{_url}"
             );
             //TODO consider url & why we call new() here.
-            FeedData newEntry = new(_title, new(_url), _expr, _history, DateTime.UnixEpoch.ToString());
+            FeedEntry newEntry = new(_title, new(_url), _expr, _history, DateTime.UnixEpoch.ToString());
             Feeds.Add(newEntry);
         }
         public bool MainLoop()
