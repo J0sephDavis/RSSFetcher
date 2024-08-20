@@ -5,11 +5,11 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 5;
-    static readonly int PATCH = 12;
+    static readonly int PATCH = 13;
     //---
-    static Reporter report;
+    static Reporter report; //cannot be readonly. Must be set AFTER Config has been created
     static EntryData? RSSEntries = null;
-    static EventTicker events = EventTicker.GetInstance();
+    static readonly EventTicker events = EventTicker.GetInstance();
 
     [Flags]
     protected enum ArgResult
@@ -23,9 +23,9 @@ public class Program
     {
         using Config cfg = Config.GetInstance();
         report ??= Config.OneReporterPlease("PROGRM");
-        report.Debug($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
-        report.Trace($"Started program with {args.Length}args");
+        report.Notice($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
 #if DEBUG
+        report.Trace($"Started program with {args.Length}args");
         report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
         //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
         args = [
