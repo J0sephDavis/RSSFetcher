@@ -17,14 +17,10 @@
         //Not in download, but also not done.
         private readonly List<DownloadEntryBase> Downloading = [];
         private readonly List<DownloadEntryBase> Processing = [];
-        private static Reporter report;
+        private static Reporter report = Config.OneReporterPlease("DLHAND");
         //----
         EventTicker events = EventTicker.GetInstance();
 
-        private DownloadHandler()
-        {
-            report = Config.OneReporterPlease("DownloadHandler");
-        }
         public static DownloadHandler GetInstance()
         {
             s_DownloadHandler ??= new DownloadHandler();

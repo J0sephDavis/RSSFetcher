@@ -38,7 +38,7 @@ namespace Murong_Xue
         DateTime start = DateTime.Now;
         //---
         static EventTicker? s_EventTicker = null;
-        private readonly Reporter report = Config.OneReporterPlease("EventTicker");
+        private readonly Reporter report = Config.OneReporterPlease("EVENTT");
 
         private EventTicker()
         {  }

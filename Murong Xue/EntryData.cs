@@ -18,7 +18,7 @@ namespace Murong_Xue
         {
             this.path = RSSPath;
             Feeds = [];
-            report ??= Config.OneReporterPlease("EntryData");
+            report ??= Config.OneReporterPlease("ENTDAT");
         }
         public async Task Process()
         {

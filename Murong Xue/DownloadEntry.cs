@@ -8,7 +8,7 @@ namespace Murong_Xue
         public Uri link;
         protected Reporter report;
         static protected EventTicker events = EventTicker.GetInstance();
-        public DownloadEntryBase(Uri link, string reportIdentifier = "DownloadEntryBase")
+        public DownloadEntryBase(Uri link, string reportIdentifier = "DLBASE")
         {
             this.link = link;
             report ??= Config.OneReporterPlease(reportIdentifier);
@@ -55,7 +55,7 @@ namespace Murong_Xue
     internal class DownloadEntryFeed : DownloadEntryBase
     {
         private FeedData Feed { get; set; }
-        public DownloadEntryFeed(Uri link, FeedData _feed) : base(link, "DownloadEntryFeed")
+        public DownloadEntryFeed(Uri link, FeedData _feed) : base(link, "DLFEED")
         {
             this.Feed = _feed;
         }
@@ -70,7 +70,7 @@ namespace Murong_Xue
     internal class DownloadEntryFile : DownloadEntryBase
     {
         private readonly Uri DownloadPath;
-        public DownloadEntryFile(Uri link, Uri DownloadPath) : base(link, "DownloadEntryFile")
+        public DownloadEntryFile(Uri link, Uri DownloadPath) : base(link, "DLFILE")
         {
             this.DownloadPath = DownloadPath;
         }

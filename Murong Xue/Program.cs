@@ -20,7 +20,7 @@ public class Program
     public static async Task Main(string[] args)
     {
         using Config cfg = Config.GetInstance();
-        report ??= Config.OneReporterPlease("PROGRAM");
+        report ??= Config.OneReporterPlease("PROGRM");
         report.Debug($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
         report.Trace($"Started program with {args.Length}args");
 #if DEBUG

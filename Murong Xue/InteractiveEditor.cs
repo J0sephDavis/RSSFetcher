@@ -8,7 +8,7 @@
         public InteractiveEditor(List<FeedData> Feeds)
         {
             this.Feeds = Feeds;
-            report = Config.OneReporterPlease("Editor");
+            report = Config.OneReporterPlease("EDITOR");
         }
         enum INTERACTIVE_OPTIONS
         {
