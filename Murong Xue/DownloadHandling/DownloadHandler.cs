@@ -1,6 +1,6 @@
 ﻿using Murong_Xue.Logging;
 
-namespace Murong_Xue
+namespace Murong_Xue.DownloadHandling
 {
     internal sealed class DownloadHandler
     {
@@ -33,7 +33,7 @@ namespace Murong_Xue
             report.Notice("Processing downloads");
             List<Task> CurrentBatch = [];
             report.DebugVal($"Before processing, Queued[{Queued.Count}] Downloading[{Downloading.Count}]");
-            
+
             int totalWaiting = Queued.Count + Downloading.Count + Processing.Count; // doesn't need a lock, no one is touching these arrays rn
             while (totalWaiting != 0) //these are volatile, might consider some type of sentinel/semaphore to handle this behavior
             {
@@ -51,7 +51,7 @@ namespace Murong_Xue
                         CurrentBatch.Clear();
                     }
                 }
-                lock(DPLock)
+                lock (DPLock)
                 {
                     totalWaiting = Queued.Count + Downloading.Count + Processing.Count;
                 }
@@ -106,9 +106,9 @@ namespace Murong_Xue
             {
                 fails++;
                 BATCH_MIN_TIME += 200;
-                if (BATCH_SIZE > 5 && fails > (BATCH_SIZE * 3/4))
+                if (BATCH_SIZE > 5 && fails > BATCH_SIZE * 3 / 4)
                 {
-                    BATCH_MIN_TIME -= (100 * fails);
+                    BATCH_MIN_TIME -= 100 * fails;
                     BATCH_SIZE--;
                     fails = 0;
                 }

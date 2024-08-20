@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Murong_Xue.Logging;
 
-namespace Murong_Xue
+namespace Murong_Xue.DownloadHandling
 {
     internal abstract class DownloadEntryBase
     {
@@ -16,8 +16,8 @@ namespace Murong_Xue
         }
         public async Task Request(HttpClient client)
         {
-            Task<HttpResponseMessage> request = client.GetAsync(this.link);
-            _ = request.ContinueWith(this.OnDownload);
+            Task<HttpResponseMessage> request = client.GetAsync(link);
+            _ = request.ContinueWith(OnDownload);
             await request; //only return when the request has actually been completed
             return;
         }
@@ -29,10 +29,10 @@ namespace Murong_Xue
         private async Task OnDownload(Task<HttpResponseMessage> response)
         {
             HttpResponseMessage msg = await response;
-                
-            if (msg.IsSuccessStatusCode  == false)
+
+            if (msg.IsSuccessStatusCode == false)
             {
-                if (msg.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                if (msg.StatusCode == HttpStatusCode.TooManyRequests)
                     report.WarnSpam("Download failed, too many requests");
                 else
                     report.Warn($"Download failed HTTP Status Code: {msg.StatusCode}");
@@ -58,7 +58,7 @@ namespace Murong_Xue
         private FeedData Feed { get; set; }
         public DownloadEntryFeed(Uri link, FeedData _feed) : base(link, "DLFEED")
         {
-            this.Feed = _feed;
+            Feed = _feed;
         }
         override public async void HandleDownload(Stream content)
         {
@@ -79,15 +79,15 @@ namespace Murong_Xue
         {
             events.OnFileDownloaded();
             string fileName = Path.GetFileName(link.AbsolutePath);
-            string destinationPath = this.DownloadPath.LocalPath + fileName;
+            string destinationPath = DownloadPath.LocalPath + fileName;
             if (File.Exists(destinationPath))
                 report.Error($"File already exists\n\tLink:{link}\n\tPath:{destinationPath}");
             else using (FileStream fs = File.Create(destinationPath))
-            {
-                content.Seek(0, SeekOrigin.Begin);
-                content.CopyTo(fs);
-                report.Out($"FILE {link} WRITTEN TO {destinationPath}");
-            }
+                {
+                    content.Seek(0, SeekOrigin.Begin);
+                    content.CopyTo(fs);
+                    report.Out($"FILE {link} WRITTEN TO {destinationPath}");
+                }
             DoneProcessing();
         }
     }
