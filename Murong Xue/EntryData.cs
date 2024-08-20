@@ -31,12 +31,11 @@ namespace Murong_Xue
             }
             //
             report.Trace("Queueing Downloads");
-            //Queueing feeds asynchronously saves 23ms (53ms sync, 32ms async)
-            List<Task> taskList = [];
+            //OLD: Queueing feeds asynchronously saves 23ms (53ms sync, 32ms async)
+            //NEW: Seems to be  faster to queue syncronously again,
+            //previously we were creating objects every time, this time its just adding to a list
             foreach (FeedData feed in Feeds)
-                taskList.Add(Task.Run(() => feed.QueueDownload()));
-            await Task.WhenAll(taskList);
-            //
+                feed.Queue();
             await downloadHandler.ProcessDownloads();
             //save changes
             UpdateEntries();
