@@ -6,14 +6,14 @@ using System.Xml;
 
 namespace Murong_Xue
 {
-    internal class FeedData(string title, Uri url,
-        string expression, string history, string date) : DownloadEntryBase(url)
+    internal class FeedData(string Title, Uri URL,
+        string Expression, string History, string Date) : DownloadEntryBase(URL)
     {
-        public string Title { get; set; } = title;
-        protected Uri URL = url;
-        public string Expression { get; set; } = expression;
-        public string History { get; set; } = history;
-        public string Date { get; set; } = date;
+        public string Title { get; set; } = Title;
+        protected Uri URL = URL;
+        public string Expression { get; set; } = Expression;
+        public string History { get; set; } = History;
+        public string Date { get; set; } = Date;
         protected bool HasNewHistory { get; set; } = false;
         protected string NewHistory = string.Empty;
         //From putting a debug point on the below functions. It seems that a primary constructor

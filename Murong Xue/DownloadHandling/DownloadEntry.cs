@@ -60,14 +60,8 @@ namespace Murong_Xue.DownloadHandling
         }
     }
 
-    internal class DownloadEntryFile : DownloadEntryBase
+    internal class DownloadEntryFile(Uri link, Uri DownloadPath) : DownloadEntryBase(link, Config.OneReporterPlease("DLFILE"))
     {
-        private readonly Uri DownloadPath;
-        //TODO "DLFILE"s
-        public DownloadEntryFile(Uri link, Uri DownloadPath) : base(link)
-        {
-            this.DownloadPath = DownloadPath;
-        }
         override public void HandleDownload(Stream content)
         {
             events.OnFileDownloaded();
