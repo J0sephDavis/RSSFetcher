@@ -4,24 +4,18 @@ using Murong_Xue.Logging;
 
 namespace Murong_Xue
 {
-    internal class EntryData
+    internal class EntryData(Uri RSSPath)
     {
-        private readonly Uri path;
-        private readonly List<FeedEntry> Feeds;
-        private readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
-        private readonly Reporter report;// = new Reporter(LogFlag.DEFAULT, "EntryData");
+        private readonly Uri path = RSSPath;
+        private readonly List<FeedEntry> Feeds = [];
+        private readonly Reporter report = Config.OneReporterPlease("ENTDAT");
         private const string RSS_Title = "title";
         private const string RSS_URL = "feed-url";
         private const string RSS_Expression = "expr";
         private const string RSS_History = "history";
         private const string RSS_Item = "item";
         private const string RSS_Date = "date";
-        public EntryData(Uri RSSPath)
-        {
-            this.path = RSSPath;
-            Feeds = [];
-            report ??= Config.OneReporterPlease("ENTDAT");
-        }
+
         public async Task Process()
         {
             if (GetEntries() == false)
@@ -36,7 +30,7 @@ namespace Murong_Xue
             //previously we were creating objects every time, this time its just adding to a list
             foreach (FeedEntry feed in Feeds)
                 feed.Queue();
-            await downloadHandler.ProcessDownloads();
+            await DownloadHandler.GetInstance().ProcessDownloads();
             //save changes
             UpdateEntries();
         }

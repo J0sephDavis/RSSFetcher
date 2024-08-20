@@ -5,7 +5,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 5;
-    static readonly int PATCH = 0;
+    static readonly int PATCH = 12;
     //---
     static Reporter report;
     static EntryData? RSSEntries = null;
