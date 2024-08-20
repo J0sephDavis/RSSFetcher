@@ -29,7 +29,7 @@ namespace Murong_Xue
             if (index != null && index > -1 && index < Feeds.Count)
             {
                 entry = Feeds[(int)index];
-                if (DateTime.TryParse(entry.GetDate(), out _date))
+                if (DateTime.TryParse(entry.Date, out _date))
                 {
                     daysSince = (_today - _date).Days;
                 }
@@ -42,13 +42,13 @@ namespace Murong_Xue
             for (int idx = 0; idx < totalFeeds; idx++)
             {
                 entry = Feeds[idx];
-                if (DateTime.TryParse(entry.GetDate(), out _date))
+                if (DateTime.TryParse(entry.Date, out _date))
                 {
                     daysSince = (_today - _date).Days;
                 }
                 else daysSince = -1;
 
-                report.Out($"{idx}\t{daysSince}\t{entry.GetTitle()}");
+                report.Out($"{idx}\t{daysSince}\t{entry.Title}");
             }
         }
 
@@ -94,10 +94,10 @@ namespace Murong_Xue
             report.Out(edit_help);
             //----
             EditFlag edits = EditFlag.NONE;
-            string _title = entry.GetTitle();
+            string _title = entry.Title;
             string _history = entry.GetHistory();
             string _url = entry.GetURL();
-            string _expr = entry.GetExpr();
+            string _expr = entry.Expression;
 
             while (true)
             {
@@ -120,7 +120,7 @@ namespace Murong_Xue
                     if (input == null)
                     {
                         report.Out("Reset title back to original");
-                        _title = entry.GetTitle();
+                        _title = entry.Title;
                         if ((edits & EditFlag.TITLE) != EditFlag.NONE)
                             edits -= EditFlag.TITLE;
                         continue;
@@ -140,7 +140,7 @@ namespace Murong_Xue
                     if (input == null)
                     {
                         report.Out("Set history to original");
-                        _title = entry.GetTitle();
+                        _title = entry.Title;
                         if ((edits & EditFlag.HISTORY) != EditFlag.NONE)
                             edits -= EditFlag.HISTORY;
                         continue;
@@ -160,7 +160,7 @@ namespace Murong_Xue
                     if (input == null)
                     {
                         report.Out("Set expression to original");
-                        _title = entry.GetTitle();
+                        _title = entry.Title;
                         if ((edits & EditFlag.EXPR) != EditFlag.NONE)
                             edits -= EditFlag.EXPR;
                         continue;
@@ -180,7 +180,7 @@ namespace Murong_Xue
                     if (input == null)
                     {
                         report.Out("Set URL to original");
-                        _title = entry.GetTitle();
+                        _title = entry.Title;
                         if ((edits & EditFlag.URL) != EditFlag.NONE)
                             edits -= EditFlag.URL;
                         continue;
@@ -206,11 +206,11 @@ namespace Murong_Xue
                     {
                         case 'y':
                             if ((edits & EditFlag.TITLE) > 0)
-                                entry.SetTitle(_title);
+                                entry.Title = _title;
                             if ((edits & EditFlag.HISTORY) > 0)
-                                entry.SetHistory(_history);
+                                entry.History = _history;
                             if ((edits & EditFlag.EXPR) > 0)
-                                entry.SetExpr(_expr);
+                                entry.Expression = _expr;
                             try
                             {
                                 if ((edits & EditFlag.URL) > 0)

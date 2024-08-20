@@ -185,19 +185,19 @@ namespace Murong_Xue
                 foreach (FeedData feed in Feeds)
                 {
                     //----
-                    if (DateTime.TryParse(feed.GetDate(), out _date))
+                    if (DateTime.TryParse(feed.Date, out _date))
                     {
                         SinceLast = _today - _date;
                         if (SinceLast.Days > 10)
                         {
-                            report.Out($"{feed.GetTitle()} / {feed.GetURL()} has not received an update in {SinceLast.Days} days");
+                            report.Out($"{feed.Title} / {feed.GetURL()} has not received an update in {SinceLast.Days} days");
                         }
                     }
                     //----
                     writer.WriteStartElement(RSS_Item);
                     // 1. Title
                     writer.WriteStartElement(RSS_Title);
-                    writer.WriteString(feed.GetTitle());
+                    writer.WriteString(feed.Title);
                     writer.WriteEndElement();
                     // 2. feed-url
                     writer.WriteStartElement(RSS_URL);
@@ -205,7 +205,7 @@ namespace Murong_Xue
                     writer.WriteEndElement();
                     // 3. expr
                     writer.WriteStartElement(RSS_Expression);
-                    writer.WriteString(feed.GetExpr());
+                    writer.WriteString(feed.Expression);
                     writer.WriteEndElement();
                     // 4. history
                     writer.WriteStartElement(RSS_History);
@@ -213,7 +213,7 @@ namespace Murong_Xue
                     writer.WriteEndElement();
                     // 5. LastEntry date
                     writer.WriteStartElement(RSS_Date);
-                    writer.WriteString(feed.GetDate());
+                    writer.WriteString(feed.Date);
                     writer.WriteEndElement();
                     //---- end item
                     writer.WriteEndElement();

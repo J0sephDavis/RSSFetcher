@@ -6,28 +6,22 @@ using System.Xml;
 
 namespace Murong_Xue
 {
-    internal class FeedData
+    internal class FeedData(string title, string url,
+        string expression, string history, string date)
     {
-        protected string Title;
-        protected Uri URL;
-        protected string Expression;
-        protected string History;
-        protected string Date;
-        protected bool HasNewHistory = false;
+        public string Title { get; set; } = title;
+        protected Uri URL = new Uri(url);
+        public string Expression { get; set; } = expression;
+        public string History { get; set; } = history;
+        public string Date { get; set; } = date;
+        protected bool HasNewHistory { get; set; } = false;
         protected string NewHistory = string.Empty;
+        //From putting a debug point on the below functions. It seems that a primary constructor
+        //does not redeclare these static variables, thankfully. I assume static is done at runtime?
+        //Will need more research done
         private static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private static readonly Config cfg = Config.GetInstance();
         private static Reporter report = Config.OneReporterPlease("F-DATA");
-
-        public FeedData(string title, string url,
-            string expression, string history, string date)
-        {
-            Title = title;
-            URL = new Uri(url);
-            Expression = expression;
-            History = history;
-            Date = date;
-        }
 
         public void Print()
         {
@@ -46,11 +40,11 @@ namespace Murong_Xue
             const string sep = "----------";
             //
             builder.AppendLine(sep);
-            builder.AppendLine("TITLE: " + GetTitle());
+            builder.AppendLine("TITLE: " + Title);
             builder.AppendLine("History: " + GetHistory());
-            builder.AppendLine("Expression: " + GetExpr());
+            builder.AppendLine("Expression: " + Expression);
             builder.AppendLine("URL: " + GetURL());
-            builder.AppendLine("Date: " + GetDate());
+            builder.AppendLine("Date: " + Date);
             builder.Append(sep); //don't end with a new line (append, not AppendLine)
             //
             return builder.ToString();
@@ -140,7 +134,7 @@ namespace Murong_Xue
                             {
                                 _date = reader.Value;
                                 tmpDate = DateTime.Parse(_date);
-                                SetDate(_date.ToString());
+                                Date = _date.ToString();
                                 if (tmpDate < lastDownload)
                                 {
             /* This should solve the problem where an older version of the
@@ -182,10 +176,6 @@ namespace Murong_Xue
                 }
             }
         }
-        public string GetTitle()
-        {
-            return Title;
-        }
         public string GetURL()
         {
             return URL.ToString();
@@ -199,33 +189,9 @@ namespace Murong_Xue
             }
             return History;
         }
-        public string GetExpr()
-        {
-            return Expression;
-        }
-        public void SetTitle(string title)
-        {
-            this.Title = title;
-        }
         public void SetURL(string URL)
         {
             this.URL = new Uri(URL);
-        }
-        public void SetHistory(string History)
-        {
-            this.History = History;
-        }
-        public void SetExpr(string Expression)
-        {
-            this.Expression = Expression;
-        }
-        public string GetDate()
-        {
-            return this.Date;
-        }
-        public void SetDate(string date)
-        {
-            this.Date = date;
         }
     }
 }
