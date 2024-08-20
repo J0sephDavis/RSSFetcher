@@ -6,11 +6,11 @@ using System.Xml;
 
 namespace Murong_Xue
 {
-    internal class FeedData(string title, string url,
-        string expression, string history, string date)
+    internal class FeedData(string title, Uri url,
+        string expression, string history, string date) : DownloadEntryBase(url)
     {
         public string Title { get; set; } = title;
-        protected Uri URL = new Uri(url);
+        protected Uri URL = url;
         public string Expression { get; set; } = expression;
         public string History { get; set; } = history;
         public string Date { get; set; } = date;
@@ -21,7 +21,7 @@ namespace Murong_Xue
         //Will need more research done
         private static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private static readonly Config cfg = Config.GetInstance();
-        private static Reporter report = Config.OneReporterPlease("F-DATA");
+        private static readonly Reporter report = Config.OneReporterPlease("F-DATA");
 
         public void Print()
         {
@@ -49,12 +49,6 @@ namespace Murong_Xue
             //
             return builder.ToString();
         }
-        public void QueueDownload()
-        {
-            DownloadEntryFeed entry = new(URL, this);
-            downloadHandler.QueueDownload(entry);
-        }
-
         public void AddFile(string title, Uri link)
         {
             if (HasNewHistory == false)
@@ -72,8 +66,9 @@ namespace Murong_Xue
             DownloadEntryFile entry = new(link, downloadPath);
             downloadHandler.QueueDownload(entry);
         }
-        public async void OnFeedDownloaded(Stream content)
+        override public async void HandleDownload(Stream content)
         {
+            events.OnFeedDownloaded();
             report.Notice($"Feed Downloaded len:{content.Length}, {this.Title}");
             XmlReaderSettings xSettings = new();
             xSettings.Async = false;
@@ -98,7 +93,8 @@ namespace Murong_Xue
                 string _url = string.Empty;
                 string _date = string.Empty;
                 DateTime tmpDate;
-                while (reader.Read())
+                bool stopReading = false;
+                while (!stopReading && reader.Read())
                 {
                     switch (reader.NodeType)
                     {
@@ -124,7 +120,10 @@ namespace Murong_Xue
                             {
                                 _title = reader.Value;
                                 if (History == _title)
-                                    return;
+                                {
+                                    stopReading = true;
+                                    break;
+                                }
                             }
                             else if (IsUrl)
                             {
@@ -145,7 +144,8 @@ namespace Murong_Xue
             * 07 having been deleted or renamed we lose our guide for when to stop
             * However, by comparing dates we avoid this. */
                                     report.Out("OLDER DATE (TAKE NOTE!!)");
-                                    return;
+                                    stopReading = true;
+                                    break;
                                 }
                                 DateAlreadySet = true;
                             }
@@ -174,6 +174,8 @@ namespace Murong_Xue
                             break;
                     }
                 }
+                //----
+                DoneProcessing();
             }
         }
         public string GetURL()

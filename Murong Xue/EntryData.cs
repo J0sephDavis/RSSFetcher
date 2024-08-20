@@ -140,7 +140,7 @@ namespace Murong_Xue
                                         _date = DateTime.UnixEpoch.ToString();
                                     Feeds.Add(new FeedData(
                                         title:      _title,
-                                        url:        _url,
+                                        url:        new Uri(_url), //TODO make _url a URI when we get it, not here.
                                         expression: _expr,
                                         history:    _history,
                                         date:       _date)

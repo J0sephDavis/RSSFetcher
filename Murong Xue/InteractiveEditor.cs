@@ -333,7 +333,8 @@ namespace Murong_Xue
                 $"\tExpression:\t{_expr}\n" +
                 $"\tURL:\t\t{_url}"
             );
-            FeedData newEntry = new(_title, _url, _expr, _history, DateTime.UnixEpoch.ToString());
+            //TODO consider url & why we call new() here.
+            FeedData newEntry = new(_title, new(_url), _expr, _history, DateTime.UnixEpoch.ToString());
             Feeds.Add(newEntry);
         }
         public bool MainLoop()

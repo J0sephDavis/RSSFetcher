@@ -5,14 +5,21 @@ namespace Murong_Xue.DownloadHandling
 {
     internal abstract class DownloadEntryBase
     {
-        protected DownloadHandler downloadHandler = DownloadHandler.GetInstance();
+        private static DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         public Uri link;
         protected Reporter report;
         static protected EventTicker events = EventTicker.GetInstance();
-        public DownloadEntryBase(Uri link, string reportIdentifier = "DLBASE")
+        public DownloadEntryBase(Uri link, Reporter? rep = null)
         {
             this.link = link;
-            report ??= Config.OneReporterPlease(reportIdentifier);
+            if (rep == null)
+                report = Config.OneReporterPlease("DLBASE");
+            else
+                report = rep;
+        }
+        public void Queue()
+        {
+            downloadHandler.QueueDownload(this);
         }
         public async Task Request(HttpClient client)
         {
@@ -20,11 +27,6 @@ namespace Murong_Xue.DownloadHandling
             _ = request.ContinueWith(OnDownload);
             await request; //only return when the request has actually been completed
             return;
-        }
-        public abstract void HandleDownload(Stream content);
-        protected void DoneProcessing()
-        {
-            downloadHandler.RemoveProcessing(this);
         }
         private async Task OnDownload(Task<HttpResponseMessage> response)
         {
@@ -47,31 +49,22 @@ namespace Murong_Xue.DownloadHandling
         {
             downloadHandler.DownloadingToProcessing(this);
         }
+        public abstract void HandleDownload(Stream content);
+        protected void DoneProcessing()
+        {
+            downloadHandler.RemoveProcessing(this);
+        }
         private void ReQueue()
         {
             downloadHandler.ReQueue(this);
         }
     }
 
-    internal class DownloadEntryFeed : DownloadEntryBase
-    {
-        private FeedData Feed { get; set; }
-        public DownloadEntryFeed(Uri link, FeedData _feed) : base(link, "DLFEED")
-        {
-            Feed = _feed;
-        }
-        override public async void HandleDownload(Stream content)
-        {
-            events.OnFeedDownloaded();
-            await Task.Run(() => Feed.OnFeedDownloaded(content));
-            DoneProcessing();
-        }
-    }
-
     internal class DownloadEntryFile : DownloadEntryBase
     {
         private readonly Uri DownloadPath;
-        public DownloadEntryFile(Uri link, Uri DownloadPath) : base(link, "DLFILE")
+        //TODO "DLFILE"s
+        public DownloadEntryFile(Uri link, Uri DownloadPath) : base(link)
         {
             this.DownloadPath = DownloadPath;
         }
