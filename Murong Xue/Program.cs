@@ -1,4 +1,6 @@
-﻿namespace Murong_Xue;
+﻿using Murong_Xue.Logging;
+
+namespace Murong_Xue;
 public class Program
 {
     static readonly int MAJOR_VERSION = 1;

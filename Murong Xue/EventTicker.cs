@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Murong_Xue.Logging;
 
 namespace Murong_Xue
 {

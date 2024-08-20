@@ -1,4 +1,6 @@
-﻿namespace Murong_Xue
+﻿using Murong_Xue.Logging;
+
+namespace Murong_Xue
 {
     internal sealed class DownloadHandler
     {
