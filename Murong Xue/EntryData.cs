@@ -137,12 +137,12 @@ namespace Murong_Xue
                                 case RSS_Item:
                                     if (_date == string.Empty)
                                         _date = DateTime.UnixEpoch.ToString();
-                                    Feeds.Add(new FeedData(
-                                        title:      _title,
-                                        url:        new Uri(_url), //TODO make _url a URI when we get it, not here.
-                                        expression: _expr,
-                                        history:    _history,
-                                        date:       _date)
+                                    Feeds.Add(new FeedEntry(
+                                        Title:      _title,
+                                        URL:        new Uri(_url), //TODO make _url a URI when we get it, not here.
+                                        Expression: _expr,
+                                        History:    _history,
+                                        Date:       _date)
                                     );
                                     Feeds.Last().Print();
                                     break;
