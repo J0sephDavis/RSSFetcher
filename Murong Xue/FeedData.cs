@@ -1,7 +1,7 @@
-﻿using System.Text;
+﻿using Murong_Xue.Logging;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Murong_Xue.Logging;
 
 namespace Murong_Xue
 {
@@ -17,7 +17,6 @@ namespace Murong_Xue
         private static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private static readonly Config cfg = Config.GetInstance();
         private static Reporter report = Config.OneReporterPlease("F-DATA");
-
 
         public FeedData(string title, string url,
             string expression, string history, string date)
