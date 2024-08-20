@@ -7,7 +7,7 @@ using System.Xml;
 namespace Murong_Xue
 {
     internal class FeedEntry(string Title, Uri URL,
-        string Expression, string History, string Date) : DownloadEntryBase(URL)
+        string Expression, string History, string Date) : DownloadEntryBase(URL, report)
     {
         public string Title { get; set; } = Title;
         protected Uri URL = URL;

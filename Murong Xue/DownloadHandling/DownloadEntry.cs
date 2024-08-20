@@ -7,8 +7,10 @@ namespace Murong_Xue.DownloadHandling
     {
         private static DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         public Uri link;
-        protected Reporter report;
+        protected Reporter? report;
         static protected EventTicker events = EventTicker.GetInstance();
+        //By accepting the reporter we can borrow the inherited classes reporter & not reallocate
+        //for each individual inherited class. For each TYPE there is one reporter, not each instance.
         public DownloadEntryBase(Uri link, Reporter? rep = null)
         {
             this.link = link;
