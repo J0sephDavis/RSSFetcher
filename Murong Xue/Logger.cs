@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Murong_Xue
@@ -177,18 +178,22 @@ namespace Murong_Xue
         private readonly LogLevel logLevel = level;
         public readonly string ReportIdentifier = "[" + identifier + "]"; // e.g. Program, FeedData, Config, &c
         // <--- DEBUG --->
+        [Conditional("DEBUG")]
         public void Debug(string msg)
         {
             Log(LogType.DEBUG, LogMod.NORMAL, msg);
         }
+        [Conditional("DEBUG")]
         public void DebugVal(string msg)
         {
             Log(LogType.DEBUG, LogMod.VERBOSE, msg);
         }
+        [Conditional("DEBUG")]
         public void Trace(string msg)
         {
             Log(LogType.DEBUG, LogMod.SPAM, msg);
         }
+        [Conditional("DEBUG")]
         public void TraceVal(string msg)
         {
             Log(LogType.DEBUG, LogMod.SPAM | LogMod.VERBOSE, msg);

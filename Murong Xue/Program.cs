@@ -2,8 +2,8 @@
 public class Program
 {
     static readonly int MAJOR_VERSION = 1;
-    static readonly int MINOR_VERSION = 4; //commit 142
-    static readonly int PATCH = 43;
+    static readonly int MINOR_VERSION = 5;
+    static readonly int PATCH = 0;
     //---
     static Reporter report;
     static EntryData? RSSEntries = null;
@@ -28,11 +28,17 @@ public class Program
         //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
         args = [
             //"--help"
-            //"--SPAM",
-            //"--VERBOSE",
-            //"--UNIMPORTANT",
-            //"--DEBUG",
+            "--SPAM",
+            "--VERBOSE",
+            "--UNIMPORTANT",
+            "--DEBUG",
             //"--edit",
+        ];
+#else
+        args = [
+            "--SPAM",
+            "--VERBOSE",
+            "--UNIMPORTANT",
         ];
 #endif
         foreach (string s in args)
@@ -135,9 +141,11 @@ public class Program
                     level |= LogMod.UNIMPORTANT;
                     SetLogLevel = true;
                     break;
+#if DEBUG
                 case ("--debug"):
                     level |= LogType.DEBUG;
                     break;
+#endif
                 default:
                     break;
             }
@@ -178,8 +186,11 @@ public class Program
     protected static readonly string log_cmd_desc = "Enable the following log flags:" +
         "\n\t--SPAM" +
         "\n\t--VERBOSE" +
-        "\n\t--UNIMPORTANT" +
-        "\n\t--DEBUG";
+        "\n\t--UNIMPORTANT"
+#if DEBUG
+        + "\n\t--DEBUG"
+#endif
+        ;
 
     protected static readonly string[] help_cmds = ["-help", "--help", "-h", "--h"];
     protected static readonly string help_cmd_desc = "(void) Get a brief description for each command";
