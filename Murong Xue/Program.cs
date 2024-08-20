@@ -5,7 +5,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 5;
-    static readonly int PATCH = 13;
+    static readonly int PATCH = 14;
     //---
     static Reporter report; //cannot be readonly. Must be set AFTER Config has been created
     static EntryData? RSSEntries = null;
@@ -25,24 +25,19 @@ public class Program
         report ??= Config.OneReporterPlease("PROGRM");
         report.Notice($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
 #if DEBUG
-        report.Trace($"Started program with {args.Length}args");
         report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
         //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
         args = [
+            "--version"
             //"--help"
-            "--SPAM",
-            "--VERBOSE",
-            "--UNIMPORTANT",
-            "--DEBUG",
+            //"--SPAM",
+            //"--VERBOSE",
+            //"--UNIMPORTANT",
+            //"--DEBUG",
             //"--edit",
         ];
-#else
-        args = [
-            "--SPAM",
-            "--VERBOSE",
-            "--UNIMPORTANT",
-        ];
 #endif
+        report.Trace($"Started program with {args.Length}args");
         foreach (string s in args)
             report.TraceVal(s);
         ArgResult choice = HandleArgs(cfg, args);
