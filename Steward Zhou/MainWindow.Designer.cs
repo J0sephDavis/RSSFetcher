@@ -28,13 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
+            FeedTree = new TreeView();
             SuspendLayout();
+            // 
+            // FeedTree
+            // 
+            FeedTree.Location = new Point(12, 12);
+            FeedTree.Name = "FeedTree";
+            FeedTree.Size = new Size(341, 426);
+            FeedTree.TabIndex = 0;
             // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(FeedTree);
             Name = "MainWindow";
             Text = "MainWindow";
             Load += MainWindow_Load;
@@ -42,5 +51,7 @@
         }
 
         #endregion
+
+        private TreeView FeedTree;
     }
 }

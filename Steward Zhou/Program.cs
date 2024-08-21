@@ -11,7 +11,8 @@ namespace Steward_Zhou
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new MainWindow());
+            MainWindow mainWin;
+            Application.Run(mainWin = new());
         }
     }
 }
