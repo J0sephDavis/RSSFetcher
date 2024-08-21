@@ -22,7 +22,6 @@ namespace Murong_Xue
         private static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private static readonly Config cfg = Config.GetInstance();
         private static readonly Reporter report = Config.OneReporterPlease("F-DATA");
-
         public void Print()
         {
             string tmp = "FeedEntry Obj:" +

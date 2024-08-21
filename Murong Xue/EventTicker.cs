@@ -1,5 +1,4 @@
-using System.Text;
-using Murong_Xue.Logging;
+﻿using System.Text;
 
 namespace Murong_Xue
 {
