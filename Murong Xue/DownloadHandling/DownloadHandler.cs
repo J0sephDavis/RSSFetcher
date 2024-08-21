@@ -2,7 +2,7 @@
 
 namespace Murong_Xue.DownloadHandling
 {
-    internal sealed class DownloadHandler
+    internal class DownloadHandler
     {
         //---------------------------------------------------------------------------
         private static DownloadHandler? s_DownloadHandler = null;
@@ -10,8 +10,9 @@ namespace Murong_Xue.DownloadHandling
         private readonly static Reporter report = Config.OneReporterPlease("DLHAND");
         private readonly static EventTicker events = EventTicker.GetInstance();
         //---------------------------------------------------------------------------
-        int BATCH_SIZE = 7;
-        int BATCH_MIN_TIME = 1000;
+        public int BATCH_SIZE { get; protected set; } = 7;
+        const int batch_delay_unit = 100;
+        public int BATCH_ADD_DELAY { get; protected set; } = batch_delay_unit * 5/4;
         private readonly object fail_lock = new();
         private int fails = 0;
         //---c# version 12 does not have System.Threading.Lock, so we use Object()---
@@ -32,16 +33,16 @@ namespace Murong_Xue.DownloadHandling
             report.DebugVal($"{totalWaiting} feeds queued for download");
             while (totalWaiting != 0)
             {
-                while (Queued.Count != 0) //volatile but we do not care that much (it will be run again when totalWaiting is calculated)
+                while (Queued.Count != 0)
                 {
+                    report.Trace($"delay {BATCH_ADD_DELAY}");
+                    await Task.Delay(BATCH_ADD_DELAY);
                     DownloadEntryBase entry = PopSwapDownload();
-                    //Add the entry to the task list
                     CurrentBatch.Add(Task.Run(() => entry.Request(client)));
                     //When we've filled our budget or used em all
                     if (CurrentBatch.Count >= BATCH_SIZE || Queued.Count == 0)
                     {
-                        CurrentBatch.Add(Task.Delay(BATCH_MIN_TIME));
-                        report.TraceVal($"\t\tQ[{Queued.Count}]  P[{Processing.Count}]\tMIN TIME{BATCH_MIN_TIME}ms");
+                        report.TraceVal($"\t\tQ[{Queued.Count}]  P[{Processing.Count}]");
                         await Task.WhenAll(CurrentBatch);
                         CurrentBatch.Clear();
                     }
@@ -92,18 +93,20 @@ namespace Murong_Xue.DownloadHandling
             lock (fail_lock)
             {
                 fails++;
-                BATCH_MIN_TIME += 200;
-                if (BATCH_SIZE > 5 && fails > BATCH_SIZE * 3 / 4)
+                if (fails > BATCH_SIZE * 9 / 16)
                 {
-                    BATCH_MIN_TIME -= 100 * fails;
-                    BATCH_SIZE--;
+                    BATCH_ADD_DELAY -= batch_delay_unit / 8;
                     fails = 0;
+                }
+                else
+                {
+                    BATCH_ADD_DELAY += batch_delay_unit / 4;
                 }
 
                 report.WarnSpam(
                     $"({fails}) Batch " +
                     $"Size {BATCH_SIZE}\t" +
-                    $"Min {BATCH_MIN_TIME}"
+                    $"delay {BATCH_ADD_DELAY}"
                 );
             }
         }

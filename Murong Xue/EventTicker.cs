@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Murong_Xue.DownloadHandling;
+using System.Text;
 
 namespace Murong_Xue
 {
@@ -49,10 +50,13 @@ namespace Murong_Xue
         }
         public string GetSummary()
         {
+            DownloadHandler hdl = DownloadHandler.GetInstance();
             StringBuilder summary = new("Summary|");
             summary.Append($" Feeds {feedsDownloaded}");
             summary.Append($" Downloads: {filesDownloaded}");
             summary.Append($" fails: {downloadsRetried}");
+            summary.Append($" Batch size: {hdl.BATCH_SIZE}");
+            summary.Append($" Batch delay: {hdl.BATCH_ADD_DELAY}");
             summary.Append($" Duration: {DateTime.Now - start}");
 #if STOPWATCH
             foreach (var t in sw_record)
