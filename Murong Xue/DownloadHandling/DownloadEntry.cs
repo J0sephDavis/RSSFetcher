@@ -44,12 +44,7 @@ namespace Murong_Xue.DownloadHandling
                 return;
             }
             Stream content = await msg.Content.ReadAsStreamAsync();
-            SetProcessing();
             _ = Task.Run(() => HandleDownload(content));
-        }
-        private void SetProcessing()
-        {
-            downloadHandler.DownloadingToProcessing(this);
         }
         public abstract void HandleDownload(Stream content);
         protected void DoneProcessing()

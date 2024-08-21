@@ -26,9 +26,9 @@ public class Program
         report.Notice($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
 #if DEBUG
         report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
-        //Config.SetLogLevel(LogType.ALL, LogMod.ALL);
+        Config.SetLogLevel(new(LogType.ALL, LogMod.ALL));
         args = [
-            "--version"
+            //"--version"
             //"--help"
             //"--SPAM",
             //"--VERBOSE",
