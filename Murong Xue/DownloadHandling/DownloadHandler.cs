@@ -4,23 +4,21 @@ namespace Murong_Xue.DownloadHandling
 {
     internal sealed class DownloadHandler
     {
-        int BATCH_SIZE = 7;
-        int BATCH_MIN_TIME = 1000;
-        //"fails" will be used for  batch size & delay adjustments
-        private readonly object fail_lock = new();
-        private int fails = 0;
-        //---
+        //---------------------------------------------------------------------------
         private static DownloadHandler? s_DownloadHandler = null;
         private readonly static HttpClient client = new();
-        //c# version 12 does not have System.Threading.Lock, so we use Object()
-        private readonly object ListLocks = new(); //for when swapping between the two lists.
-        //list of files to be downloaded
+        private readonly static Reporter report = Config.OneReporterPlease("DLHAND");
+        private readonly static EventTicker events = EventTicker.GetInstance();
+        //---------------------------------------------------------------------------
+        int BATCH_SIZE = 7;
+        int BATCH_MIN_TIME = 1000;
+        private readonly object fail_lock = new();
+        private int fails = 0;
+        //---c# version 12 does not have System.Threading.Lock, so we use Object()---
+        private readonly object ListLocks = new();
         private readonly List<DownloadEntryBase> Queued = [];
         private readonly List<DownloadEntryBase> Processing = [];
-        private readonly static Reporter report = Config.OneReporterPlease("DLHAND");
-        //----
-        EventTicker events = EventTicker.GetInstance();
-
+        //---------------------------------------------------------------------------
         public static DownloadHandler GetInstance()
         {
             s_DownloadHandler ??= new DownloadHandler();
@@ -31,9 +29,9 @@ namespace Murong_Xue.DownloadHandling
             report.Notice("Processing downloads");
             List<Task> CurrentBatch = [];
 
-            int totalWaiting = Queued.Count + Processing.Count; // doesn't need a lock, no one is touching these arrays rn
+            int totalWaiting = Queued.Count + Processing.Count;
             report.DebugVal($"{totalWaiting} feeds queued for download");
-            while (totalWaiting != 0) //these are volatile, might consider some type of sentinel/semaphore to handle this behavior
+            while (totalWaiting != 0)
             {
                 while (Queued.Count != 0) //volatile but we do not care that much (it will be run again when totalWaiting is calculated)
                 {
@@ -53,7 +51,7 @@ namespace Murong_Xue.DownloadHandling
                 {
                     totalWaiting = Queued.Count + Processing.Count;
                 }
-                await Task.Delay(500); //nothing queued, may be wise to pass an autoresetevent to each of the download entries? or have some function that triggers it for them
+                await Task.Delay(100);
             }
             report.DebugVal($"\t\tQ[{Queued.Count}] P[{Processing.Count}]");
             report.Notice("Download queue exhausted");
