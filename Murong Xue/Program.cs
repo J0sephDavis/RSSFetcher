@@ -4,8 +4,8 @@ namespace Murong_Xue;
 public class Program
 {
     static readonly int MAJOR_VERSION = 1;
-    static readonly int MINOR_VERSION = 5;
-    static readonly int PATCH = 14;
+    static readonly int MINOR_VERSION = 6;
+    static readonly int PATCH = 0;
     //---
     static Reporter report; //cannot be readonly. Must be set AFTER Config has been created
     static EntryData? RSSEntries = null;
