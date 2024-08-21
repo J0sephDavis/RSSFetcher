@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Text;
 using Murong_Xue.Logging;
 
 namespace Murong_Xue
@@ -42,7 +42,7 @@ namespace Murong_Xue
         //private readonly Reporter report = Config.OneReporterPlease("EVENTT");
 
         private EventTicker()
-        {  }
+        { }
         public static EventTicker GetInstance()
         {
             s_EventTicker ??= new();
@@ -50,11 +50,23 @@ namespace Murong_Xue
         }
         public string GetSummary()
         {
-            return "Event Summary:" +
-                $"\n\tFeeds Checked: {feedsDownloaded}" +
-                $"\n\tFiles Downloaded: {filesDownloaded}" +
-                $"\n\tDownloads ReQueued: {downloadsRetried}" +
-                $"\n\tDuration: {DateTime.Now - start}";
+            StringBuilder summary = new("Summary|");
+            summary.Append($" Feeds {feedsDownloaded}");
+            summary.Append($" Downloads: {filesDownloaded}");
+            summary.Append($" fails: {downloadsRetried}");
+            summary.Append($" Duration: {DateTime.Now - start}");
+#if STOPWATCH
+            foreach (var t in sw_record)
+            {
+                report.Out(t.ToString());
+            }
+            TimeSpan avg_time =
+                sw_record.Aggregate((accumulated, current) => accumulated + current)
+                / sw_record.Count;
+            report.Out("AVERAGE STOPWATCH TIME: " + avg_time);
+            summary.Append($" Avg SW Time {avg_time} of {sw_record.Count}");
+#endif
+            return summary.ToString();
         }
 
         public void OnFeedDownloaded()
@@ -69,7 +81,7 @@ namespace Murong_Xue
         {
             downloadsRetried++;
         }
-#if false
+#if STOPWATCH
         List<TimeSpan> sw_record = [];
         public void HandleStopWatch(TimeSpan elapsed_t)
         {
@@ -77,17 +89,6 @@ namespace Murong_Xue
             {
                 sw_record.Add(elapsed_t);
             }
-            /*Used in GetSummary():
-            foreach (var t in sw_record)
-            {
-                report.Out(t.ToString());
-            }
-            TimeSpan avg_time =
-                sw_record.Aggregate((accumulated, current) => accumulated + current)
-                / sw_record.Count;
-            report.Out("AVERAGE STOPWATCH TIME: " + avg_time);
-            */
-            //events.HandleStopWatch(stopwatch.Elapsed);
         }
 #endif
     }
