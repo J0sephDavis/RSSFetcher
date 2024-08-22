@@ -5,7 +5,7 @@ namespace Murong_Xue.DownloadHandling
 {
     internal abstract class DownloadEntryBase
     {
-        private static DownloadHandler downloadHandler = DownloadHandler.GetInstance();
+        protected static DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         public Uri link;
         protected Reporter? report;
         static protected EventTicker events = EventTicker.GetInstance();

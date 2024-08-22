@@ -19,7 +19,6 @@ namespace Murong_Xue
         //From putting a debug point on the below functions. It seems that a primary constructor
         //does not redeclare these static variables, thankfully. I assume static is done at runtime?
         //Will need more research done
-        private static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         private static readonly Config cfg = Config.GetInstance();
         private static readonly Reporter report = Config.OneReporterPlease("F-DATA");
         public void Print()
