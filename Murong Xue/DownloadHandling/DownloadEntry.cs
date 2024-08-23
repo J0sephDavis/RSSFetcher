@@ -15,7 +15,7 @@ namespace Murong_Xue.DownloadHandling
         {
             this.link = link;
             if (rep == null)
-                report = Config.OneReporterPlease("DLBASE");
+                report = Logger.RequestReporter("DLBASE");
             else
                 report = rep;
         }
@@ -57,7 +57,7 @@ namespace Murong_Xue.DownloadHandling
         }
     }
 
-    internal class DownloadEntryFile(Uri link, Uri DownloadPath) : DownloadEntryBase(link, Config.OneReporterPlease("DLFILE"))
+    internal class DownloadEntryFile(Uri link, Uri DownloadPath) : DownloadEntryBase(link, Logger.RequestReporter("DLFILE"))
     {
         override public void HandleDownload(Stream content)
         {

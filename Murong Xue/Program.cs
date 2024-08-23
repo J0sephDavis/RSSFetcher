@@ -22,11 +22,11 @@ public class Program
     public static async Task Main(string[] args)
     {
         using Config cfg = Config.GetInstance();
-        report ??= Config.OneReporterPlease("PROGRM");
+        report ??= Logger.RequestReporter("PROGRM");
         report.Notice($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
 #if DEBUG
         report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");
-        Config.SetLogLevel(new(LogType.ALL, LogMod.ALL));
+        Logger.SetLogLevel(new(LogType.ALL, LogMod.ALL));
         args = [
             //"--version"
             //"--help"
@@ -162,7 +162,7 @@ public class Program
         if (SetLogLevel)
         {
             report.Out($"Masking log level {level}");
-            Config.MaskLogLevel(level);
+            Logger.MaskLogLevel(level);
         }
         report.Log(LogType.DEBUG, LogMod.UNIMPORTANT, $"HandleArgs returning: {retVal}");
         return retVal;

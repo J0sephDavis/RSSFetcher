@@ -7,7 +7,7 @@ namespace Murong_Xue.DownloadHandling
         //---------------------------------------------------------------------------
         private static DownloadHandler? s_DownloadHandler = null;
         private readonly static HttpClient client = new();
-        private readonly static Reporter report = Config.OneReporterPlease("DLHAND");
+        private readonly static Reporter report = Logger.RequestReporter("DLHAND");
         private readonly static EventTicker events = EventTicker.GetInstance();
         //---------------------------------------------------------------------------
         public int BATCH_SIZE { get; protected set; } = 7;

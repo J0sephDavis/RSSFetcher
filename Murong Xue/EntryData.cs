@@ -8,7 +8,7 @@ namespace Murong_Xue
     {
         private readonly Uri path = RSSPath;
         private readonly List<FeedEntry> Feeds = [];
-        private readonly Reporter report = Config.OneReporterPlease("ENTDAT");
+        private readonly Reporter report = Logger.RequestReporter("ENTDAT");
         private const string RSS_Title = "title";
         private const string RSS_URL = "feed-url";
         private const string RSS_Expression = "expr";
