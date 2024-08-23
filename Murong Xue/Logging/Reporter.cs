@@ -67,7 +67,6 @@ namespace Murong_Xue.Logging
         public void Log(LogType type, LogMod mod, string msg)
         {
             LogMsg log = new(type, mod, ReportIdentifier, msg);
-            //mod == _modifier when _modifier = LogMod.NONE
             if (log == logLevel)
                 SendLog(log);
         }
