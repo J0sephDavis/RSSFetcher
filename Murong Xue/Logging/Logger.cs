@@ -1,63 +1,190 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 
 namespace Murong_Xue.Logging
 {
+    internal class LogOutput
+    {
+        private readonly List<LogMsg> Buffer = []; // lock needed
+        private List<LogMsg> buffer_copy = []; // no lock needed
+        private readonly object BufferLock = new();
+        //---
+        private readonly Thread BufferThread;
+        private readonly AutoResetEvent BufferEvent = new(false);
+        //
+        private bool StopThread = false;
+        private StreamWriter? FileStream;
+        private Uri? FilePath;
+        // When InteractiveMode is enabled, only show the short strings in the viewport & decrease either buffer_timeout or threshold
+        // OR whenever a msg if flagged interactive & added to the queue immediately end the wait
+        public bool InteractiveMode { get; set; } = true;
+        //
+        const int BUFFER_THRESHOLD = 10;
+        const int BUFFER_TIMEOUT = 5000;
+        const int INTERACTIVE_TIMEOUT = 250;
+        //
+        public LogOutput()
+        {
+            BufferThread = new(Main);
+        }
+        public bool SetPath(Uri path)
+        {
+            if (FilePath != null)
+            {
+                Log(new(LogType.ERROR, LogMod.NORMAL, "LOGPUT", "SetPath FAILED, FilePath != null"));
+                return false;
+            }
+            if (path?.IsFile != true)
+            {
+                Log(new(LogType.ERROR, LogMod.NORMAL, "LOGPUT", "SetPath FAILED, path does not lead to file"));
+                return false;
+            }
+            Log(new(LogType.DEBUG, LogMod.SPAM | LogMod.VERBOSE, "LOGPUT", $"SetPath: [{path}]")); //traceval
+            
+            if (File.Exists(path.LocalPath))
+            {
+                Log(new(LogType.ERROR, LogMod.SPAM | LogMod.UNIMPORTANT, "LOGPUT", "Deleting previous logfile")); //warnspam
+                File.Delete(path.LocalPath);
+            }
+            FilePath = path;
+            FileStream = new(FilePath.LocalPath);
+            return true;
+        }
+        public void Start()
+        {
+            BufferThread.Start();
+        }
+        public void Stop()
+        {
+            if (BufferThread.IsAlive)
+            {
+                StopThread = true;
+                BufferEvent.Set();
+                BufferThread.Join();
+            }
+            if (FileStream != null) //not very robust I assume
+            { 
+                FileStream.Dispose();
+                FileStream = null;
+            }
+        }
+        public void Log(LogMsg msg)
+        {
+            lock (BufferLock)
+            {
+                Buffer.Add(msg);
+                if (Buffer.Count > BUFFER_THRESHOLD || (InteractiveMode && (msg & LogMod.INTERACTIVE) != 0))
+                    BufferEvent.Set();
+            }
+        }
+        private void WriteMsg()
+        {
+            lock (BufferLock)
+            {
+                buffer_copy = new(Buffer);
+                Buffer.Clear();
+            }
+            if (buffer_copy.Count == 0) return;
+
+            foreach (LogMsg msg in buffer_copy)
+            {
+                FileStream?.WriteLine(msg);
+                Console.WriteLine(msg);
+            }
+        }
+        private void Main()
+        {
+            int timeout_millis = BUFFER_TIMEOUT;
+            bool current_mode = !InteractiveMode; //forces an update on the first cycle
+            while (StopThread == false)
+            {
+                //if the interactive mode has changed
+                if (current_mode != InteractiveMode)
+                    timeout_millis = InteractiveMode ? INTERACTIVE_TIMEOUT : BUFFER_TIMEOUT;
+
+                BufferEvent.WaitOne(timeout_millis);
+                WriteMsg();
+            }
+            WriteMsg(); //stragglers
+        }
+    }
+    /// <summary>
+    /// Responsible for
+    /// 1. Creating reporters (factory)
+    /// 2. Propagating information to reporters
+    ///     - Such as a new logging level
+    ///     - If we ever use individual buffers for each reporter, it would be possible to flush all the reporters buffers here
+    /// </summary>
+    internal class ReporterManager(LogLevel _level)
+    {
+        LogLevel Level = _level;
+        private readonly List<Reporter> reporters = [];
+        public Reporter GetReporter(string name,
+            LogType type = LogType.NONE,
+            LogMod mod = LogMod.NONE)
+        {
+            LogLevel _level = Level | mod | type;
+            lock (reporters)
+            //https://stackoverflow.com/questions/266681/should-a-return-statement-be-inside-or-outside-a-lock
+            {
+                Reporter _r = new(_level, name);
+                Subscribe(_r);
+                return _r;
+            }
+        }
+        private void Subscribe(Reporter reporter)
+        {
+            lock (reporters)
+            {
+                reporters.Add(reporter);
+            }
+        }
+        private void NotifySubscribers()
+        {
+            lock (reporters)
+            {
+                foreach(var r in reporters)
+                {
+                    r.SetLogLevel(Level);
+                }
+            }
+        }
+
+        public void SetLogLevel(LogLevel _level)
+        {
+            Level = _level;
+        }
+        public void MaskLogLevel(LogLevel _level)
+        {
+            Level |= _level;
+        }
+    }
     internal class Logger
     {
-        /* After several iterations and changes on this class, it can only be considered sloppy.
-         * Should it be a static class?
-         * Should it be a singleton?
-         * How to ensure this is cleaned up on exit?
-         *  -> Included in the Config.Dipose() (because Garbage collection may not/wont happen)
-         */
-        private static readonly List<LogMsg> bufferedMsgs = [];
-        private static readonly object buffLock = new();
         private static Logger? s_Logger = null;
-        private static Reporter report = Config.OneReporterPlease("LOGGER");
-        //----
-        private readonly Thread batchThread;
-        private static readonly AutoResetEvent batchEvent = new(false);
-        private bool StopLoop = false;
-        private bool InteractiveMode = false;
-        //----
-        const int BUFFER_THRESHOLD = 10; // msgs
-        const int BUFFER_TIMEOUT = 5; // seconds
-        //----
-        private Uri? filePath;
-        public static Logger GetInstance(string? path = null)
+        private readonly LogOutput LogPut;
+        private readonly ReporterManager RepManager;
+        public static Logger GetInstance()
         {
-            s_Logger ??= new Logger(path == null ? null : new Uri(path));
+            s_Logger ??= new Logger();
             return s_Logger;
         }
-        private Logger(Uri? path = null)
+        private Logger()
         {
-            filePath = path;
-            if (path?.IsFile == true)
-            {
-                report.TraceVal($"Log file: [{filePath}]");
-                if (File.Exists(path.LocalPath))
-                {
-                    report.WarnSpam("Deleting previous logfile");
-                    File.Delete(path.LocalPath);
-                }
-                batchThread = new(BatchLoopFile);
-            }
-            else
-            {
-                Log(new LogMsg(LogType.ERROR, LogMod.NORMAL, "Logger", $"Path does not lead to a file:\n\t[{(path == null ? "null" : path.LocalPath)}]"));
-                batchThread = new(BatchLoop);
-            }
-            batchThread.Start();
+            RepManager = new(new(LogType.DEFAULT, LogMod.DEFAULT));
+            LogPut = new();
+            LogPut.Start();
         }
-        ~Logger() { Quit(); } //Probably won't be called because its the last thing to be done. GC won't take place
-        public void Quit()
+        public void Dispose()
         {
-            if (batchThread.IsAlive)
-            {
-                StopLoop = true;
-                batchEvent.Set();
-                batchThread.Join();
-            }
+            LogPut.Stop();
+        }
+        //------------------------------------
+        public void SetPath(Uri path)
+        {
+            LogPut.SetPath(path);
         }
         //------------------------------------
         /// <summary>
@@ -66,127 +193,23 @@ namespace Murong_Xue.Logging
         /// <param name="msg">The message</param>
         public static void Log(LogMsg msg)
         {
-            lock (buffLock)
-            {
-                bufferedMsgs.Add(msg);
-                if (bufferedMsgs.Count > BUFFER_THRESHOLD)
-                    batchEvent.Set();
-            }
+            GetInstance().LogPut.Log(msg);
         }
-
-        public void SetInteractiveMode(bool val)
+        public static Reporter RequestReporter(string ModuleName, LogType type = LogType.NONE, LogMod mod = LogMod.NONE)
         {
-            InteractiveMode = val;
+            return GetInstance().RepManager.GetReporter(ModuleName, type, mod);
         }
-        /// <summary>
-        /// The loggers main thread. Waits for the batchEvent flag to be set or BUFFER_TIMEOUT.
-        /// Clears & creates a copy of the buffer and writes output to the console (WIP for files)
-        /// </summary>
-        private void BatchLoop() //Console only
+        public static void SetInteractiveMode(bool mode)
         {
-            bool changeTimeOut = !InteractiveMode;
-            List<LogMsg> copiedBuff = [];
-            TimeSpan waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT);
-
-            while (StopLoop == false)
-            {
-                //assuming changeTimeOut is actuallythe state
-                //of InteractiveMode before the loop ended
-                changeTimeOut = changeTimeOut != InteractiveMode;
-                if (changeTimeOut)
-                {
-                    if (InteractiveMode)
-                        waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT / 10);
-                    else
-                        waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT);
-                }
-                changeTimeOut = InteractiveMode;
-                //---
-                batchEvent.WaitOne(waitTimeOut);
-                //---
-                lock (buffLock)
-                {
-                    copiedBuff = new(bufferedMsgs);
-                    bufferedMsgs.Clear();
-                }
-                if (copiedBuff != null)
-                {
-                    foreach (LogMsg msg in copiedBuff)
-                    {
-                        if (InteractiveMode)
-                        {
-                            if ((msg & LogMod.INTERACTIVE) != LogMod.NONE)
-                                Console.WriteLine(msg.ToInteractiveString());
-                            else if ((msg & LogMod.NORMAL) != LogMod.NONE)
-                                Console.WriteLine(msg);
-                        }
-                        else
-                            Console.WriteLine(msg);
-                    }
-                    copiedBuff.Clear();
-                }
-            }
-            //--- making sure the buffer is clear on exit
-            lock (buffLock)
-            {
-                foreach (LogMsg msg in bufferedMsgs)
-                    Console.WriteLine(msg);
-                bufferedMsgs.Clear();
-            }
+            GetInstance().LogPut.InteractiveMode = mode;
         }
-        private void BatchLoopFile() //file & console
+        public static void SetLogLevel(LogLevel _level)
         {
-            using (StreamWriter file = new StreamWriter(filePath.LocalPath)) //when this is null, what happens?
-            {
-                bool changeTimeOut = !InteractiveMode; //force an update on first cycle
-                TimeSpan waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT);
-                List<LogMsg> copiedBuff = [];
-                while (StopLoop == false)
-                {
-                    changeTimeOut = changeTimeOut != InteractiveMode;
-                    if (changeTimeOut)
-                    {
-                        if (InteractiveMode)
-                            waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT / 10);
-                        else
-                            waitTimeOut = TimeSpan.FromSeconds(BUFFER_TIMEOUT);
-                    }
-                    changeTimeOut = InteractiveMode;
-                    batchEvent.WaitOne(waitTimeOut);
-                    //---
-                    lock (buffLock)
-                    {
-                        copiedBuff = new(bufferedMsgs);
-                        bufferedMsgs.Clear();
-                    }
-                    if (copiedBuff != null)
-                    {
-                        foreach (LogMsg msg in copiedBuff)
-                        {
-                            if (InteractiveMode)
-                            {
-                                if ((msg & LogMod.INTERACTIVE) != LogMod.NONE)
-                                    Console.Write(msg.ToInteractiveString());
-                                else if ((msg & LogMod.NORMAL) != LogMod.NONE)
-                                    Console.WriteLine(msg.GetContent());
-                            }
-                            else
-                                Console.WriteLine(msg);
-                        }
-                        copiedBuff.Clear();
-                    }
-                }
-                //--- making sure the buffer is clear on exit
-                lock (buffLock)
-                {
-                    foreach (LogMsg msg in bufferedMsgs)
-                    {
-                        Console.WriteLine(msg);
-                        file.WriteLine(msg);
-                    }
-                    bufferedMsgs.Clear();
-                }
-            }
+            GetInstance().RepManager.SetLogLevel(_level);
+        }
+        public static void MaskLogLevel(LogLevel _level)
+        {
+            GetInstance().RepManager.MaskLogLevel(_level);
         }
     }
 }
