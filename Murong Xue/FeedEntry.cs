@@ -63,7 +63,7 @@ namespace Murong_Xue
                 Directory.CreateDirectory(downloadPath.LocalPath);
             }
             DownloadEntryFile entry = new(link, downloadPath);
-            downloadHandler.QueueDownload(entry);
+            entry.Queue();
         }
         override public void HandleDownload(Stream content)
         {
