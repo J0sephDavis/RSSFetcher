@@ -1,5 +1,6 @@
 ﻿using Murong_Xue.DownloadHandling;
 using Murong_Xue.Logging;
+using Murong_Xue.Logging.Reporting;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Murong_Xue.Logging;
+using Murong_Xue.Logging.Reporting;
 
 namespace Murong_Xue.DownloadHandling
 {
