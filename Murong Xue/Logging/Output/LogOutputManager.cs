@@ -28,9 +28,12 @@
         {
             modules.Add(new LogFile(path));
         }
-        public void Start()
+        public void EnableConsoleOutput()
         {
             modules.Add(new LogConsole());
+        }
+        public void Start()
+        {
             BufferThread.Start();
         }
         public void Stop()

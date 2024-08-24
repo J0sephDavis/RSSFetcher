@@ -1,4 +1,6 @@
 using Murong_Xue;
+using Murong_Xue.Logging;
+using Murong_Xue.Logging.Reporting;
 namespace Steward_Zhou
 {
     internal static class Program
@@ -12,9 +14,15 @@ namespace Steward_Zhou
         - CONTROLLER - Basically just MX, but we will edit it to fit more in line with this identity.
         - MODEL - the xml files we are editing, I think.
         ------------------------------------------------------------------------------*/
+        static Reporter report;
         [STAThread]
         static void Main()
         {
+            using Config cfg = Config.GetInstance();
+            report ??= Logger.RequestReporter("WINPROG");
+            report.Notice($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
+            Logger.SetLogLevel(new(LogType.ALL, LogMod.ALL));
+            //
             ApplicationConfiguration.Initialize();
             MainWindow mainWin = new();
             Application.Run(mainWin);

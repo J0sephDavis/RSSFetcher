@@ -8,7 +8,7 @@ namespace Murong_Xue.Logging.Reporting
     /// </summary>
     /// <param name="logFlags">The mask/filter applied to all incoming logs (will be overriden if a new log level is set in the Config class)</param>
     /// <param name="identifier">This reporters identity, e.g.,"Program" & "DownloadHandler"</param>
-    internal class Reporter(LogLevel level, string identifier)
+    public class Reporter(LogLevel level, string identifier)
     {
         private readonly LogLevel logLevel = level;
         public readonly string ReportIdentifier = "[" + identifier + "]"; // e.g. Program, FeedEntry, Config, &c

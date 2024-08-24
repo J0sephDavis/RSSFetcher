@@ -7,7 +7,7 @@ using Murong_Xue.Logging.Reporting;
 
 namespace Murong_Xue.Logging
 {
-    internal class Logger
+    public class Logger
     {
         private static Logger? s_Logger = null;
         private readonly LogOutputManager LogPut;
@@ -27,10 +27,14 @@ namespace Murong_Xue.Logging
         {
             LogPut.Stop();
         }
-        //------------------------------------
+        //-----MODULES------------------------
         public void SetPath(Uri path)
         {
             LogPut.SetPath(path);
+        }
+        public void LogConsole()
+        {
+            LogPut.EnableConsoleOutput();
         }
         //------------------------------------
         /// <summary>

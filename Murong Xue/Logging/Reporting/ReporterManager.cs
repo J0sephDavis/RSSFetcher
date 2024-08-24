@@ -45,6 +45,7 @@
         public void SetLogLevel(LogLevel _level)
         {
             Level = _level;
+            NotifySubscribers();
         }
         public void MaskLogLevel(LogLevel _level)
         {

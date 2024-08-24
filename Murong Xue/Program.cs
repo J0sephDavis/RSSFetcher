@@ -24,6 +24,7 @@ public class Program
     {
         using Config cfg = Config.GetInstance();
         report ??= Logger.RequestReporter("PROGRM");
+        Logger.GetInstance().LogConsole();
         report.Notice($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
 #if DEBUG
         report.Debug("!! PROGRAM COMPILED IN DEBUG MODE !!");

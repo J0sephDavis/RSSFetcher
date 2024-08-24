@@ -38,7 +38,7 @@
         public void WriteMsg(LogMsg msg, bool InteractiveMode)
         {
             //ignores interactive mode
-            FileStream?.Write(msg);
+            FileStream?.WriteLine(msg);
         }
         public void Dispose()
         {

@@ -5,6 +5,7 @@
 		- 2. [ ] LogLevel operator |(LogLevel a, LogLevel b)
 		- 3. [ ] LogLevel operator |(LogLevel a, LogType b)
 	b. [ ] search about using Action<Log>() for buffer? Saw online
+	c. [ ] create a LoggerBuilder to configure the output modules in a consistent manner
 2. Download Handler
 	a. record batch settings (mintime / size)
 	b. Create an algorithm that allows rewards size+/- & time +/-

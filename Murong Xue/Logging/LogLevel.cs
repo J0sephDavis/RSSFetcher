@@ -1,7 +1,7 @@
 ﻿namespace Murong_Xue.Logging
 {
     [Flags]
-    enum LogMod
+    public enum LogMod
     {
         NONE = 0,
         NORMAL = 1 << 0,
@@ -19,7 +19,7 @@
 #endif
     }
     [Flags]
-    enum LogType
+    public enum LogType
     {
         NONE = 0,
         DEBUG = 1 << 0,
@@ -34,7 +34,7 @@
         DEFAULT = OUTPUT | ERROR
 #endif
     }
-    internal class LogLevel(LogType type, LogMod mod)
+    public class LogLevel(LogType type, LogMod mod)
     {
         protected LogMod _modifier = mod;
         protected LogType _type = type;

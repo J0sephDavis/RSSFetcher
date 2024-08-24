@@ -3,7 +3,7 @@ using Murong_Xue.Logging.Reporting;
 
 namespace Murong_Xue
 {
-    internal class Config : IDisposable
+    public class Config : IDisposable
     {
         private string DownloadDirectory;
         private Uri RSSConfigPath;
