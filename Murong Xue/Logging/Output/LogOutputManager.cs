@@ -26,11 +26,15 @@
         }
         public void SetPath(Uri path)
         {
-            modules.Add(new LogFile(path));
+            AddModule(new LogFile(path));
         }
         public void EnableConsoleOutput()
         {
-            modules.Add(new LogConsole());
+            AddModule(new LogConsole());
+        }
+        public void AddModule(IOutputModule mod)
+        {
+            modules.Add(mod);
         }
         public void Start()
         {
