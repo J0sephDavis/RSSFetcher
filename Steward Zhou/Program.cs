@@ -20,7 +20,7 @@ namespace Steward_Zhou
         {
             using Config cfg = Config.GetInstance();
             report ??= Logger.RequestReporter("WINPROG");
-            report.Notice($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
+            report.Notice(VERSION);
             Logger.SetLogLevel(new(LogType.ALL, LogMod.ALL));
             //
             ApplicationConfiguration.Initialize();
