@@ -1,13 +1,14 @@
 ﻿using System.Net;
 using Murong_Xue.Logging;
+using Murong_Xue.Logging.Reporting;
 
 namespace Murong_Xue.DownloadHandling
 {
     internal abstract class DownloadEntryBase
     {
-        protected static DownloadHandler downloadHandler = DownloadHandler.GetInstance();
+        private readonly static DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         public Uri link;
-        protected Reporter? report;
+        protected Reporter report;
         static protected EventTicker events = EventTicker.GetInstance();
         //By accepting the reporter we can borrow the inherited classes reporter & not reallocate
         //for each individual inherited class. For each TYPE there is one reporter, not each instance.
@@ -15,7 +16,7 @@ namespace Murong_Xue.DownloadHandling
         {
             this.link = link;
             if (rep == null)
-                report = Config.OneReporterPlease("DLBASE");
+                report = Logger.RequestReporter("DLBASE");
             else
                 report = rep;
         }
@@ -57,7 +58,7 @@ namespace Murong_Xue.DownloadHandling
         }
     }
 
-    internal class DownloadEntryFile(Uri link, Uri DownloadPath) : DownloadEntryBase(link, Config.OneReporterPlease("DLFILE"))
+    internal class DownloadEntryFile(Uri link, Uri DownloadPath) : DownloadEntryBase(link, Logger.RequestReporter("DLFILE"))
     {
         override public void HandleDownload(Stream content)
         {

@@ -16,13 +16,12 @@
         {
             return $"[{TIMESTAMP}] {IDENTIFIER}\t{base.ToString()}\t{CONTENT}";
         }
-        public string GetContent()
-        {
-            return CONTENT;
-        }
         public string ToInteractiveString()
         {
-            return "> " + CONTENT;
+            if ((_modifier & LogMod.INTERACTIVE) != 0)
+                return "> " + CONTENT;
+            else
+                return CONTENT;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Murong_Xue.Logging;
+using Murong_Xue.Logging.Reporting;
 
 namespace Murong_Xue
 {
@@ -10,7 +11,7 @@ namespace Murong_Xue
         public InteractiveEditor(List<FeedEntry> Feeds)
         {
             this.Feeds = Feeds;
-            report = Config.OneReporterPlease("EDITOR");
+            report = Logger.RequestReporter("EDITOR");
         }
         enum INTERACTIVE_OPTIONS
         {
@@ -347,7 +348,7 @@ namespace Murong_Xue
             }
             
             report.Debug("\n!!!---INTERACTIVE MODE---!!!");
-            Config.EnableInteractiveMode();
+            Logger.SetInteractiveMode(true);
             string? input;
             string[] input_args;
             int value = -1;

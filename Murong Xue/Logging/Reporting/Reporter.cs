@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Murong_Xue.Logging
+namespace Murong_Xue.Logging.Reporting
 {
     /// <summary>
     /// Reporter constructor, reporters handle interfacing with the logger class and scheduling messages.
@@ -67,7 +67,6 @@ namespace Murong_Xue.Logging
         public void Log(LogType type, LogMod mod, string msg)
         {
             LogMsg log = new(type, mod, ReportIdentifier, msg);
-            //mod == _modifier when _modifier = LogMod.NONE
             if (log == logLevel)
                 SendLog(log);
         }

@@ -1,5 +1,6 @@
 ﻿using Murong_Xue.DownloadHandling;
 using Murong_Xue.Logging;
+using Murong_Xue.Logging.Reporting;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -20,7 +21,7 @@ namespace Murong_Xue
         //does not redeclare these static variables, thankfully. I assume static is done at runtime?
         //Will need more research done
         private static readonly Config cfg = Config.GetInstance();
-        private static readonly Reporter report = Config.OneReporterPlease("F-DATA");
+        private static readonly Reporter report = Logger.RequestReporter("F-DATA");
         public void Print()
         {
             string tmp = "FeedEntry Obj:" +

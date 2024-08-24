@@ -1,4 +1,5 @@
 ﻿using Murong_Xue.Logging;
+using Murong_Xue.Logging.Reporting;
 
 namespace Murong_Xue
 {
@@ -6,71 +7,28 @@ namespace Murong_Xue
     {
         private string DownloadDirectory;
         private Uri RSSConfigPath;
-        private static LogLevel level = new(LogType.DEFAULT, LogMod.DEFAULT);
         //---
         private static Config? s_Config = null;
-        private static readonly Reporter report = new(level, "CONFIG");
+        private readonly Reporter report;
         private readonly Logger _Logger;
-        private static readonly List<Reporter> Reporters = [ report ];
 
         private Config()
         {
             string rootDir = Path.GetDirectoryName(System.AppContext.BaseDirectory) + Path.DirectorySeparatorChar;
             DownloadDirectory = rootDir + @"Downloads" + Path.DirectorySeparatorChar;
             RSSConfigPath = new Uri(rootDir + "rss-config.xml");
-            _Logger = Logger.GetInstance(rootDir + @"MurongLie.log");
+            
+            _Logger = Logger.GetInstance();
+            _Logger.SetPath(new(rootDir + @"MurongLie.log"));
+            report = Logger.RequestReporter("CONFIG");
             report.Trace($"Config(), rootDir: {rootDir}, cfgPath:{RSSConfigPath}, downloadDir:{DownloadDirectory}");
-            Subscribe(report);
         }
         public static Config GetInstance()
         {
             s_Config ??= new Config();
             return s_Config;
         }
-        //--------
-        public static Reporter OneReporterPlease(string ModuleName, LogType type = LogType.NONE, LogMod mod = LogMod.NONE)
-        {
-            if (type == LogType.NONE)
-                type = level.GetLType();
-            if (mod == LogMod.NONE)
-                mod = level.GetLMod();
-            Reporter _r = new(new(type, mod), ModuleName);
-            Subscribe(_r);
-            return _r;
-        }
-        private static void Subscribe(Reporter reporter)
-        {
-            lock (Reporters)
-            {
-                Reporters.Add(reporter);
-            }
-        }
-        protected static void NotifySubscribers()
-        {
-            lock (Reporters)
-            {
-                foreach (Reporter r in Reporters)
-                {
-                    r.SetLogLevel(level);
-                }
-            }
-        }
         //----------
-        public static void EnableInteractiveMode()
-        {
-            Config.GetInstance()._Logger.SetInteractiveMode(true);
-        }
-        public static void SetLogLevel(LogLevel _level)
-        {
-            level.Set(_level);
-            report.DebugVal($"New LogLevel: {level}");
-            NotifySubscribers();
-        }
-        public static void MaskLogLevel(LogLevel _level)
-        {
-            level.Mask(_level);
-            report.DebugVal($"New LogLevel: {level}");
-        }
         public void SetRSSPath(string path)
         {
             RSSConfigPath = new Uri(path);
@@ -92,9 +50,8 @@ namespace Murong_Xue
         //----------
         public void Dispose()
         {
-            Reporters.Clear();
-            s_Config = null;
-            _Logger.Quit();
+            //clear s_Config?
+            _Logger.Dispose();
         }
     }
 }

@@ -114,7 +114,7 @@
         }
         public static LogLevel operator |(LogLevel a, LogType b)
         {
-            LogLevel tmp = new LogLevel(a._type, a._modifier);
+            LogLevel tmp = new(a._type, a._modifier);
             tmp.Mask(b);
             return tmp;
         }
