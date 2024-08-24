@@ -8,12 +8,13 @@ namespace Steward_Zhou
         {
             InitializeComponent();
         }
-
+        
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            UpdateFeedTree();
+            //UpdateFeedTree();
             Logger.GetInstance().AddModule(new LogOutputListView(LogListBox));
         }
+        /*
         public void UpdateFeedTree()
         {
             FeedTree.BeginUpdate();
@@ -31,6 +32,6 @@ namespace Steward_Zhou
             }
             //---------------------
             FeedTree.EndUpdate();
-        }
+        }*/
     }
 }

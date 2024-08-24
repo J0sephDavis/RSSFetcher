@@ -28,72 +28,245 @@
         /// </summary>
         private void InitializeComponent()
         {
-            FeedTree = new TreeView();
-            LogListBox = new ListBox();
+            BasePanel = new Panel();
             splitContainer1 = new SplitContainer();
+            FeedListBox = new ListBox();
+            RightMainSplit = new SplitContainer();
+            btnSaveQuit = new Button();
+            btnCreate = new Button();
+            btnEdit = new Button();
+            btnProcess = new Button();
+            LogListBox = new ListBox();
+            FeedStatusStrip = new StatusStrip();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            toolStripStatusLabel2 = new ToolStripStatusLabel();
+            toolStripStatusLabel3 = new ToolStripStatusLabel();
+            toolStripStatusLabel4 = new ToolStripStatusLabel();
+            btnGetFeeds = new Button();
+            flowLayoutPanel1 = new FlowLayoutPanel();
+            BasePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)RightMainSplit).BeginInit();
+            RightMainSplit.Panel1.SuspendLayout();
+            RightMainSplit.Panel2.SuspendLayout();
+            RightMainSplit.SuspendLayout();
+            FeedStatusStrip.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
-            // FeedTree
+            // BasePanel
             // 
-            FeedTree.Dock = DockStyle.Fill;
-            FeedTree.Location = new Point(0, 0);
-            FeedTree.Name = "FeedTree";
-            FeedTree.Size = new Size(800, 225);
-            FeedTree.TabIndex = 0;
-            // 
-            // LogListBox
-            // 
-            LogListBox.Dock = DockStyle.Fill;
-            LogListBox.FormattingEnabled = true;
-            LogListBox.HorizontalScrollbar = true;
-            LogListBox.ItemHeight = 15;
-            LogListBox.Location = new Point(0, 0);
-            LogListBox.Name = "LogListBox";
-            LogListBox.Size = new Size(800, 221);
-            LogListBox.TabIndex = 1;
+            BasePanel.Controls.Add(splitContainer1);
+            BasePanel.Dock = DockStyle.Fill;
+            BasePanel.Location = new Point(0, 0);
+            BasePanel.Name = "BasePanel";
+            BasePanel.Size = new Size(800, 428);
+            BasePanel.TabIndex = 0;
             // 
             // splitContainer1
             // 
             splitContainer1.Dock = DockStyle.Fill;
             splitContainer1.Location = new Point(0, 0);
             splitContainer1.Name = "splitContainer1";
-            splitContainer1.Orientation = Orientation.Horizontal;
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(FeedTree);
+            splitContainer1.Panel1.Controls.Add(FeedListBox);
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(LogListBox);
-            splitContainer1.Size = new Size(800, 450);
-            splitContainer1.SplitterDistance = 225;
-            splitContainer1.TabIndex = 2;
+            splitContainer1.Panel2.Controls.Add(RightMainSplit);
+            splitContainer1.Size = new Size(800, 428);
+            splitContainer1.SplitterDistance = 266;
+            splitContainer1.TabIndex = 1;
+            // 
+            // FeedListBox
+            // 
+            FeedListBox.Dock = DockStyle.Fill;
+            FeedListBox.FormattingEnabled = true;
+            FeedListBox.ItemHeight = 15;
+            FeedListBox.Location = new Point(0, 0);
+            FeedListBox.Name = "FeedListBox";
+            FeedListBox.Size = new Size(266, 428);
+            FeedListBox.TabIndex = 0;
+            // 
+            // RightMainSplit
+            // 
+            RightMainSplit.Dock = DockStyle.Fill;
+            RightMainSplit.Location = new Point(0, 0);
+            RightMainSplit.Name = "RightMainSplit";
+            RightMainSplit.Orientation = Orientation.Horizontal;
+            // 
+            // RightMainSplit.Panel1
+            // 
+            RightMainSplit.Panel1.Controls.Add(flowLayoutPanel1);
+            // 
+            // RightMainSplit.Panel2
+            // 
+            RightMainSplit.Panel2.Controls.Add(LogListBox);
+            RightMainSplit.Size = new Size(530, 428);
+            RightMainSplit.SplitterDistance = 252;
+            RightMainSplit.TabIndex = 0;
+            // 
+            // btnSaveQuit
+            // 
+            btnSaveQuit.AutoSize = true;
+            btnSaveQuit.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnSaveQuit.Location = new Point(376, 3);
+            btnSaveQuit.Name = "btnSaveQuit";
+            btnSaveQuit.Size = new Size(80, 25);
+            btnSaveQuit.TabIndex = 3;
+            btnSaveQuit.Text = "Save && Quit";
+            btnSaveQuit.UseVisualStyleBackColor = true;
+            // 
+            // btnCreate
+            // 
+            btnCreate.AutoSize = true;
+            btnCreate.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnCreate.Location = new Point(291, 3);
+            btnCreate.Name = "btnCreate";
+            btnCreate.Size = new Size(79, 25);
+            btnCreate.TabIndex = 2;
+            btnCreate.Text = "Create Feed";
+            btnCreate.UseVisualStyleBackColor = true;
+            // 
+            // btnEdit
+            // 
+            btnEdit.AutoSize = true;
+            btnEdit.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnEdit.Location = new Point(173, 3);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(112, 25);
+            btnEdit.TabIndex = 1;
+            btnEdit.Text = "Edit Selected Feed";
+            btnEdit.UseVisualStyleBackColor = true;
+            // 
+            // btnProcess
+            // 
+            btnProcess.AutoSize = true;
+            btnProcess.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnProcess.Location = new Point(77, 3);
+            btnProcess.Name = "btnProcess";
+            btnProcess.Size = new Size(90, 25);
+            btnProcess.TabIndex = 0;
+            btnProcess.Text = "Process Feeds";
+            btnProcess.UseVisualStyleBackColor = true;
+            // 
+            // LogListBox
+            // 
+            LogListBox.Dock = DockStyle.Fill;
+            LogListBox.FormattingEnabled = true;
+            LogListBox.ItemHeight = 15;
+            LogListBox.Location = new Point(0, 0);
+            LogListBox.Name = "LogListBox";
+            LogListBox.Size = new Size(530, 172);
+            LogListBox.TabIndex = 0;
+            // 
+            // FeedStatusStrip
+            // 
+            FeedStatusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2, toolStripStatusLabel3, toolStripStatusLabel4 });
+            FeedStatusStrip.Location = new Point(0, 428);
+            FeedStatusStrip.Name = "FeedStatusStrip";
+            FeedStatusStrip.Size = new Size(800, 22);
+            FeedStatusStrip.Stretch = false;
+            FeedStatusStrip.TabIndex = 1;
+            FeedStatusStrip.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(118, 17);
+            toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabel2
+            // 
+            toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            toolStripStatusLabel2.Size = new Size(118, 17);
+            toolStripStatusLabel2.Text = "toolStripStatusLabel2";
+            // 
+            // toolStripStatusLabel3
+            // 
+            toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            toolStripStatusLabel3.Size = new Size(118, 17);
+            toolStripStatusLabel3.Text = "toolStripStatusLabel3";
+            // 
+            // toolStripStatusLabel4
+            // 
+            toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            toolStripStatusLabel4.Size = new Size(118, 17);
+            toolStripStatusLabel4.Text = "toolStripStatusLabel4";
+            // 
+            // btnGetFeeds
+            // 
+            btnGetFeeds.AutoSize = true;
+            btnGetFeeds.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnGetFeeds.Location = new Point(3, 3);
+            btnGetFeeds.Name = "btnGetFeeds";
+            btnGetFeeds.Size = new Size(68, 25);
+            btnGetFeeds.TabIndex = 4;
+            btnGetFeeds.Text = "Get Feeds";
+            btnGetFeeds.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.Controls.Add(btnGetFeeds);
+            flowLayoutPanel1.Controls.Add(btnProcess);
+            flowLayoutPanel1.Controls.Add(btnEdit);
+            flowLayoutPanel1.Controls.Add(btnCreate);
+            flowLayoutPanel1.Controls.Add(btnSaveQuit);
+            flowLayoutPanel1.Dock = DockStyle.Fill;
+            flowLayoutPanel1.Location = new Point(0, 0);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(530, 252);
+            flowLayoutPanel1.TabIndex = 5;
             // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(splitContainer1);
+            Controls.Add(BasePanel);
+            Controls.Add(FeedStatusStrip);
             Name = "MainWindow";
             Text = "MainWindow";
             Load += MainWindow_Load;
+            BasePanel.ResumeLayout(false);
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            RightMainSplit.Panel1.ResumeLayout(false);
+            RightMainSplit.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)RightMainSplit).EndInit();
+            RightMainSplit.ResumeLayout(false);
+            FeedStatusStrip.ResumeLayout(false);
+            FeedStatusStrip.PerformLayout();
+            flowLayoutPanel1.ResumeLayout(false);
+            flowLayoutPanel1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private TreeView FeedTree;
-        private ListBox LogListBox;
+        private Panel BasePanel;
+        private StatusStrip FeedStatusStrip;
+        private SplitContainer RightMainSplit;
         private SplitContainer splitContainer1;
+        private ListBox FeedListBox;
+        private ListBox LogListBox;
+        private ToolStripStatusLabel toolStripStatusLabel1;
+        private ToolStripStatusLabel toolStripStatusLabel2;
+        private ToolStripStatusLabel toolStripStatusLabel3;
+        private ToolStripStatusLabel toolStripStatusLabel4;
+        private Button btnEdit;
+        private Button btnProcess;
+        private Button btnSaveQuit;
+        private Button btnCreate;
+        private Button btnGetFeeds;
+        private FlowLayoutPanel flowLayoutPanel1;
     }
 }
