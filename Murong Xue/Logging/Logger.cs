@@ -36,6 +36,10 @@ namespace Murong_Xue.Logging
         {
             LogPut.EnableConsoleOutput();
         }
+        public  void AddModule(IOutputModule mod)
+        {
+            LogPut.AddModule(mod);
+        }
         //------------------------------------
         /// <summary>
         /// Add message to the log
