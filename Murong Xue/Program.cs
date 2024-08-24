@@ -6,7 +6,7 @@ public class Program
 {
     static readonly int MAJOR_VERSION = 1;
     static readonly int MINOR_VERSION = 6;
-    static readonly int PATCH = 6;
+    static readonly int PATCH = 7;
     //---
     static Reporter report; //cannot be readonly. Must be set AFTER Config has been created
     static EntryData? RSSEntries = null;
