@@ -7,7 +7,6 @@ namespace Murong_Xue
     {
         private string DownloadDirectory;
         private Uri RSSConfigPath;
-        private static LogLevel level = new(LogType.DEFAULT, LogMod.DEFAULT);
         //---
         private static Config? s_Config = null;
         private readonly Reporter report;
