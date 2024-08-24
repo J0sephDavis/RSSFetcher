@@ -2,119 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
+using Murong_Xue.Logging.OutputHandling;
 using Murong_Xue.Logging.Reporting;
 
 namespace Murong_Xue.Logging
 {
-    internal class LogOutput
-    {
-        private readonly List<LogMsg> Buffer = []; // lock needed
-        private List<LogMsg> buffer_copy = []; // no lock needed
-        private readonly object BufferLock = new();
-        //---
-        private readonly Thread BufferThread;
-        private readonly AutoResetEvent BufferEvent = new(false);
-        //
-        private bool StopThread = false;
-        private StreamWriter? FileStream;
-        private Uri? FilePath;
-        // When InteractiveMode is enabled, only show the short strings in the viewport & decrease either buffer_timeout or threshold
-        // OR whenever a msg if flagged interactive & added to the queue immediately end the wait
-        public bool InteractiveMode { get; set; } = true;
-        //
-        const int BUFFER_THRESHOLD = 10;
-        const int BUFFER_TIMEOUT = 5000;
-        const int INTERACTIVE_TIMEOUT = 250;
-        //
-        public LogOutput()
-        {
-            BufferThread = new(Main);
-        }
-        public bool SetPath(Uri path)
-        {
-            if (FilePath != null)
-            {
-                Log(new(LogType.ERROR, LogMod.NORMAL, "LOGPUT", "SetPath FAILED, FilePath != null"));
-                return false;
-            }
-            if (path?.IsFile != true)
-            {
-                Log(new(LogType.ERROR, LogMod.NORMAL, "LOGPUT", "SetPath FAILED, path does not lead to file"));
-                return false;
-            }
-            Log(new(LogType.DEBUG, LogMod.SPAM | LogMod.VERBOSE, "LOGPUT", $"SetPath: [{path}]")); //traceval
-            
-            if (File.Exists(path.LocalPath))
-            {
-                Log(new(LogType.ERROR, LogMod.SPAM | LogMod.UNIMPORTANT, "LOGPUT", "Deleting previous logfile")); //warnspam
-                File.Delete(path.LocalPath);
-            }
-            FilePath = path;
-            FileStream = new(FilePath.LocalPath);
-            return true;
-        }
-        public void Start()
-        {
-            BufferThread.Start();
-        }
-        public void Stop()
-        {
-            if (BufferThread.IsAlive)
-            {
-                StopThread = true;
-                BufferEvent.Set();
-                BufferThread.Join();
-            }
-            if (FileStream != null) //not very robust I assume
-            { 
-                FileStream.Dispose();
-                FileStream = null;
-            }
-        }
-        public void Log(LogMsg msg)
-        {
-            lock (BufferLock)
-            {
-                Buffer.Add(msg);
-                if (Buffer.Count > BUFFER_THRESHOLD || (InteractiveMode && (msg & LogMod.INTERACTIVE) != 0))
-                    BufferEvent.Set();
-            }
-        }
-        private void WriteMsg()
-        {
-            lock (BufferLock)
-            {
-                buffer_copy = new(Buffer);
-                Buffer.Clear();
-            }
-            if (buffer_copy.Count == 0) return;
-
-            foreach (LogMsg msg in buffer_copy)
-            {
-                FileStream?.WriteLine(msg);
-                Console.WriteLine(msg);
-            }
-        }
-        private void Main()
-        {
-            int timeout_millis = BUFFER_TIMEOUT;
-            bool current_mode = !InteractiveMode; //forces an update on the first cycle
-            while (StopThread == false)
-            {
-                //if the interactive mode has changed
-                if (current_mode != InteractiveMode)
-                    timeout_millis = InteractiveMode ? INTERACTIVE_TIMEOUT : BUFFER_TIMEOUT;
-
-                BufferEvent.WaitOne(timeout_millis);
-                WriteMsg();
-            }
-            WriteMsg(); //stragglers
-        }
-    }
     internal class Logger
     {
         private static Logger? s_Logger = null;
-        private readonly LogOutput LogPut;
+        private readonly LogOutputManager LogPut;
         private readonly ReporterManager RepManager;
         public static Logger GetInstance()
         {
