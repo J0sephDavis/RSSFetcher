@@ -1,6 +1,6 @@
 ﻿namespace Murong_Xue.Logging.OutputHandling
 {
-    internal interface IOutputModule
+    public interface IOutputModule
     {
         public void WriteMsg(LogMsg msg, bool InteractiveMode); //accept a copy of the buffer?
         public void Dispose();
