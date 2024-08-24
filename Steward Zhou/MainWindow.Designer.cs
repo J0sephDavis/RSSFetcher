@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             FeedTree = new TreeView();
-            LogListBox = new ListBox();
             SuspendLayout();
             // 
             // FeedTree
@@ -39,22 +38,11 @@
             FeedTree.Size = new Size(341, 426);
             FeedTree.TabIndex = 0;
             // 
-            // LogListBox
-            // 
-            LogListBox.FormattingEnabled = true;
-            LogListBox.HorizontalScrollbar = true;
-            LogListBox.ItemHeight = 15;
-            LogListBox.Location = new Point(359, 12);
-            LogListBox.Name = "LogListBox";
-            LogListBox.Size = new Size(429, 424);
-            LogListBox.TabIndex = 1;
-            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(LogListBox);
             Controls.Add(FeedTree);
             Name = "MainWindow";
             Text = "MainWindow";
@@ -65,6 +53,5 @@
         #endregion
 
         private TreeView FeedTree;
-        private ListBox LogListBox;
     }
 }

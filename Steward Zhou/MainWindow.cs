@@ -1,5 +1,3 @@
-using Murong_Xue.Logging;
-
 namespace Steward_Zhou
 {
     public partial class MainWindow : Form
@@ -12,7 +10,6 @@ namespace Steward_Zhou
         private void MainWindow_Load(object sender, EventArgs e)
         {
             UpdateFeedTree();
-            Logger.GetInstance().AddModule(new LogOutputListView(LogListBox));
         }
         public void UpdateFeedTree()
         {
