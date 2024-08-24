@@ -32,18 +32,18 @@
             splitContainer1 = new SplitContainer();
             FeedListBox = new ListBox();
             RightMainSplit = new SplitContainer();
-            btnSaveQuit = new Button();
-            btnCreate = new Button();
-            btnEdit = new Button();
+            flowLayoutPanel1 = new FlowLayoutPanel();
+            btnGetFeeds = new Button();
             btnProcess = new Button();
+            btnEdit = new Button();
+            btnCreate = new Button();
+            btnSaveQuit = new Button();
             LogListBox = new ListBox();
             FeedStatusStrip = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             toolStripStatusLabel2 = new ToolStripStatusLabel();
             toolStripStatusLabel3 = new ToolStripStatusLabel();
             toolStripStatusLabel4 = new ToolStripStatusLabel();
-            btnGetFeeds = new Button();
-            flowLayoutPanel1 = new FlowLayoutPanel();
             BasePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -53,8 +53,8 @@
             RightMainSplit.Panel1.SuspendLayout();
             RightMainSplit.Panel2.SuspendLayout();
             RightMainSplit.SuspendLayout();
-            FeedStatusStrip.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
+            FeedStatusStrip.SuspendLayout();
             SuspendLayout();
             // 
             // BasePanel
@@ -111,38 +111,30 @@
             RightMainSplit.SplitterDistance = 252;
             RightMainSplit.TabIndex = 0;
             // 
-            // btnSaveQuit
+            // flowLayoutPanel1
             // 
-            btnSaveQuit.AutoSize = true;
-            btnSaveQuit.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnSaveQuit.Location = new Point(376, 3);
-            btnSaveQuit.Name = "btnSaveQuit";
-            btnSaveQuit.Size = new Size(80, 25);
-            btnSaveQuit.TabIndex = 3;
-            btnSaveQuit.Text = "Save && Quit";
-            btnSaveQuit.UseVisualStyleBackColor = true;
+            flowLayoutPanel1.Controls.Add(btnGetFeeds);
+            flowLayoutPanel1.Controls.Add(btnProcess);
+            flowLayoutPanel1.Controls.Add(btnEdit);
+            flowLayoutPanel1.Controls.Add(btnCreate);
+            flowLayoutPanel1.Controls.Add(btnSaveQuit);
+            flowLayoutPanel1.Dock = DockStyle.Fill;
+            flowLayoutPanel1.Location = new Point(0, 0);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new Size(530, 252);
+            flowLayoutPanel1.TabIndex = 5;
             // 
-            // btnCreate
+            // btnGetFeeds
             // 
-            btnCreate.AutoSize = true;
-            btnCreate.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnCreate.Location = new Point(291, 3);
-            btnCreate.Name = "btnCreate";
-            btnCreate.Size = new Size(79, 25);
-            btnCreate.TabIndex = 2;
-            btnCreate.Text = "Create Feed";
-            btnCreate.UseVisualStyleBackColor = true;
-            // 
-            // btnEdit
-            // 
-            btnEdit.AutoSize = true;
-            btnEdit.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnEdit.Location = new Point(173, 3);
-            btnEdit.Name = "btnEdit";
-            btnEdit.Size = new Size(112, 25);
-            btnEdit.TabIndex = 1;
-            btnEdit.Text = "Edit Selected Feed";
-            btnEdit.UseVisualStyleBackColor = true;
+            btnGetFeeds.AutoSize = true;
+            btnGetFeeds.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnGetFeeds.Location = new Point(3, 3);
+            btnGetFeeds.Name = "btnGetFeeds";
+            btnGetFeeds.Size = new Size(68, 25);
+            btnGetFeeds.TabIndex = 4;
+            btnGetFeeds.Text = "Get Feeds";
+            btnGetFeeds.UseVisualStyleBackColor = true;
+            btnGetFeeds.Click += btnGetFeeds_Click;
             // 
             // btnProcess
             // 
@@ -154,6 +146,43 @@
             btnProcess.TabIndex = 0;
             btnProcess.Text = "Process Feeds";
             btnProcess.UseVisualStyleBackColor = true;
+            btnProcess.Click += btnProcess_Click;
+            // 
+            // btnEdit
+            // 
+            btnEdit.AutoSize = true;
+            btnEdit.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnEdit.Location = new Point(173, 3);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(112, 25);
+            btnEdit.TabIndex = 1;
+            btnEdit.Text = "Edit Selected Feed";
+            btnEdit.UseVisualStyleBackColor = true;
+            btnEdit.Click += btnEdit_Click;
+            // 
+            // btnCreate
+            // 
+            btnCreate.AutoSize = true;
+            btnCreate.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnCreate.Location = new Point(291, 3);
+            btnCreate.Name = "btnCreate";
+            btnCreate.Size = new Size(79, 25);
+            btnCreate.TabIndex = 2;
+            btnCreate.Text = "Create Feed";
+            btnCreate.UseVisualStyleBackColor = true;
+            btnCreate.Click += btnCreate_Click;
+            // 
+            // btnSaveQuit
+            // 
+            btnSaveQuit.AutoSize = true;
+            btnSaveQuit.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnSaveQuit.Location = new Point(376, 3);
+            btnSaveQuit.Name = "btnSaveQuit";
+            btnSaveQuit.Size = new Size(80, 25);
+            btnSaveQuit.TabIndex = 3;
+            btnSaveQuit.Text = "Save && Quit";
+            btnSaveQuit.UseVisualStyleBackColor = true;
+            btnSaveQuit.Click += btnSaveQuit_Click;
             // 
             // LogListBox
             // 
@@ -199,30 +228,6 @@
             toolStripStatusLabel4.Size = new Size(118, 17);
             toolStripStatusLabel4.Text = "toolStripStatusLabel4";
             // 
-            // btnGetFeeds
-            // 
-            btnGetFeeds.AutoSize = true;
-            btnGetFeeds.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnGetFeeds.Location = new Point(3, 3);
-            btnGetFeeds.Name = "btnGetFeeds";
-            btnGetFeeds.Size = new Size(68, 25);
-            btnGetFeeds.TabIndex = 4;
-            btnGetFeeds.Text = "Get Feeds";
-            btnGetFeeds.UseVisualStyleBackColor = true;
-            // 
-            // flowLayoutPanel1
-            // 
-            flowLayoutPanel1.Controls.Add(btnGetFeeds);
-            flowLayoutPanel1.Controls.Add(btnProcess);
-            flowLayoutPanel1.Controls.Add(btnEdit);
-            flowLayoutPanel1.Controls.Add(btnCreate);
-            flowLayoutPanel1.Controls.Add(btnSaveQuit);
-            flowLayoutPanel1.Dock = DockStyle.Fill;
-            flowLayoutPanel1.Location = new Point(0, 0);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(530, 252);
-            flowLayoutPanel1.TabIndex = 5;
-            // 
             // MainWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -242,10 +247,10 @@
             RightMainSplit.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)RightMainSplit).EndInit();
             RightMainSplit.ResumeLayout(false);
-            FeedStatusStrip.ResumeLayout(false);
-            FeedStatusStrip.PerformLayout();
             flowLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.PerformLayout();
+            FeedStatusStrip.ResumeLayout(false);
+            FeedStatusStrip.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }

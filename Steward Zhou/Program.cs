@@ -19,7 +19,7 @@ namespace Steward_Zhou
         static void Main()
         {
             using Config cfg = Config.GetInstance();
-            report ??= Logger.RequestReporter("WINPROG");
+            report ??= Logger.RequestReporter("W-PROG");
             report.Notice(VERSION);
             Logger.SetLogLevel(new(LogType.ALL, LogMod.ALL));
             //

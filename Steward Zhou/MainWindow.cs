@@ -1,37 +1,44 @@
 using Murong_Xue.Logging;
+using Murong_Xue.Logging.Reporting;
 
 namespace Steward_Zhou
 {
     public partial class MainWindow : Form
     {
+        Reporter report = Logger.RequestReporter("W-MAIN");
         public MainWindow()
         {
             InitializeComponent();
         }
-        
+
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            //UpdateFeedTree();
             Logger.GetInstance().AddModule(new LogOutputListView(LogListBox));
         }
-        /*
-        public void UpdateFeedTree()
+
+        private void btnGetFeeds_Click(object sender, EventArgs e)
         {
-            FeedTree.BeginUpdate();
-            //---------------------
-            for (int i = 0; i < 5; i++)
-            {
-                TreeNode parent =
-                    FeedTree.Nodes.Add("Parent " + i.ToString());
-                for (int j = 0; j < 5 - i; j++)
-                {
-                    var child = parent.Nodes.Add("Child " + j.ToString());
-                    if (j == i)
-                        child.Nodes.Add("grand child");
-                }
-            }
-            //---------------------
-            FeedTree.EndUpdate();
-        }*/
+            report.Trace("btnGetFeeds_click");
+        }
+
+        private void btnProcess_Click(object sender, EventArgs e)
+        {
+            report.Trace("btnProcess_Click");
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            report.Trace("btnEdit_Click");
+        }
+
+        private void btnCreate_Click(object sender, EventArgs e)
+        {
+            report.Trace("btnCreate_Click");
+        }
+
+        private void btnSaveQuit_Click(object sender, EventArgs e)
+        {
+            report.Trace("btnSaveQuit_Click");
+        }
     }
 }
