@@ -17,6 +17,8 @@ namespace Steward_Zhou
         }
         public void WriteMsg(LogMsg msg, bool InteractiveMode)
         {
+        //TODO implement a try catch that just dumps it incase a log is being put through
+        //when the app is closing (happened) Or somehow check if the winform is closed/being closed
             if (lb.InvokeRequired)
                 lb.Invoke((MethodInvoker)delegate
                 {
