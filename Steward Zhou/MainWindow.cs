@@ -24,9 +24,12 @@ namespace Steward_Zhou
             FeedListView.Items.Clear();
             foreach (var feed in feeds)
             {
-                FeedListViewItem item = new(feed, FeedFields.ID | FeedFields.TITLE);
+                FeedListViewItem item = new(feed, FeedFields.TITLE | FeedFields.DATE);
                 FeedListView.Items.Add(item);
             }
+            //Autosize the columns to the text.
+            foreach (ColumnHeader col in FeedListView.Columns)
+                col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             FeedListView.EndUpdate();
         }
         private void btnGetFeeds_Click(object sender, EventArgs e)
@@ -75,7 +78,9 @@ namespace Steward_Zhou
             InfoListView.BeginUpdate();
             InfoListView.Items.Clear();
             InfoListView.Items.Add(new FeedListViewItem(feed));
-            //---
+            //Autosize the columns to the text.
+            foreach (ColumnHeader col in InfoListView.Columns)
+                col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             InfoListView.EndUpdate();
         }
     }
@@ -94,6 +99,8 @@ namespace Steward_Zhou
     internal class FeedListViewItem : ListViewItem
     {
         public Feed feed;
+        //TODO instead of use FeedFields as a flag, it should be an ordered list/array
+        //So we can genereate diff orders
         public FeedListViewItem(Feed _feed, FeedFields fields = FeedFields.ALL) : base()
         {
             base.SubItems.Clear();
