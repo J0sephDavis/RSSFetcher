@@ -159,9 +159,12 @@ namespace Murong_Xue
                 bool IsUrl = false;
                 bool IsDate = false;
                 bool DateAlreadySet = false;
-                Feed copy = new(original);
+                
                 string _title = string.Empty;
-                string _url = string.Empty;
+                Uri? _url = null;
+                DateTime _date = DateTime.UnixEpoch;
+                string _history;
+
                 bool stopReading = false; //set when we reach an entry older than our history
                 while (!stopReading && reader.Read())
                 {
@@ -177,7 +180,7 @@ namespace Murong_Xue
                                     IsUrl = true;
                                     break;
                                 case date_element:
-                                    if (DateAlreadySet == false)
+                                    if(DateAlreadySet)
                                         IsDate = true;
                                     break;
                                 default:
@@ -196,12 +199,14 @@ namespace Murong_Xue
                             }
                             else if (IsUrl)
                             {
-                                _url = reader.Value;
+                                _url = new(reader.Value);
                             }
                             else if (IsDate)
                             {
-                                copy.Date = DateTime.Parse(reader.Value);
-                                if (copy.Date < lastDownload)
+                                DateTime tmp = DateTime.Parse(reader.Value);
+                                //entry date 
+                                report.Debug($"{_date} < {lastDownload} = {_date < lastDownload}");
+                               if (_date < lastDownload)
                                 {
             /* This should solve the problem where an older version of the
             * feed looks like: 07,06,05,04,...
@@ -215,6 +220,7 @@ namespace Murong_Xue
                                     break;
                                 }
                                 DateAlreadySet = true; //we only want the newest date
+                                _date = tmp;
                             }
                             break;
                         case XmlNodeType.EndElement:
@@ -223,9 +229,16 @@ namespace Murong_Xue
                                 case item_element:
                                     if (Regex.IsMatch(_title, this.Expression))
                                     {
-                                        copy.History = _title;
-                                        edited = copy;
-                                        AddFile(_title, new Uri(_url));
+                                        if (_url == null)
+                                        {
+                                            report.Debug("failed to add file, missing Uri");
+                                            break;
+                                        }
+                                        _history = _title;
+                                        edited = new(original.ID, original.Title, original.URL, original.Expression,
+                                            _date, _history);
+
+                                        AddFile(_title, _url);
                                     }
                                     break;
                                 case title_element:
