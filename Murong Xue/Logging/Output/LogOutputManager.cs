@@ -76,15 +76,9 @@
         }
         private void Main()
         {
-            int timeout_millis = BUFFER_TIMEOUT;
-            bool current_mode = !InteractiveMode; //forces an update on the first cycle
             while (StopThread == false)
             {
-                //if the interactive mode has changed
-                if (current_mode != InteractiveMode)
-                    timeout_millis = InteractiveMode ? INTERACTIVE_TIMEOUT : BUFFER_TIMEOUT;
-
-                BufferEvent.WaitOne(timeout_millis);
+                BufferEvent.WaitOne(InteractiveMode ? INTERACTIVE_TIMEOUT : BUFFER_TIMEOUT);
                 WriteMsg();
             }
             WriteMsg(); //stragglers
