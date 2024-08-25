@@ -68,8 +68,8 @@ namespace Steward_Zhou
             else if (FeedListView.SelectedItems.Count == 1)
             {
                 report.Trace("One entry: " + FeedListView.SelectedItems[0]);
-                FeedListViewItem feed_payload = FeedListView.SelectedItems[0] as FeedListViewItem;
-                InfoListView_PrintFeed(feed_payload.feed);
+                if (FeedListView.SelectedItems[0] is FeedListViewItem feed_payload)
+                    InfoListView_PrintFeed(feed_payload.feed);
             }
         }
 
