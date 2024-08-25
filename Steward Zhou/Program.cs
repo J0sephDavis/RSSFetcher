@@ -26,6 +26,7 @@ namespace Steward_Zhou
             ApplicationConfiguration.Initialize();
             MainWindow mainWin = new();
             Application.Run(mainWin);
+            report.Out("END OF EXECUTION");
         }
         /*----------------------------------------------|-------------------------------
         1. Populate a list of feeds                     | Would rely on MX & a common

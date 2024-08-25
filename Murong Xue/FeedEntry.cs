@@ -7,6 +7,48 @@ using System.Xml;
 
 namespace Murong_Xue
 {
+    public record Feed
+    {
+        public int ID;
+        public string Title;
+        public Uri URL;
+        public string Expression;
+        public DateTime Date;
+        public string History;
+
+        public Feed(int id, string title, Uri url, string expression, DateTime date, string history)
+        {
+            ID = id;
+            Title = title;
+            URL = url;
+            Expression = expression;
+            this.Date = date;
+            History = history;
+        }
+        public Feed(Feed copy)
+        {
+            ID = copy.ID;
+            Title = copy.Title;
+            URL = copy.URL;
+            Expression = copy.Expression;
+            Date = copy.Date;
+            History = copy.History;
+        }
+
+        public string ToStringEntry()
+        {
+            return $"{ID} {Title} {Date}";
+        }
+
+        public string[] ToStringList()
+        {
+            return [Title, $"{Date}"];
+        }
+        public override string ToString()
+        {
+            return $"T:{Title}\tU:{URL}\tE:{Expression}\tH:{History}";
+        }
+    }
     internal class FeedEntry(string Title, Uri URL,
         string Expression, string History, string Date) : DownloadEntryBase(URL, report)
     {
@@ -24,14 +66,9 @@ namespace Murong_Xue
         private static readonly Reporter report = Logger.RequestReporter("F-DATA");
         public void Print()
         {
-            string tmp = "FeedEntry Obj:" +
-                $"\n\t{this.Title}" +
-                $"\n\t{this.URL}" +
-                $"\n\t{this.Expression}" +
-                $"\n\t{this.History}";
-            if (HasNewHistory)
-                tmp += $"\n\tNEW-HISTORY: {NewHistory}";
-            report.Spam(tmp);
+            report.Spam(edited == null
+                ? original.ToString()
+                : edited.ToString());
         }
         public string ToLongString()
         {
@@ -40,9 +77,9 @@ namespace Murong_Xue
             //
             builder.AppendLine(sep);
             builder.AppendLine("TITLE: " + Title);
-            builder.AppendLine("History: " + GetHistory());
+            builder.AppendLine("History: " + History);
             builder.AppendLine("Expression: " + Expression);
-            builder.AppendLine("URL: " + GetURL());
+            builder.AppendLine("URL: " + URL);
             builder.AppendLine("Date: " + Date);
             builder.Append(sep); //don't end with a new line (append, not AppendLine)
             //
@@ -71,7 +108,7 @@ namespace Murong_Xue
             report.Notice($"Feed Downloaded len:{content.Length}, {this.Title}");
             XmlReaderSettings xSettings = new();
             xSettings.Async = false;
-            DateTime lastDownload = DateTime.Parse(Date);
+            DateTime lastDownload = Date;
             //
             const string title_element = "title";
             const string link_element = "link";
@@ -87,12 +124,10 @@ namespace Murong_Xue
                 bool IsUrl = false;
                 bool IsDate = false;
                 bool DateAlreadySet = false;
-
+                Feed copy = new(original);
                 string _title = string.Empty;
                 string _url = string.Empty;
-                string _date = string.Empty;
-                DateTime tmpDate;
-                bool stopReading = false;
+                bool stopReading = false; //set when we reach an entry older than our history
                 while (!stopReading && reader.Read())
                 {
                     switch (reader.NodeType)
@@ -130,10 +165,8 @@ namespace Murong_Xue
                             }
                             else if (IsDate)
                             {
-                                _date = reader.Value;
-                                tmpDate = DateTime.Parse(_date);
-                                Date = _date.ToString();
-                                if (tmpDate < lastDownload)
+                                copy.Date = DateTime.Parse(reader.Value);
+                                if (copy.Date < lastDownload)
                                 {
             /* This should solve the problem where an older version of the
             * feed looks like: 07,06,05,04,...
@@ -142,16 +175,24 @@ namespace Murong_Xue
             * Our last "History" entry would be "07", but with
             * 07 having been deleted or renamed we lose our guide for when to stop
             * However, by comparing dates we avoid this. */
-                                    report.Out("OLDER DATE (TAKE NOTE!!)");
+                                    report.Out("OLDER DATE (see if problem persists)");
                                     stopReading = true;
                                     break;
                                 }
-                                DateAlreadySet = true;
+                                DateAlreadySet = true; //we only want the newest date
                             }
                             break;
                         case XmlNodeType.EndElement:
                             switch (reader.Name)
                             {
+                                case item_element:
+                                    if (Regex.IsMatch(_title, this.Expression))
+                                    {
+                                        copy.History = _title;
+                                        edited = copy;
+                                        AddFile(_title, new Uri(_url));
+                                    }
+                                    break;
                                 case title_element:
                                     IsTitle = false;
                                     break;
@@ -160,10 +201,6 @@ namespace Murong_Xue
                                     break;
                                 case date_element:
                                     IsDate = false;
-                                    break;
-                                case item_element:
-                                    if (Regex.IsMatch(_title, this.Expression))
-                                        AddFile(_title, new Uri(_url));
                                     break;
                                 default:
                                     break;
@@ -192,7 +229,8 @@ namespace Murong_Xue
         }
         public void SetURL(string URL)
         {
-            this.URL = new Uri(URL);
+            edited ??= new(original);
+            edited.URL = new Uri(URL);
         }
     }
 }
