@@ -168,7 +168,6 @@ namespace Murong_Xue
             
             //NOTICE: async saving takes ~4ms longer than just saving syncronously (6ms -> 1-2ms)
             XmlWriterSettings xSettings = new() { Async = false };
-            DateTime _date;
             DateTime _today = DateTime.Now;
             using (XmlWriter writer = XmlWriter.Create(xStream, xSettings))
             {
@@ -177,15 +176,11 @@ namespace Murong_Xue
                 TimeSpan SinceLast;
                 //---- item
                 foreach (FeedEntry feed in Feeds)
-                {
-                    //----
-                    if (DateTime.TryParse(feed.Date, out _date))
+            {
+                    SinceLast = _today - feed.Date;
+                    if (SinceLast.Days > 10)
                     {
-                        SinceLast = _today - _date;
-                        if (SinceLast.Days > 10)
-                        {
-                            report.Out($"{feed.Title} / {feed.GetURL()} has not received an update in {SinceLast.Days} days");
-                        }
+                        report.Out($"{feed.Title} / {feed.GetURL()} has not received an update in {SinceLast.Days} days");
                     }
                     //----
                     writer.WriteStartElement(RSS_Item);
@@ -207,7 +202,7 @@ namespace Murong_Xue
                     writer.WriteEndElement();
                     // 5. LastEntry date
                     writer.WriteStartElement(RSS_Date);
-                    writer.WriteString(feed.Date);
+                    writer.WriteString(feed.Date.ToString());
                     writer.WriteEndElement();
                     //---- end item
                     writer.WriteEndElement();

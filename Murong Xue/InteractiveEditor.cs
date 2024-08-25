@@ -23,33 +23,32 @@ namespace Murong_Xue
         };
         protected void PrintHandler(int? index)
         {
-            FeedEntry? entry;
+            FeedEntry? feed;
             DateTime _today = DateTime.Now;
-            DateTime _date;
             int daysSince;
             if (index != null && index > -1 && index < Feeds.Count)
             {
-                entry = Feeds[(int)index];
-                if (DateTime.TryParse(entry.Date, out _date))
+                feed = Feeds[(int)index];
+                if (feed.Date != DateTime.UnixEpoch)
                 {
-                    daysSince = (_today - _date).Days;
+                    daysSince = (_today - feed.Date).Days;
                 }
                 else daysSince = -1;
-                report.Out(entry.ToLongString());
+                report.Out(feed.ToLongString());
                 return;
             }
             int totalFeeds = Feeds.Count;
             report.Out("ID\tDays\tTitle");
             for (int idx = 0; idx < totalFeeds; idx++)
             {
-                entry = Feeds[idx];
-                if (DateTime.TryParse(entry.Date, out _date))
+                feed = Feeds[idx];
+                if (feed.Date != DateTime.UnixEpoch)
                 {
-                    daysSince = (_today - _date).Days;
+                    daysSince = (_today - feed.Date).Days;
                 }
                 else daysSince = -1;
 
-                report.Out($"{idx}\t{daysSince}\t{entry.Title}");
+                report.Out($"{idx}\t{daysSince}\t{feed.Title}");
             }
         }
 
