@@ -1,6 +1,7 @@
 using Murong_Xue;
 using Murong_Xue.Logging;
 using Murong_Xue.Logging.Reporting;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Steward_Zhou
@@ -11,6 +12,7 @@ namespace Steward_Zhou
         private Controller controller = new();
         public MainWindow()
         {
+            Logger.SetInteractiveMode(true);
             InitializeComponent();
         }
 
@@ -41,6 +43,8 @@ namespace Steward_Zhou
         private void btnProcess_Click(object sender, EventArgs e)
         {
             report.Trace("btnProcess_Click");
+            //queue feeds & process
+            controller.DownloadFeeds();
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -56,6 +60,7 @@ namespace Steward_Zhou
         private void btnSaveQuit_Click(object sender, EventArgs e)
         {
             report.Trace("btnSaveQuit_Click");
+            controller.UpdateEntries();
         }
 
         private void FeedListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -103,6 +108,7 @@ namespace Steward_Zhou
         //So we can genereate diff orders
         public FeedListViewItem(Feed _feed, FeedFields fields = FeedFields.ALL) : base()
         {
+            //reduce data dup by only storing the ID instaed of the Feed itself?, call GetFeed(ID) to get it later
             base.SubItems.Clear();
             feed = _feed;
 
