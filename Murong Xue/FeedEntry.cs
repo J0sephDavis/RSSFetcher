@@ -53,45 +53,12 @@ namespace Murong_Xue
         string Expression, string History, string Date) : DownloadEntryBase(URL, report)
     {
         public readonly Feed original = new(1337, Title, URL, Expression, DateTime.Parse(Date), History);
-        public Feed? edited;
         //making the class feel like a feed. Also should be the default behavior imo.
-        public string Title
-        {
-            get => edited == null ? original.Title : edited.Title;
-            set {
-                edited ??= new (original);
-                edited.History = value;
-            }
-        }
-        public Uri URL
-        {
-            get =>edited == null ? original.URL : edited.URL;
-            set {
-                edited ??= new (original);
-                edited.URL= value;
-            }
-        }
-        public string Expression
-        {
-            get => edited == null ? original.Expression : edited.Expression;
-            set {
-                edited ??= new (original);
-                edited.Expression = value;
-            }
-        }
-        public DateTime Date { get => edited == null ? original.Date : edited.Date;
-            set
-            {
-                edited ??= new(original);
-                edited.Date = value;
-            }
-        }
-        public string History { get => edited == null ? original.History : edited.History;
-            set {
-                edited ??= new(original);
-                edited.History = value;
-            }
-        }
+        public string Title { get => original.Title; set => original.Title = value; }
+        public Uri URL { get => original.URL; set => original.URL = value; }
+        public string Expression { get => original.Expression; set => original.Expression = value; }
+        public DateTime Date { get => original.Date; set => original.Date = value; }
+        public string History { get => original.History; set => original.History = value; }
         protected bool HasNewHistory { get; set; } = false;
         protected string NewHistory = string.Empty;
         //From putting a debug point on the below functions. It seems that a primary constructor
@@ -101,9 +68,7 @@ namespace Murong_Xue
         private static readonly Reporter report = Logger.RequestReporter("F-DATA");
         public void Print()
         {
-            report.Spam(edited == null
-                ? original.ToString()
-                : edited.ToString());
+            report.Spam(original.ToString());
         }
         public string ToLongString()
         {
@@ -234,10 +199,9 @@ namespace Murong_Xue
                                             report.Debug("failed to add file, missing Uri");
                                             break;
                                         }
-                                        _history = _title;
-                                        edited = new(original.ID, original.Title, original.URL, original.Expression,
-                                            _date, _history);
-
+                                        report.Debug($"ADDING FILE: {original.Title}->{_date.ToString()} LAST WAS: {Date}");
+                                        Date = _date;
+                                        History = _title;
                                         AddFile(_title, _url);
                                     }
                                     break;
@@ -277,8 +241,7 @@ namespace Murong_Xue
         }
         public void SetURL(string URL)
         {
-            edited ??= new(original);
-            edited.URL = new Uri(URL);
+            original.URL = new Uri(URL);
         }
     }
 }
