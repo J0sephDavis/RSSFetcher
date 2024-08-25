@@ -44,21 +44,27 @@ namespace Murong_Xue
     public class Controller
     {
         private EntryData rss;
-        private List<FeedEntry> feeds;
-        
+        private List<Feed> Feeds = [];
+
         public Controller()
         {
             rss = new EntryData(Config.GetInstance().GetRSSPath());
-            feeds = rss.GetFeeds();
-            for (int ind = 0; ind < feeds.Count; ind++)
-            {
-                FeedEntry c_feed = feeds[ind];
-                Feed feed = new(c_feed.original);
-                Feeds.Add(feed);
-            }
+            List<FeedEntry> Entries = rss.GetFeeds();
+            foreach (FeedEntry entry in Entries)
+                Feeds.Add(new(entry.original));
         }
-
-        private List<Feed> Feeds = [];
+        //----------------------------------------
+        public async void DownloadFeeds()
+        {
+            //TODO when a feed is updated we must update the corresponding entry in Entries?
+            //is the Feed ref linked still?
+            await rss.DownloadFeeds();
+        }
+        public void UpdateEntries()
+        {
+            rss.UpdateEntries();
+        }
+        //----------------------------------------
         public List<Feed> GetFeeds()
         {
             return Feeds;

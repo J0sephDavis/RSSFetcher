@@ -342,7 +342,7 @@ namespace Murong_Xue
             int totalFeeds = Feeds.Count;
             if (totalFeeds == 0)
             {
-                report.Error("No feeds found");
+                report.Error("No Entries found");
                 return false;
             }
             

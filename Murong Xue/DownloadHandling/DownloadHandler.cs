@@ -31,7 +31,7 @@ namespace Murong_Xue.DownloadHandling
             report.Notice("Processing downloads");
             List<Task> CurrentBatch = [];
             int totalWaiting = Queued.Count + Processing.Count;
-            report.DebugVal($"{totalWaiting} feeds queued for download");
+            report.DebugVal($"{totalWaiting} Entries queued for download");
             while (totalWaiting != 0)
             {
                 while (Queued.Count != 0)
