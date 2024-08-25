@@ -52,7 +52,7 @@ namespace Murong_Xue
     internal class FeedEntry(string Title, Uri URL,
         string Expression, string History, string Date) : DownloadEntryBase(URL, report)
     {
-        public readonly Feed original = new(0, Title, URL, Expression, DateTime.Parse(Date), History);
+        public readonly Feed original = new(1337, Title, URL, Expression, DateTime.Parse(Date), History);
         public Feed? edited;
         //making the class feel like a feed. Also should be the default behavior imo.
         public string Title
