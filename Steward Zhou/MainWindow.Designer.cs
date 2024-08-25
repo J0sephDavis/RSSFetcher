@@ -35,6 +35,7 @@
             columnHeaderDate = new ColumnHeader();
             RightMainSplit = new SplitContainer();
             InfoListView = new ListView();
+            hdrID = new ColumnHeader();
             hdrTitle = new ColumnHeader();
             hdrHistory = new ColumnHeader();
             hdrURL = new ColumnHeader();
@@ -135,7 +136,7 @@
             // InfoListView
             // 
             InfoListView.BackColor = SystemColors.Info;
-            InfoListView.Columns.AddRange(new ColumnHeader[] { hdrTitle, hdrHistory, hdrURL, hdrExpr, hdrDate });
+            InfoListView.Columns.AddRange(new ColumnHeader[] { hdrID, hdrTitle, hdrURL, hdrExpr, hdrDate, hdrHistory });
             InfoListView.Dock = DockStyle.Fill;
             InfoListView.Location = new Point(118, 0);
             InfoListView.Name = "InfoListView";
@@ -143,6 +144,10 @@
             InfoListView.TabIndex = 6;
             InfoListView.UseCompatibleStateImageBehavior = false;
             InfoListView.View = View.Details;
+            // 
+            // hdrID
+            // 
+            hdrID.Text = "ID";
             // 
             // hdrTitle
             // 
@@ -337,5 +342,6 @@
         private ColumnHeader hdrURL;
         private ColumnHeader hdrExpr;
         private ColumnHeader hdrDate;
+        private ColumnHeader hdrID;
     }
 }
