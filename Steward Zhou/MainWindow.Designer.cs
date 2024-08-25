@@ -30,7 +30,9 @@
         {
             BasePanel = new Panel();
             splitContainer1 = new SplitContainer();
-            FeedListBox = new ListBox();
+            FeedListView = new ListView();
+            columnHeaderTitle = new ColumnHeader();
+            columnHeaderDate = new ColumnHeader();
             RightMainSplit = new SplitContainer();
             flowLayoutPanel1 = new FlowLayoutPanel();
             btnGetFeeds = new Button();
@@ -74,7 +76,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(FeedListBox);
+            splitContainer1.Panel1.Controls.Add(FeedListView);
             // 
             // splitContainer1.Panel2
             // 
@@ -83,15 +85,27 @@
             splitContainer1.SplitterDistance = 266;
             splitContainer1.TabIndex = 1;
             // 
-            // FeedListBox
+            // FeedListView
             // 
-            FeedListBox.Dock = DockStyle.Fill;
-            FeedListBox.FormattingEnabled = true;
-            FeedListBox.ItemHeight = 15;
-            FeedListBox.Location = new Point(0, 0);
-            FeedListBox.Name = "FeedListBox";
-            FeedListBox.Size = new Size(266, 428);
-            FeedListBox.TabIndex = 0;
+            FeedListView.AllowColumnReorder = true;
+            FeedListView.Columns.AddRange(new ColumnHeader[] { columnHeaderTitle, columnHeaderDate });
+            FeedListView.Dock = DockStyle.Fill;
+            FeedListView.GridLines = true;
+            FeedListView.Location = new Point(0, 0);
+            FeedListView.Name = "FeedListView";
+            FeedListView.Size = new Size(266, 428);
+            FeedListView.TabIndex = 1;
+            FeedListView.UseCompatibleStateImageBehavior = false;
+            FeedListView.View = View.Details;
+            FeedListView.SelectedIndexChanged += FeedListView_SelectedIndexChanged;
+            // 
+            // columnHeaderTitle
+            // 
+            columnHeaderTitle.Text = "Title";
+            // 
+            // columnHeaderDate
+            // 
+            columnHeaderDate.Text = "Last Update";
             // 
             // RightMainSplit
             // 
@@ -261,7 +275,6 @@
         private StatusStrip FeedStatusStrip;
         private SplitContainer RightMainSplit;
         private SplitContainer splitContainer1;
-        private ListBox FeedListBox;
         private ListBox LogListBox;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripStatusLabel toolStripStatusLabel2;
@@ -273,5 +286,8 @@
         private Button btnCreate;
         private Button btnGetFeeds;
         private FlowLayoutPanel flowLayoutPanel1;
+        private ListView FeedListView;
+        private ColumnHeader columnHeaderTitle;
+        private ColumnHeader columnHeaderDate;
     }
 }
