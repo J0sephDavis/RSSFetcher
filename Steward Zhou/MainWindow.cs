@@ -24,7 +24,7 @@ namespace Steward_Zhou
             FeedListView.Items.Clear();
             foreach (var feed in feeds)
             {
-                ListViewItem item = new(feed.ToStringList());
+                FeedListViewItem item = new(feed, FeedFields.ID | FeedFields.TITLE);
                 FeedListView.Items.Add(item);
             }
             FeedListView.EndUpdate();
@@ -61,16 +61,65 @@ namespace Steward_Zhou
             builder.AppendLine("Selected Index Changed");
             //---
             if (FeedListView.SelectedItems.Count == 0)
-                builder.AppendLine("No items selected");
-            else
+                report.Trace("No items selected");
+            else if (FeedListView.SelectedItems.Count == 1)
             {
-                for (int i = 0; i < FeedListView.SelectedItems.Count; i++)
-                {
-                    builder.AppendLine(FeedListView.SelectedItems[i].Text + "|");
-                }
+                report.Trace("One entry: " + FeedListView.SelectedItems[0]);
+                FeedListViewItem feed_payload = FeedListView.SelectedItems[0] as FeedListViewItem;
+                InfoListView_PrintFeed(feed_payload.feed);
             }
+        }
+
+        public void InfoListView_PrintFeed(Feed feed)
+        {
+            InfoListView.BeginUpdate();
+            InfoListView.Items.Clear();
+            InfoListView.Items.Add(new FeedListViewItem(feed));
             //---
-            report.Trace(builder.ToString());
+            InfoListView.EndUpdate();
+        }
+    }
+    [Flags]
+    enum FeedFields
+    {
+        ID = 1 << 0,
+        TITLE = 1 << 1,
+        URL = 1<<2,
+        EXPRESSION =1<<3,
+        DATE = 1<<4,
+        HISTORY = 1<<5,
+        
+        ALL = ID | TITLE | URL | EXPRESSION | DATE | HISTORY,
+    };
+    internal class FeedListViewItem : ListViewItem
+    {
+        public Feed feed;
+        public FeedListViewItem(Feed _feed, FeedFields fields = FeedFields.ALL) : base()
+        {
+            base.SubItems.Clear();
+            feed = _feed;
+
+            if ((fields & FeedFields.ID)>0)
+                base.SubItems.Add(feed.ID.ToString());
+
+            if ((fields & FeedFields.TITLE) > 0)
+                base.SubItems.Add(feed.Title);
+
+            if ((fields & FeedFields.URL) > 0)
+                base.SubItems.Add(feed.URL.ToString());
+
+            if ((fields & FeedFields.EXPRESSION) > 0)
+                base.SubItems.Add(feed.Expression);
+
+            if ((fields & FeedFields.DATE) > 0)
+                base.SubItems.Add(feed.Date.ToString());
+
+            if ((fields & FeedFields.HISTORY) > 0)
+                base.SubItems.Add(feed.History);
+
+            //I have no clue why there is an empty string added by default
+            if (base.SubItems.Count > 0 && base.SubItems[0].Text == string.Empty)
+                base.SubItems.RemoveAt(0);
         }
     }
 }
