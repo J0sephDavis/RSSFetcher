@@ -34,18 +34,20 @@
             columnHeaderTitle = new ColumnHeader();
             columnHeaderDate = new ColumnHeader();
             RightMainSplit = new SplitContainer();
-            txtBoxHistory = new TextBox();
-            lblHistory = new Label();
-            txtBoxDate = new TextBox();
-            lblDate = new Label();
-            txtBoxRegex = new TextBox();
-            lblExpr = new Label();
-            txtBoxURL = new TextBox();
-            lblURL = new Label();
-            txtBoxTitle = new TextBox();
-            lblTitle = new Label();
+            tableLayoutPanel1 = new TableLayoutPanel();
             txtBoxID = new TextBox();
+            lblTitle = new Label();
+            txtBoxTitle = new TextBox();
+            txtBoxURL = new TextBox();
+            lblDate = new Label();
+            txtBoxDate = new TextBox();
             LblId = new Label();
+            lblURL = new Label();
+            lblHistory = new Label();
+            lblExpr = new Label();
+            txtBoxRegex = new TextBox();
+            txtBoxHistory = new TextBox();
+            btnGoToURL = new Button();
             ButtonPanelFlowLayout = new FlowLayoutPanel();
             btnGetFeeds = new Button();
             btnProcess = new Button();
@@ -67,6 +69,7 @@
             RightMainSplit.Panel1.SuspendLayout();
             RightMainSplit.Panel2.SuspendLayout();
             RightMainSplit.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             ButtonPanelFlowLayout.SuspendLayout();
             FeedStatusStrip.SuspendLayout();
             SuspendLayout();
@@ -128,18 +131,7 @@
             // 
             // RightMainSplit.Panel1
             // 
-            RightMainSplit.Panel1.Controls.Add(txtBoxHistory);
-            RightMainSplit.Panel1.Controls.Add(lblHistory);
-            RightMainSplit.Panel1.Controls.Add(txtBoxDate);
-            RightMainSplit.Panel1.Controls.Add(lblDate);
-            RightMainSplit.Panel1.Controls.Add(txtBoxRegex);
-            RightMainSplit.Panel1.Controls.Add(lblExpr);
-            RightMainSplit.Panel1.Controls.Add(txtBoxURL);
-            RightMainSplit.Panel1.Controls.Add(lblURL);
-            RightMainSplit.Panel1.Controls.Add(txtBoxTitle);
-            RightMainSplit.Panel1.Controls.Add(lblTitle);
-            RightMainSplit.Panel1.Controls.Add(txtBoxID);
-            RightMainSplit.Panel1.Controls.Add(LblId);
+            RightMainSplit.Panel1.Controls.Add(tableLayoutPanel1);
             RightMainSplit.Panel1.Controls.Add(ButtonPanelFlowLayout);
             // 
             // RightMainSplit.Panel2
@@ -149,102 +141,166 @@
             RightMainSplit.SplitterDistance = 252;
             RightMainSplit.TabIndex = 0;
             // 
-            // txtBoxHistory
+            // tableLayoutPanel1
             // 
-            txtBoxHistory.Location = new Point(226, 178);
-            txtBoxHistory.Name = "txtBoxHistory";
-            txtBoxHistory.Size = new Size(212, 23);
-            txtBoxHistory.TabIndex = 20;
+            tableLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel1.ColumnCount = 3;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.Controls.Add(txtBoxID, 1, 0);
+            tableLayoutPanel1.Controls.Add(lblTitle, 0, 1);
+            tableLayoutPanel1.Controls.Add(txtBoxTitle, 1, 1);
+            tableLayoutPanel1.Controls.Add(txtBoxURL, 1, 2);
+            tableLayoutPanel1.Controls.Add(lblDate, 0, 4);
+            tableLayoutPanel1.Controls.Add(txtBoxDate, 1, 4);
+            tableLayoutPanel1.Controls.Add(LblId, 0, 0);
+            tableLayoutPanel1.Controls.Add(lblURL, 0, 2);
+            tableLayoutPanel1.Controls.Add(lblHistory, 0, 5);
+            tableLayoutPanel1.Controls.Add(lblExpr, 0, 3);
+            tableLayoutPanel1.Controls.Add(txtBoxRegex, 1, 3);
+            tableLayoutPanel1.Controls.Add(txtBoxHistory, 1, 5);
+            tableLayoutPanel1.Controls.Add(btnGoToURL, 2, 2);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
+            tableLayoutPanel1.Location = new Point(118, 0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 7;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.Size = new Size(412, 252);
+            tableLayoutPanel1.TabIndex = 21;
             // 
-            // lblHistory
+            // txtBoxID
             // 
-            lblHistory.AutoSize = true;
-            lblHistory.Location = new Point(175, 181);
-            lblHistory.Name = "lblHistory";
-            lblHistory.Size = new Size(45, 15);
-            lblHistory.TabIndex = 19;
-            lblHistory.Text = "History";
-            // 
-            // txtBoxDate
-            // 
-            txtBoxDate.Location = new Point(226, 149);
-            txtBoxDate.Name = "txtBoxDate";
-            txtBoxDate.Size = new Size(212, 23);
-            txtBoxDate.TabIndex = 18;
-            // 
-            // lblDate
-            // 
-            lblDate.AutoSize = true;
-            lblDate.Location = new Point(189, 152);
-            lblDate.Name = "lblDate";
-            lblDate.Size = new Size(31, 15);
-            lblDate.TabIndex = 17;
-            lblDate.Text = "Date";
-            // 
-            // txtBoxRegex
-            // 
-            txtBoxRegex.Location = new Point(226, 120);
-            txtBoxRegex.Name = "txtBoxRegex";
-            txtBoxRegex.Size = new Size(212, 23);
-            txtBoxRegex.TabIndex = 16;
-            // 
-            // lblExpr
-            // 
-            lblExpr.AutoSize = true;
-            lblExpr.Location = new Point(182, 125);
-            lblExpr.Name = "lblExpr";
-            lblExpr.Size = new Size(39, 15);
-            lblExpr.TabIndex = 15;
-            lblExpr.Text = "Regex";
-            // 
-            // txtBoxURL
-            // 
-            txtBoxURL.Location = new Point(226, 91);
-            txtBoxURL.Name = "txtBoxURL";
-            txtBoxURL.Size = new Size(212, 23);
-            txtBoxURL.TabIndex = 14;
-            // 
-            // lblURL
-            // 
-            lblURL.AutoSize = true;
-            lblURL.Location = new Point(192, 94);
-            lblURL.Name = "lblURL";
-            lblURL.Size = new Size(28, 15);
-            lblURL.TabIndex = 13;
-            lblURL.Text = "URL";
-            // 
-            // txtBoxTitle
-            // 
-            txtBoxTitle.Location = new Point(226, 62);
-            txtBoxTitle.Name = "txtBoxTitle";
-            txtBoxTitle.Size = new Size(212, 23);
-            txtBoxTitle.TabIndex = 12;
+            txtBoxID.Dock = DockStyle.Fill;
+            txtBoxID.Enabled = false;
+            txtBoxID.Location = new Point(54, 3);
+            txtBoxID.Name = "txtBoxID";
+            txtBoxID.Size = new Size(275, 23);
+            txtBoxID.TabIndex = 10;
             // 
             // lblTitle
             // 
             lblTitle.AutoSize = true;
-            lblTitle.Location = new Point(191, 65);
+            lblTitle.Dock = DockStyle.Fill;
+            lblTitle.Location = new Point(3, 29);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(29, 15);
+            lblTitle.Size = new Size(45, 29);
             lblTitle.TabIndex = 11;
             lblTitle.Text = "Title";
+            lblTitle.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // txtBoxID
+            // txtBoxTitle
             // 
-            txtBoxID.Enabled = false;
-            txtBoxID.Location = new Point(226, 34);
-            txtBoxID.Name = "txtBoxID";
-            txtBoxID.Size = new Size(212, 23);
-            txtBoxID.TabIndex = 10;
+            txtBoxTitle.Dock = DockStyle.Fill;
+            txtBoxTitle.Location = new Point(54, 32);
+            txtBoxTitle.Name = "txtBoxTitle";
+            txtBoxTitle.Size = new Size(275, 23);
+            txtBoxTitle.TabIndex = 12;
+            // 
+            // txtBoxURL
+            // 
+            txtBoxURL.Dock = DockStyle.Fill;
+            txtBoxURL.Location = new Point(54, 61);
+            txtBoxURL.Name = "txtBoxURL";
+            txtBoxURL.PlaceholderText = "URL to rss feed";
+            txtBoxURL.Size = new Size(275, 23);
+            txtBoxURL.TabIndex = 14;
+            // 
+            // lblDate
+            // 
+            lblDate.AutoSize = true;
+            lblDate.Dock = DockStyle.Fill;
+            lblDate.Location = new Point(3, 116);
+            lblDate.Name = "lblDate";
+            lblDate.Size = new Size(45, 29);
+            lblDate.TabIndex = 17;
+            lblDate.Text = "Date";
+            lblDate.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // txtBoxDate
+            // 
+            txtBoxDate.Dock = DockStyle.Fill;
+            txtBoxDate.Location = new Point(54, 119);
+            txtBoxDate.Name = "txtBoxDate";
+            txtBoxDate.Size = new Size(275, 23);
+            txtBoxDate.TabIndex = 18;
             // 
             // LblId
             // 
             LblId.AutoSize = true;
-            LblId.Location = new Point(202, 37);
+            LblId.Dock = DockStyle.Fill;
+            LblId.Location = new Point(3, 0);
             LblId.Name = "LblId";
-            LblId.Size = new Size(18, 15);
+            LblId.Size = new Size(45, 29);
             LblId.TabIndex = 6;
             LblId.Text = "ID";
+            LblId.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lblURL
+            // 
+            lblURL.AutoSize = true;
+            lblURL.Dock = DockStyle.Fill;
+            lblURL.Location = new Point(3, 58);
+            lblURL.Name = "lblURL";
+            lblURL.Size = new Size(45, 29);
+            lblURL.TabIndex = 13;
+            lblURL.Text = "URL";
+            lblURL.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lblHistory
+            // 
+            lblHistory.AutoSize = true;
+            lblHistory.Dock = DockStyle.Fill;
+            lblHistory.Location = new Point(3, 145);
+            lblHistory.Name = "lblHistory";
+            lblHistory.Size = new Size(45, 29);
+            lblHistory.TabIndex = 19;
+            lblHistory.Text = "History";
+            lblHistory.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lblExpr
+            // 
+            lblExpr.AutoSize = true;
+            lblExpr.Dock = DockStyle.Fill;
+            lblExpr.Location = new Point(3, 87);
+            lblExpr.Name = "lblExpr";
+            lblExpr.Size = new Size(45, 29);
+            lblExpr.TabIndex = 15;
+            lblExpr.Text = "Regex";
+            lblExpr.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // txtBoxRegex
+            // 
+            txtBoxRegex.Dock = DockStyle.Fill;
+            txtBoxRegex.Location = new Point(54, 90);
+            txtBoxRegex.Name = "txtBoxRegex";
+            txtBoxRegex.Size = new Size(275, 23);
+            txtBoxRegex.TabIndex = 16;
+            // 
+            // txtBoxHistory
+            // 
+            txtBoxHistory.Dock = DockStyle.Fill;
+            txtBoxHistory.Location = new Point(54, 148);
+            txtBoxHistory.Name = "txtBoxHistory";
+            txtBoxHistory.Size = new Size(275, 23);
+            txtBoxHistory.TabIndex = 20;
+            // 
+            // btnGoToURL
+            // 
+            btnGoToURL.Dock = DockStyle.Right;
+            btnGoToURL.Location = new Point(335, 61);
+            btnGoToURL.Name = "btnGoToURL";
+            btnGoToURL.Size = new Size(74, 23);
+            btnGoToURL.TabIndex = 21;
+            btnGoToURL.Text = "Open";
+            btnGoToURL.UseVisualStyleBackColor = true;
             // 
             // ButtonPanelFlowLayout
             // 
@@ -385,6 +441,8 @@
             RightMainSplit.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)RightMainSplit).EndInit();
             RightMainSplit.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             ButtonPanelFlowLayout.ResumeLayout(false);
             ButtonPanelFlowLayout.PerformLayout();
             FeedStatusStrip.ResumeLayout(false);
@@ -425,5 +483,7 @@
         private TextBox txtBoxHistory;
         private Label lblHistory;
         private TextBox txtBoxID;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Button btnGoToURL;
     }
 }
