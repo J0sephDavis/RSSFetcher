@@ -1,46 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-/* ----- Create/Request/Update/Delete
- * wrapper/controller to return view & convert to model
- R* GetEntries() -> List<FEED RECORD>
- U* EditEntry(ID, FLAGS, RECORD)? Maybe make this a method of FEED RECORD
- C* CreateEntry(RECORD) -> ID - returns ID of new entry
- D* Delete Entry(ID) - Deletes the entry
-*/
-namespace Murong_Xue
+﻿namespace Murong_Xue
 {
-    /*public record Feed
-    {
-        public int ID;
-        string Title;
-        Uri URL;
-        string Expression;
-        DateTime Date;
-        string History;
-
-        public Feed(int id, string title, Uri url, string expression, DateTime Date, string history)
-        {
-            ID = id;
-            Title = title;
-            URL = url;
-            Expression = expression;
-            this.Date = Date;
-            History = history;
-        }
-
-        public string ToStringEntry()
-        {
-            return $"{ID} {Title} {Date}";
-        }
-
-        public string[] ToStringList()
-        {
-            return [Title, $"{Date}"];
-        }
-    }*/
     public class Controller
     {
         private EntryData rss;
