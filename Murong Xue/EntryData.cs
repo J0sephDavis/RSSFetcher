@@ -11,6 +11,9 @@ namespace Murong_Xue
         private readonly List<FeedEntry> Feeds = [];
         private readonly Reporter report = Logger.RequestReporter("ENTDAT");
         //--------------------------------------------------------------------
+        private int PrivateKey = 0;
+        private readonly object PrivateKeyLock = new(); // a precaution
+        //--------------------------------------------------------------------
         private const string RSS_Title = "title";
         private const string RSS_URL = "feed-url";
         private const string RSS_Expression = "expr";
@@ -46,6 +49,15 @@ namespace Murong_Xue
             if (Feeds.Count == 0)
                 GetEntries();
             return Feeds;
+        }
+        public int GetPrivateKey()
+        {
+            int retVal = -1;
+            lock (PrivateKeyLock)
+            {
+                retVal = PrivateKey++;
+            }
+            return retVal;
         }
         //! Reads the XML files and populated the FeedEntry list
         private bool GetEntries()
@@ -132,9 +144,8 @@ namespace Murong_Xue
                                     InDate = false;
                                     break;
                                 case RSS_Item:
-                                    feed.ID = Feeds.Count;
-                                    Feeds.Add(new FeedEntry(new(feed))
-                                    );
+                                    feed.ID = GetPrivateKey();
+                                    Feeds.Add(new FeedEntry(new(feed)));
                                     Feeds.Last().Print();
                                     break;
                                 default:
