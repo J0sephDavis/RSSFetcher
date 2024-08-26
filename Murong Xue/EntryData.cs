@@ -163,7 +163,7 @@ namespace Murong_Xue
             FileStream xStream = File.Open(path.LocalPath, FileMode.Create);
 
             //NOTICE: async saving takes ~4ms longer than just saving syncronously (6ms -> 1-2ms)
-            XmlWriterSettings xSettings = new() { Async = false };
+            XmlWriterSettings xSettings = new() { Async = false, Indent = true };
             DateTime _today = DateTime.Now;
             using (XmlWriter writer = XmlWriter.Create(xStream, xSettings))
             {
@@ -181,25 +181,17 @@ namespace Murong_Xue
                     //----
                     writer.WriteStartElement(RSS_Item);
                     // 1. Title
-                    writer.WriteStartElement(RSS_Title);
-                    writer.WriteString(feed.Title);
-                    writer.WriteEndElement();
+                    writer.WriteElementString(RSS_Title, feed.Title);
                     // 2. feed-url
                     writer.WriteStartElement(RSS_URL);
                     writer.WriteCData(feed.URL.ToString());
                     writer.WriteEndElement();
                     // 3. expr
-                    writer.WriteStartElement(RSS_Expression);
-                    writer.WriteString(feed.Expression);
-                    writer.WriteEndElement();
+                    writer.WriteElementString(RSS_Expression, feed.Expression);
                     // 4. history
-                    writer.WriteStartElement(RSS_History);
-                    writer.WriteString(feed.History);
-                    writer.WriteEndElement();
+                    writer.WriteElementString(RSS_History, feed.History);
                     // 5. LastEntry date
-                    writer.WriteStartElement(RSS_Date);
-                    writer.WriteString(feed.Date.ToString());
-                    writer.WriteEndElement();
+                    writer.WriteElementString(RSS_Date, feed.Date.ToString());
                     //---- end item
                     writer.WriteEndElement();
                 }
