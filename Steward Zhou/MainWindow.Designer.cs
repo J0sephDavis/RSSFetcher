@@ -34,13 +34,18 @@
             columnHeaderTitle = new ColumnHeader();
             columnHeaderDate = new ColumnHeader();
             RightMainSplit = new SplitContainer();
-            InfoListView = new ListView();
-            hdrID = new ColumnHeader();
-            hdrTitle = new ColumnHeader();
-            hdrHistory = new ColumnHeader();
-            hdrURL = new ColumnHeader();
-            hdrExpr = new ColumnHeader();
-            hdrDate = new ColumnHeader();
+            txtBoxHistory = new TextBox();
+            lblHistory = new Label();
+            txtBoxDate = new TextBox();
+            lblDate = new Label();
+            txtBoxRegex = new TextBox();
+            lblExpr = new Label();
+            txtBoxURL = new TextBox();
+            lblURL = new Label();
+            txtBoxTitle = new TextBox();
+            lblTitle = new Label();
+            txtBoxID = new TextBox();
+            LblId = new Label();
             ButtonPanelFlowLayout = new FlowLayoutPanel();
             btnGetFeeds = new Button();
             btnProcess = new Button();
@@ -123,7 +128,18 @@
             // 
             // RightMainSplit.Panel1
             // 
-            RightMainSplit.Panel1.Controls.Add(InfoListView);
+            RightMainSplit.Panel1.Controls.Add(txtBoxHistory);
+            RightMainSplit.Panel1.Controls.Add(lblHistory);
+            RightMainSplit.Panel1.Controls.Add(txtBoxDate);
+            RightMainSplit.Panel1.Controls.Add(lblDate);
+            RightMainSplit.Panel1.Controls.Add(txtBoxRegex);
+            RightMainSplit.Panel1.Controls.Add(lblExpr);
+            RightMainSplit.Panel1.Controls.Add(txtBoxURL);
+            RightMainSplit.Panel1.Controls.Add(lblURL);
+            RightMainSplit.Panel1.Controls.Add(txtBoxTitle);
+            RightMainSplit.Panel1.Controls.Add(lblTitle);
+            RightMainSplit.Panel1.Controls.Add(txtBoxID);
+            RightMainSplit.Panel1.Controls.Add(LblId);
             RightMainSplit.Panel1.Controls.Add(ButtonPanelFlowLayout);
             // 
             // RightMainSplit.Panel2
@@ -133,41 +149,102 @@
             RightMainSplit.SplitterDistance = 252;
             RightMainSplit.TabIndex = 0;
             // 
-            // InfoListView
+            // txtBoxHistory
             // 
-            InfoListView.BackColor = SystemColors.Info;
-            InfoListView.Columns.AddRange(new ColumnHeader[] { hdrID, hdrTitle, hdrURL, hdrExpr, hdrDate, hdrHistory });
-            InfoListView.Dock = DockStyle.Fill;
-            InfoListView.Location = new Point(118, 0);
-            InfoListView.Name = "InfoListView";
-            InfoListView.Size = new Size(412, 252);
-            InfoListView.TabIndex = 6;
-            InfoListView.UseCompatibleStateImageBehavior = false;
-            InfoListView.View = View.Details;
+            txtBoxHistory.Location = new Point(226, 178);
+            txtBoxHistory.Name = "txtBoxHistory";
+            txtBoxHistory.Size = new Size(212, 23);
+            txtBoxHistory.TabIndex = 20;
             // 
-            // hdrID
+            // lblHistory
             // 
-            hdrID.Text = "ID";
+            lblHistory.AutoSize = true;
+            lblHistory.Location = new Point(175, 181);
+            lblHistory.Name = "lblHistory";
+            lblHistory.Size = new Size(45, 15);
+            lblHistory.TabIndex = 19;
+            lblHistory.Text = "History";
             // 
-            // hdrTitle
+            // txtBoxDate
             // 
-            hdrTitle.Text = "Title";
+            txtBoxDate.Location = new Point(226, 149);
+            txtBoxDate.Name = "txtBoxDate";
+            txtBoxDate.Size = new Size(212, 23);
+            txtBoxDate.TabIndex = 18;
             // 
-            // hdrHistory
+            // lblDate
             // 
-            hdrHistory.Text = "History";
+            lblDate.AutoSize = true;
+            lblDate.Location = new Point(189, 152);
+            lblDate.Name = "lblDate";
+            lblDate.Size = new Size(31, 15);
+            lblDate.TabIndex = 17;
+            lblDate.Text = "Date";
             // 
-            // hdrURL
+            // txtBoxRegex
             // 
-            hdrURL.Text = "URL";
+            txtBoxRegex.Location = new Point(226, 120);
+            txtBoxRegex.Name = "txtBoxRegex";
+            txtBoxRegex.Size = new Size(212, 23);
+            txtBoxRegex.TabIndex = 16;
             // 
-            // hdrExpr
+            // lblExpr
             // 
-            hdrExpr.Text = "Expression";
+            lblExpr.AutoSize = true;
+            lblExpr.Location = new Point(182, 125);
+            lblExpr.Name = "lblExpr";
+            lblExpr.Size = new Size(39, 15);
+            lblExpr.TabIndex = 15;
+            lblExpr.Text = "Regex";
             // 
-            // hdrDate
+            // txtBoxURL
             // 
-            hdrDate.Text = "Date";
+            txtBoxURL.Location = new Point(226, 91);
+            txtBoxURL.Name = "txtBoxURL";
+            txtBoxURL.Size = new Size(212, 23);
+            txtBoxURL.TabIndex = 14;
+            // 
+            // lblURL
+            // 
+            lblURL.AutoSize = true;
+            lblURL.Location = new Point(192, 94);
+            lblURL.Name = "lblURL";
+            lblURL.Size = new Size(28, 15);
+            lblURL.TabIndex = 13;
+            lblURL.Text = "URL";
+            // 
+            // txtBoxTitle
+            // 
+            txtBoxTitle.Location = new Point(226, 62);
+            txtBoxTitle.Name = "txtBoxTitle";
+            txtBoxTitle.Size = new Size(212, 23);
+            txtBoxTitle.TabIndex = 12;
+            // 
+            // lblTitle
+            // 
+            lblTitle.AutoSize = true;
+            lblTitle.Location = new Point(191, 65);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(29, 15);
+            lblTitle.TabIndex = 11;
+            lblTitle.Text = "Title";
+            // 
+            // txtBoxID
+            // 
+            txtBoxID.Enabled = false;
+            txtBoxID.Location = new Point(226, 34);
+            txtBoxID.Name = "txtBoxID";
+            txtBoxID.Size = new Size(212, 23);
+            txtBoxID.TabIndex = 10;
+            // 
+            // LblId
+            // 
+            LblId.AutoSize = true;
+            LblId.Location = new Point(202, 37);
+            LblId.Name = "LblId";
+            LblId.Size = new Size(18, 15);
+            LblId.TabIndex = 6;
+            LblId.Text = "ID";
             // 
             // ButtonPanelFlowLayout
             // 
@@ -336,12 +413,17 @@
         private ListView FeedListView;
         private ColumnHeader columnHeaderTitle;
         private ColumnHeader columnHeaderDate;
-        private ListView InfoListView;
-        private ColumnHeader hdrTitle;
-        private ColumnHeader hdrHistory;
-        private ColumnHeader hdrURL;
-        private ColumnHeader hdrExpr;
-        private ColumnHeader hdrDate;
-        private ColumnHeader hdrID;
+        private TextBox txtBoxDate;
+        private Label lblDate;
+        private TextBox txtBoxRegex;
+        private Label lblExpr;
+        private TextBox txtBoxURL;
+        private Label lblURL;
+        private TextBox txtBoxTitle;
+        private Label lblTitle;
+        private Label LblId;
+        private TextBox txtBoxHistory;
+        private Label lblHistory;
+        private TextBox txtBoxID;
     }
 }
