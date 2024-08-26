@@ -62,6 +62,7 @@ namespace Murong_Xue
     {
         //------------------Accessing Records-----------------------------------------------------
         private readonly Feed feed = _feed;
+        public int ID { get => feed.ID; }
         public string Title { get => feed.Title; set => feed.Title = value; }
         public string Expression { get => feed.Expression; set => feed.Expression = value; }
         public DateTime Date { get => feed.Date; set => feed.Date = value; }
