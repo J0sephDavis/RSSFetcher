@@ -185,7 +185,7 @@ namespace Murong_Xue
                     SinceLast = _today - feed.Date;
                     if (SinceLast.Days > 10)
                     {
-                        report.Out($"{feed.Title} / {feed.GetURL()} has not received an update in {SinceLast.Days} days");
+                        report.Out($"{feed.Title} / {feed.URL} has not received an update in {SinceLast.Days} days");
                     }
                     //----
                     writer.WriteStartElement(RSS_Item);
@@ -195,7 +195,7 @@ namespace Murong_Xue
                     writer.WriteEndElement();
                     // 2. feed-url
                     writer.WriteStartElement(RSS_URL);
-                    writer.WriteCData(feed.GetURL());
+                    writer.WriteCData(feed.URL.ToString());
                     writer.WriteEndElement();
                     // 3. expr
                     writer.WriteStartElement(RSS_Expression);

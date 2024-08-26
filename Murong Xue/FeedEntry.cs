@@ -55,7 +55,7 @@ namespace Murong_Xue
         public readonly Feed original = new(1337, Title, URL, Expression, DateTime.Parse(Date), History);
         //making the class feel like a feed. Also should be the default behavior imo.
         public string Title { get => original.Title; set => original.Title = value; }
-        public Uri URL { get => original.URL; set => original.URL = value; }
+        public Uri URL { get => original.URL; protected set => original.URL = value; }
         public string Expression { get => original.Expression; set => original.Expression = value; }
         public DateTime Date { get => original.Date; set => original.Date = value; }
         public string History { get => original.History; set => original.History = value; }
@@ -219,10 +219,6 @@ namespace Murong_Xue
                 //----
                 DoneProcessing();
             }
-        }
-        public string GetURL()
-        {
-            return URL.ToString();
         }
         public void SetURL(string URL)
         {

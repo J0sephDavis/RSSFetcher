@@ -96,7 +96,7 @@ namespace Murong_Xue
             EditFlag edits = EditFlag.NONE;
             string _title = entry.Title;
             string _history = entry.History;
-            string _url = entry.GetURL();
+            string _url = entry.URL.ToString();
             string _expr = entry.Expression;
 
             while (true)
