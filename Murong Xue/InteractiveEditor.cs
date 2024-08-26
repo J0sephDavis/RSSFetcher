@@ -294,48 +294,44 @@ namespace Murong_Xue
         }
         protected void CreateHandler()
         {
-            string _title = string.Empty;
-            string _url = string.Empty;
+            Feed feed = new(1212, string.Empty,null,string.Empty,DateTime.UnixEpoch, string.Empty);
             string _history = "no-history";
-            string _expr = string.Empty;
-
+            
             string? input;
-            while (_title == string.Empty)
+            while (feed.Title == string.Empty)
             {
                 report.Out("Title:");
                 input = Console.ReadLine();
                 if (input == null) continue;
-                _title = input;
+                feed.Title= input;
             }
-            while (_url == string.Empty)
+            while (feed.URL.ToString() == string.Empty)
             {
                 report.Out("URL:");
                 input = Console.ReadLine();
                 if (input == null) continue;
-                _url = input;
+                feed.URL = new(input); //exception point
             }
             report.Out("History(can be null):");
             input = Console.ReadLine();
             if (input != null && input.Length > 1)
-                _history = input;
+                feed.History = input;
 
-            while (_expr == string.Empty)
+            while (feed.Expression == string.Empty)
             {
                 report.Out("Expression:");
                 input = Console.ReadLine();
                 if (input == null) continue;
-                _expr = input;
+                feed.Expression = input;
             }
 
             report.Out("NEW ENTRY:\n" +
-                $"\tTitle:\t\t{_title}\n" +
-                $"\tHistory:\t{_history}\n" +
-                $"\tExpression:\t{_expr}\n" +
-                $"\tURL:\t\t{_url}"
+                $"\tTitle:\t\t{feed.Title}\n" +
+                $"\tHistory:\t{feed.History}\n" +
+                $"\tExpression:\t{feed.Expression}\n" +
+                $"\tURL:\t\t{feed.URL}"
             );
-            //TODO consider url & why we call new() here.
-            FeedEntry newEntry = new(_title, new(_url), _expr, _history, DateTime.UnixEpoch.ToString());
-            Feeds.Add(newEntry);
+            Feeds.Add(new(feed));
         }
         public bool MainLoop()
         {
