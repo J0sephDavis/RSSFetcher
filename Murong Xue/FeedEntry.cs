@@ -49,10 +49,9 @@ namespace Murong_Xue
             return $"T:{Title}\tU:{URL}\tE:{Expression}\tH:{History}";
         }
     }
-    internal class FeedEntry(string Title, Uri URL,
-        string Expression, string History, string Date) : DownloadEntryBase(URL, report)
+    internal class FeedEntry(Feed feedRec) : DownloadEntryBase(feedRec.URL, report)
     {
-        public readonly Feed original = new(1337, Title, URL, Expression, DateTime.Parse(Date), History);
+        public readonly Feed original = feedRec;
         //making the class feel like a feed. Also should be the default behavior imo.
         public string Title { get => original.Title; set => original.Title = value; }
         public Uri URL { get => original.URL; protected set => original.URL = value; }
