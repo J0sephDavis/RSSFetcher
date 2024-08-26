@@ -49,23 +49,24 @@ namespace Murong_Xue
             return $"T:{Title}\tU:{URL}\tE:{Expression}\tH:{History}";
         }
     }
-    internal class FeedEntry(Feed feedRec) : DownloadEntryBase(feedRec.URL, report)
+    internal class FeedEntry(Feed _feed) : DownloadEntryBase(_feed.URL, report)
     {
-        public readonly Feed original = feedRec;
-        //making the class feel like a feed. Also should be the default behavior imo.
-        public string Title { get => original.Title; set => original.Title = value; }
-        public Uri URL { get => original.URL; protected set => original.URL = value; }
-        public string Expression { get => original.Expression; set => original.Expression = value; }
-        public DateTime Date { get => original.Date; set => original.Date = value; }
-        public string History { get => original.History; set => original.History = value; }
-        //From putting a debug point on the below functions. It seems that a primary constructor
-        //does not redeclare these static variables, thankfully. I assume static is done at runtime?
-        //Will need more research done
+        //------------------Accessing Records-----------------------------------------------------
+        private readonly Feed feed = _feed;
+        public string Title { get => feed.Title; set => feed.Title = value; }
+        public string Expression { get => feed.Expression; set => feed.Expression = value; }
+        public DateTime Date { get => feed.Date; set => feed.Date = value; }
+        public string History { get => feed.History; set => feed.History = value; }
+        public Uri URL { get => feed.URL; set => feed.URL = value; }
+
+        public Feed GetFeed() { return feed; }
+        //----------------------------------------------------------------------------------------
         private static readonly Config cfg = Config.GetInstance();
         private static readonly Reporter report = Logger.RequestReporter("F-DATA");
+        //----------------------------------------------------------------------------------------
         public void Print()
         {
-            report.Spam(original.ToString());
+            report.Spam(feed.ToString());
         }
         public string ToLongString()
         {
@@ -119,7 +120,7 @@ namespace Murong_Xue
                 string _title = string.Empty;
                 Uri? _url = null;
                 DateTime _date = DateTime.UnixEpoch;
-                //original.Date & original.History are set when a file is added.
+                //feed.Date & feed.History are set when a file is added.
                 DateTime _originalDate = Date;
                 string _originalHistory = History;
 
@@ -218,10 +219,6 @@ namespace Murong_Xue
                 //----
                 DoneProcessing();
             }
-        }
-        public void SetURL(string URL)
-        {
-            original.URL = new Uri(URL);
         }
     }
 }

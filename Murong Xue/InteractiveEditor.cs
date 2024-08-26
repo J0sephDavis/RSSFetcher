@@ -214,7 +214,7 @@ namespace Murong_Xue
                             try
                             {
                                 if ((edits & EditFlag.URL) > 0)
-                                    entry.SetURL(_url);
+                                    entry.URL = new(_url);
                             }
                             catch (System.UriFormatException e)
                             {

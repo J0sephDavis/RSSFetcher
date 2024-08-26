@@ -10,7 +10,7 @@
             rss = new EntryData(Config.GetInstance().GetRSSPath());
             List<FeedEntry> Entries = rss.GetFeeds();
             foreach (FeedEntry entry in Entries)
-                Feeds.Add(new(entry.original));
+                Feeds.Add(new(entry.GetFeed())); //creates a copy of each record,
         }
         //----------------------------------------
         public async void DownloadFeeds()
