@@ -68,7 +68,6 @@ namespace Murong_Xue
         public DateTime Date { get => feed.Date; set => feed.Date = value; }
         public string History { get => feed.History; set => feed.History = value; }
         public Uri URL { get => feed.URL; set => feed.URL = value; }
-
         public Feed GetFeed() { return feed; }
         //----------------------------------------------------------------------------------------
         private static readonly Config cfg = Config.GetInstance();

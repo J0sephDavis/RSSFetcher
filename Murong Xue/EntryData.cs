@@ -1,7 +1,7 @@
-﻿using System.Xml;
-using Murong_Xue.DownloadHandling;
+﻿using Murong_Xue.DownloadHandling;
 using Murong_Xue.Logging;
 using Murong_Xue.Logging.Reporting;
+using System.Xml;
 
 namespace Murong_Xue
 {
@@ -10,13 +10,14 @@ namespace Murong_Xue
         private readonly Uri path = RSSPath;
         private readonly List<FeedEntry> Feeds = [];
         private readonly Reporter report = Logger.RequestReporter("ENTDAT");
+        //--------------------------------------------------------------------
         private const string RSS_Title = "title";
         private const string RSS_URL = "feed-url";
         private const string RSS_Expression = "expr";
         private const string RSS_History = "history";
         private const string RSS_Item = "item";
         private const string RSS_Date = "date";
-
+        //--------------------------------------------------------------------
         public async Task Process()
         {
             if (GetEntries() == false)
@@ -29,7 +30,7 @@ namespace Murong_Xue
             //save changes
             UpdateEntries();
         }
-        public  async Task DownloadFeeds()
+        public async Task DownloadFeeds()
         {
             report.Trace("Queueing Downloads");
             //OLD: Queueing Entries asynchronously saves 23ms (53ms sync, 32ms async)
@@ -160,7 +161,7 @@ namespace Murong_Xue
             Console.WriteLine($"newPath {newFilePath.LocalPath}");
             File.Move(path.LocalPath, newFilePath.LocalPath, overwrite: true);
             FileStream xStream = File.Open(path.LocalPath, FileMode.Create);
-            
+
             //NOTICE: async saving takes ~4ms longer than just saving syncronously (6ms -> 1-2ms)
             XmlWriterSettings xSettings = new() { Async = false };
             DateTime _today = DateTime.Now;
@@ -171,7 +172,7 @@ namespace Murong_Xue
                 TimeSpan SinceLast;
                 //---- item
                 foreach (FeedEntry feed in Feeds)
-            {
+                {
                     SinceLast = _today - feed.Date;
                     if (SinceLast.Days > 10)
                     {
