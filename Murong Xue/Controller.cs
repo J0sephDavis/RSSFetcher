@@ -12,7 +12,7 @@
             foreach (FeedEntry entry in Entries)
                 Feeds.Add(new(entry.GetFeed())); //creates a copy of each record,
         }
-        //----------------------------------------
+        //-----------Tasks------------------------------------------------------
         public async void DownloadFeeds()
         {
             //TODO when a feed is updated we must update the corresponding entry in Entries?
@@ -23,7 +23,12 @@
         {
             rss.UpdateEntries();
         }
-        //----------------------------------------
+        //-----------Helper-Methods---------------------------------------------
+        private int GetPrivateKey()
+        {
+            return rss.GetPrivateKey();
+        }
+        //----------------------------------------------------------------------
         public List<Feed> GetFeeds()
         {
             return Feeds;
