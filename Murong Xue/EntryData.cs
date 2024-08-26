@@ -61,11 +61,7 @@ namespace Murong_Xue
 
             using (XmlReader reader = XmlReader.Create(xStream, xSettings))
             {
-                string _title = string.Empty;
-                string _url = string.Empty;
-                string _expr = string.Empty;
-                string _history = string.Empty;
-                string _date = string.Empty;
+                Feed feed = new(64, string.Empty, null, string.Empty, DateTime.UnixEpoch, string.Empty);
 
                 bool InTitle = false;
                 bool InUrl = false;
@@ -101,19 +97,19 @@ namespace Murong_Xue
                         case XmlNodeType.Text:
                             if (InTitle)
                             {
-                                _title = reader.Value;
+                                feed.Title = reader.Value;
                             }
                             else if (InExpr)
                             {
-                                _expr = reader.Value;
+                                feed.Expression = reader.Value;
                             }
                             else if (InHistory)
                             {
-                                _history = reader.Value;
+                                feed.History = reader.Value;
                             }
                             else if (InDate)
                             {
-                                _date = reader.Value;
+                                feed.Date = DateTime.Parse(reader.Value);
                             }
                             break;
                         case XmlNodeType.EndElement:
@@ -135,14 +131,7 @@ namespace Murong_Xue
                                     InDate = false;
                                     break;
                                 case RSS_Item:
-                                    if (_date == string.Empty)
-                                        _date = DateTime.UnixEpoch.ToString();
-                                    Feeds.Add(new FeedEntry(
-                                        Title:      _title,
-                                        URL:        new Uri(_url), //TODO make _url a URI when we get it, not here.
-                                        Expression: _expr,
-                                        History:    _history,
-                                        Date:       _date)
+                                    Feeds.Add(new FeedEntry(new(feed))
                                     );
                                     Feeds.Last().Print();
                                     break;
@@ -153,7 +142,7 @@ namespace Murong_Xue
                         case XmlNodeType.CDATA:
                             if (InUrl)
                             {
-                                _url = reader.Value;
+                                feed.URL = new(reader.Value);
                             }
                             break;
                         default:
