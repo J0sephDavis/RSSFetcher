@@ -203,7 +203,7 @@ namespace Murong_Xue
                     writer.WriteEndElement();
                     // 4. history
                     writer.WriteStartElement(RSS_History);
-                    writer.WriteString(feed.GetHistory());
+                    writer.WriteString(feed.History);
                     writer.WriteEndElement();
                     // 5. LastEntry date
                     writer.WriteStartElement(RSS_Date);

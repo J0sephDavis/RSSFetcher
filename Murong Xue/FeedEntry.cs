@@ -59,8 +59,6 @@ namespace Murong_Xue
         public string Expression { get => original.Expression; set => original.Expression = value; }
         public DateTime Date { get => original.Date; set => original.Date = value; }
         public string History { get => original.History; set => original.History = value; }
-        protected bool HasNewHistory { get; set; } = false;
-        protected string NewHistory = string.Empty;
         //From putting a debug point on the below functions. It seems that a primary constructor
         //does not redeclare these static variables, thankfully. I assume static is done at runtime?
         //Will need more research done
@@ -87,11 +85,6 @@ namespace Murong_Xue
         }
         public void AddFile(string title, Uri link)
         {
-            if (HasNewHistory == false)
-            {
-                HasNewHistory = true;
-                NewHistory = title;
-            }
             report.Out($"Add File {title} {link}");
             Uri downloadPath = new(cfg.GetDownloadPath());
             if (Path.Exists(downloadPath.LocalPath) == false)
@@ -108,7 +101,6 @@ namespace Murong_Xue
             report.Notice($"Feed Downloaded len:{content.Length}, {this.Title}");
             XmlReaderSettings xSettings = new();
             xSettings.Async = false;
-            DateTime lastDownload = Date;
             //
             const string title_element = "title";
             const string link_element = "link";
@@ -128,7 +120,9 @@ namespace Murong_Xue
                 string _title = string.Empty;
                 Uri? _url = null;
                 DateTime _date = DateTime.UnixEpoch;
-                string _history;
+                //original.Date & original.History are set when a file is added.
+                DateTime _originalDate = Date;
+                string _originalHistory = History;
 
                 bool stopReading = false; //set when we reach an entry older than our history
                 while (!stopReading && reader.Read())
@@ -145,7 +139,7 @@ namespace Murong_Xue
                                     IsUrl = true;
                                     break;
                                 case date_element:
-                                    if(DateAlreadySet)
+                                    if(!DateAlreadySet)
                                         IsDate = true;
                                     break;
                                 default:
@@ -156,7 +150,7 @@ namespace Murong_Xue
                             if (IsTitle)
                             {
                                 _title = reader.Value;
-                                if (History == _title)
+                                if (_originalHistory == _title)
                                 {
                                     stopReading = true;
                                     break;
@@ -168,10 +162,9 @@ namespace Murong_Xue
                             }
                             else if (IsDate)
                             {
-                                DateTime tmp = DateTime.Parse(reader.Value);
+                                _date = DateTime.Parse(reader.Value);
                                 //entry date 
-                                report.Debug($"{_date} < {lastDownload} = {_date < lastDownload}");
-                               if (_date < lastDownload)
+                                if (_date < _originalDate) //if the current item comes before or our last download: STOP.
                                 {
             /* This should solve the problem where an older version of the
             * feed looks like: 07,06,05,04,...
@@ -184,8 +177,6 @@ namespace Murong_Xue
                                     stopReading = true;
                                     break;
                                 }
-                                DateAlreadySet = true; //we only want the newest date
-                                _date = tmp;
                             }
                             break;
                         case XmlNodeType.EndElement:
@@ -199,9 +190,12 @@ namespace Murong_Xue
                                             report.Debug("failed to add file, missing Uri");
                                             break;
                                         }
-                                        report.Debug($"ADDING FILE: {original.Title}->{_date.ToString()} LAST WAS: {Date}");
-                                        Date = _date;
-                                        History = _title;
+                                        if (!DateAlreadySet) //we only store the newest download (by publication date) in the history.
+                                        {
+                                            Date = _date;
+                                            History = _title;
+                                        }
+                                        else DateAlreadySet = true;
                                         AddFile(_title, _url);
                                     }
                                     break;
@@ -229,15 +223,6 @@ namespace Murong_Xue
         public string GetURL()
         {
             return URL.ToString();
-        }
-        public string GetHistory()
-        {
-            if (HasNewHistory && NewHistory != string.Empty)
-            {
-                report.TraceVal("GetHistory (HasNewHistory && !=empty)");
-                return NewHistory;
-            }
-            return History;
         }
         public void SetURL(string URL)
         {
