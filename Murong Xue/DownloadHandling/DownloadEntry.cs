@@ -4,12 +4,24 @@ using Murong_Xue.Logging.Reporting;
 
 namespace Murong_Xue.DownloadHandling
 {
+    public enum DownloadStatus
+    {
+        INVALID = -1, //only used in methods, never set.
+        INITIALIZED,
+        QUEUED,
+        DOWNLOADING,
+        DOWNLOADED,
+        PROCESSING,
+        PROCESSED,
+    };
     internal abstract class DownloadEntryBase
     {
         private readonly static DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         public Uri link;
         protected Reporter report;
         static protected EventTicker events = EventTicker.GetInstance();
+        public DownloadStatus status = DownloadStatus.INITIALIZED;
+
         //By accepting the reporter we can borrow the inherited classes reporter & not reallocate
         //for each individual inherited class. For each TYPE there is one reporter, not each instance.
         public DownloadEntryBase(Uri link, Reporter? rep = null)
@@ -22,10 +34,14 @@ namespace Murong_Xue.DownloadHandling
         }
         public void Queue()
         {
+            status = DownloadStatus.QUEUED;
+            //----------------------------------
             downloadHandler.QueueDownload(this);
         }
         public async Task Request(HttpClient client)
         {
+            status = DownloadStatus.DOWNLOADING;
+
             Task<HttpResponseMessage> request = client.GetAsync(link);
             _ = request.ContinueWith(OnDownload);
             await request; //only return when the request has actually been completed
@@ -33,6 +49,8 @@ namespace Murong_Xue.DownloadHandling
         }
         private async Task OnDownload(Task<HttpResponseMessage> response)
         {
+            status = DownloadStatus.DOWNLOADED;
+            //----------------------------------
             HttpResponseMessage msg = await response;
 
             if (msg.IsSuccessStatusCode == false)
@@ -45,15 +63,22 @@ namespace Murong_Xue.DownloadHandling
                 return;
             }
             Stream content = await msg.Content.ReadAsStreamAsync();
+            
+            status = DownloadStatus.PROCESSING;
+            //----------------------------------
             _ = Task.Run(() => HandleDownload(content));
         }
         public abstract void HandleDownload(Stream content);
         protected void DoneProcessing()
         {
+            status = DownloadStatus.PROCESSED;
+            //----------------------------------
             downloadHandler.RemoveProcessing(this);
         }
         private void ReQueue()
         {
+            status = DownloadStatus.QUEUED;
+            //----------------------------------
             downloadHandler.ReQueue(this);
         }
     }
