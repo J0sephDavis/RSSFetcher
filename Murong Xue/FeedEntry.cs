@@ -15,6 +15,15 @@ namespace Murong_Xue
         public string Expression;
         public DateTime Date;
         public string History;
+        public Feed() //null constructor
+        {
+            ID = -1;
+            Title = string.Empty;
+            URL = null;
+            Expression = string.Empty;
+            Date = DateTime.UnixEpoch;
+            History = string.Empty;
+        }
 
         public Feed(int id, string title, Uri url, string expression, DateTime date, string history)
         {

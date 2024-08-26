@@ -294,8 +294,7 @@ namespace Murong_Xue
         }
         protected void CreateHandler()
         {
-            Feed feed = new(1212, string.Empty,null,string.Empty,DateTime.UnixEpoch, string.Empty);
-            string _history = "no-history";
+            Feed feed = new();
             
             string? input;
             while (feed.Title == string.Empty)

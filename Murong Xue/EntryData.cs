@@ -61,7 +61,7 @@ namespace Murong_Xue
 
             using (XmlReader reader = XmlReader.Create(xStream, xSettings))
             {
-                Feed feed = new(64, string.Empty, null, string.Empty, DateTime.UnixEpoch, string.Empty);
+                Feed feed = new();
 
                 bool InTitle = false;
                 bool InUrl = false;
