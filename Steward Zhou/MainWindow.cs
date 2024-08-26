@@ -80,13 +80,12 @@ namespace Steward_Zhou
 
         public void InfoListView_PrintFeed(Feed feed)
         {
-            InfoListView.BeginUpdate();
-            InfoListView.Items.Clear();
-            InfoListView.Items.Add(new FeedListViewItem(feed));
-            //Autosize the columns to the text.
-            foreach (ColumnHeader col in InfoListView.Columns)
-                col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            InfoListView.EndUpdate();
+            txtBoxID.Text = feed.ID.ToString();
+            txtBoxTitle.Text = feed.Title;
+            txtBoxURL.Text = feed.URL.ToString();
+            txtBoxRegex.Text = feed.Expression;
+            txtBoxDate.Text = feed.Date.ToString();
+            txtBoxHistory.Text = feed.History;
         }
     }
     [Flags]
