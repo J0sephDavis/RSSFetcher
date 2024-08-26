@@ -330,6 +330,7 @@ namespace Murong_Xue
                 $"\tExpression:\t{feed.Expression}\n" +
                 $"\tURL:\t\t{feed.URL}"
             );
+            feed.ID = Feeds.Count;
             Feeds.Add(new(feed));
         }
         public bool MainLoop()

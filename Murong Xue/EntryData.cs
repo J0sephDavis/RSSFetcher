@@ -131,6 +131,7 @@ namespace Murong_Xue
                                     InDate = false;
                                     break;
                                 case RSS_Item:
+                                    feed.ID = Feeds.Count;
                                     Feeds.Add(new FeedEntry(new(feed))
                                     );
                                     Feeds.Last().Print();
