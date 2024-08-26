@@ -35,6 +35,7 @@
                     return feed;
             return null;
         }
+        /*
         public int UpdateFeed(Feed feed)
         {
             Feed? currentFeed = GetFeed(feed.ID);
@@ -53,6 +54,6 @@
         {
             Feeds.Remove(feed);
             return feed.ID;
-        }
+        }*/
     }
 }
