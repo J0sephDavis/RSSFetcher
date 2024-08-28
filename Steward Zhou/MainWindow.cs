@@ -1,7 +1,6 @@
 using Murong_Xue;
 using Murong_Xue.Logging;
 using Murong_Xue.Logging.Reporting;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Steward_Zhou
@@ -128,12 +127,12 @@ namespace Steward_Zhou
     [Flags]
     enum FeedFields
     {
-        ID = 1 << 0,
-        TITLE = 1 << 1,
-        URL = 1<<2,
-        EXPRESSION =1<<3,
-        DATE = 1<<4,
-        HISTORY = 1<<5,
+        ID          = 1 << 0,
+        TITLE       = 1 << 1,
+        URL         = 1 << 2,
+        EXPRESSION  = 1 << 3,
+        DATE        = 1 << 4,
+        HISTORY     = 1 << 5,
         
         ALL = ID | TITLE | URL | EXPRESSION | DATE | HISTORY,
     };
