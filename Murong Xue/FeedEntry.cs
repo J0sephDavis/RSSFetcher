@@ -24,7 +24,6 @@ namespace Murong_Xue
             Date = DateTime.UnixEpoch;
             History = string.Empty;
         }
-
         public Feed(int id, string title, Uri url, string expression, DateTime date, string history)
         {
             ID = id;
@@ -42,16 +41,6 @@ namespace Murong_Xue
             Expression = copy.Expression;
             Date = copy.Date;
             History = copy.History;
-        }
-
-        public string ToStringEntry()
-        {
-            return $"{ID} {Title} {Date}";
-        }
-
-        public string[] ToStringList()
-        {
-            return [Title, $"{Date}"];
         }
         public override string ToString()
         {
