@@ -122,7 +122,7 @@ namespace Murong_Xue
                 bool IsTitle = false;
                 bool IsUrl = false;
                 bool IsDate = false;
-                bool DateAlreadySet = false;
+                bool HistoryUpdated = false;
                 
                 string _title = string.Empty;
                 Uri? _url = null;
@@ -146,7 +146,7 @@ namespace Murong_Xue
                                     IsUrl = true;
                                     break;
                                 case date_element:
-                                    if(!DateAlreadySet)
+                                    if(!HistoryUpdated) // saves on some cycles by not updating the date multiple times
                                         IsDate = true;
                                     break;
                                 default:
@@ -197,12 +197,12 @@ namespace Murong_Xue
                                             report.Debug("failed to add file, missing Uri");
                                             break;
                                         }
-                                        if (!DateAlreadySet) //we only store the newest download (by publication date) in the history.
+                                        if (!HistoryUpdated) //we only store the newest download (by publication date) in the history.
                                         {
                                             Date = _date;
                                             History = _title;
+                                            HistoryUpdated = true;
                                         }
-                                        else DateAlreadySet = true;
                                         AddFile(_title, _url);
                                     }
                                     break;
