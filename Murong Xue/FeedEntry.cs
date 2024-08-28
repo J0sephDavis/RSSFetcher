@@ -90,9 +90,8 @@ namespace Murong_Xue
             //
             return builder.ToString();
         }
-        public void AddFile(string title, Uri link)
+        public void AddFile(Uri link)
         {
-            report.Out($"Add File {title} {link}");
             Uri downloadPath = new(cfg.GetDownloadPath());
             if (Path.Exists(downloadPath.LocalPath) == false)
             {
@@ -180,7 +179,7 @@ namespace Murong_Xue
             * Our last "History" entry would be "07", but with
             * 07 having been deleted or renamed we lose our guide for when to stop
             * However, by comparing dates we avoid this. */
-                                    report.Out("OLDER DATE (see if problem persists)");
+                                    report.Warn("OLDER DATE (see if problem persists)");
                                     stopReading = true;
                                     break;
                                 }
@@ -203,7 +202,8 @@ namespace Murong_Xue
                                             History = _title;
                                             HistoryUpdated = true;
                                         }
-                                        AddFile(_title, _url);
+                                        report.Out($"({feed.Title}) Add File {_title}\t{link}");
+                                        AddFile(_url);
                                     }
                                     break;
                                 case title_element:
