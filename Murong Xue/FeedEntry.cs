@@ -193,7 +193,7 @@ namespace Murong_Xue
                                     {
                                         if (_url == null)
                                         {
-                                            report.Debug("failed to add file, missing Uri");
+                                            report.Warn($"{feed.Title} failed to add file, missing Uri");
                                             break;
                                         }
                                         if (!HistoryUpdated) //we only store the newest download (by publication date) in the history.
