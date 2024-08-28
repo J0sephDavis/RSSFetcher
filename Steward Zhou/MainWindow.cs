@@ -10,6 +10,7 @@ namespace Steward_Zhou
     {
         private Reporter report = Logger.RequestReporter("W-MAIN");
         private Controller controller = new();
+        private Feed? EditingFeed = null;
         public MainWindow()
         {
             Logger.SetInteractiveMode(true);
@@ -50,11 +51,29 @@ namespace Steward_Zhou
         private void btnEdit_Click(object sender, EventArgs e)
         {
             report.Trace("btnEdit_Click");
+            if (EditingFeed == null) return;
+            //----
+            EditingFeed.Title = txtBoxTitle.Text;
+            
+            bool create = Uri.TryCreate(txtBoxURL.Text, UriKind.Absolute, out EditingFeed.URL);
+            report.DebugVal($"TryCreate of URL: txt:{txtBoxURL.Text} success? {create}");
+
+            EditingFeed.Expression = txtBoxRegex.Text;
+            EditingFeed.Date =
+                (txtBoxDate.Text == string.Empty)
+                ? DateTime.UnixEpoch
+                : DateTime.Parse(txtBoxDate.Text);
+            EditingFeed.History = txtBoxHistory.Text;
+            //! UPDATE THE TEXT BOXES AFTER
+            //(e.g., change DATE to an empty string should display UnixEpoch immediately)
+            //! UPDATE THE FEED LIST as well
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
             report.Trace("btnCreate_Click");
+            UpdateEditorFields(controller.CreateNewFeed());
+            //! UPDATE FEED LIST
         }
 
         private void btnSaveQuit_Click(object sender, EventArgs e)
@@ -69,20 +88,38 @@ namespace Steward_Zhou
             builder.AppendLine("Selected Index Changed");
             //---
             if (FeedListView.SelectedItems.Count == 0)
+            {
+                UpdateEditorFields(null);
                 report.Trace("No items selected");
+            }
             else if (FeedListView.SelectedItems.Count == 1)
             {
                 report.Trace("One entry: " + FeedListView.SelectedItems[0]);
                 if (FeedListView.SelectedItems[0] is FeedListViewItem feed_payload)
-                    InfoListView_PrintFeed(feed_payload.feed);
+                {
+                    UpdateEditorFields(feed_payload.feed);
+                }
             }
         }
 
-        public void InfoListView_PrintFeed(Feed feed)
+        public void UpdateEditorFields(Feed? feed)
         {
+            EditingFeed = feed;
+            //---
+            if (feed == null)
+            {
+                txtBoxID.Clear();
+                txtBoxTitle.Clear();
+                txtBoxURL.Clear();
+                txtBoxRegex.Clear();
+                txtBoxDate.Clear();
+                txtBoxHistory.Clear();
+                return;
+            }
+            //---
             txtBoxID.Text = feed.ID.ToString();
             txtBoxTitle.Text = feed.Title;
-            txtBoxURL.Text = feed.URL.ToString();
+            txtBoxURL.Text = feed.URL != null ? feed.URL.ToString() : string.Empty ;
             txtBoxRegex.Text = feed.Expression;
             txtBoxDate.Text = feed.Date.ToString();
             txtBoxHistory.Text = feed.History;
@@ -118,7 +155,7 @@ namespace Steward_Zhou
                 base.SubItems.Add(feed.Title);
 
             if ((fields & FeedFields.URL) > 0)
-                base.SubItems.Add(feed.URL.ToString());
+                base.SubItems.Add(feed.URL != null ? feed.URL.ToString() : string.Empty);
 
             if ((fields & FeedFields.EXPRESSION) > 0)
                 base.SubItems.Add(feed.Expression);

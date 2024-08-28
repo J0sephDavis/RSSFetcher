@@ -21,12 +21,8 @@
         }
         public void UpdateEntries()
         {
+            //! TODO add newly created entries to the RSS list
             rss.UpdateEntries();
-        }
-        //-----------Helper-Methods---------------------------------------------
-        private int GetPrivateKey()
-        {
-            return rss.GetPrivateKey();
         }
         //----------------------------------------------------------------------
         public List<Feed> GetFeeds()
@@ -40,19 +36,22 @@
                     return feed;
             return null;
         }
+
+        public Feed? CreateNewFeed()
+        {
+            Feed tmp = new()
+            {
+                ID = rss.GetPrivateKey()
+            };
+            Feeds.Add(tmp);
+            return tmp;
+        }
         /*
         public int UpdateFeed(Feed feed)
         {
             Feed? currentFeed = GetFeed(feed.ID);
             if (currentFeed == null) return -1;
             currentFeed = feed; //this should update it?
-            return feed.ID;
-        }
-        public int CreateFeed(Feed feed)
-        {
-            if (GetFeed(feed.ID) != null)
-                return -1;
-            Feeds.Add(feed);
             return feed.ID;
         }
         public int DeleteFeed(Feed feed)

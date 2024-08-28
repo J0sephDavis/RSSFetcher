@@ -11,7 +11,7 @@ namespace Murong_Xue
     {
         public int ID;
         public string Title;
-        public Uri URL;
+        public Uri? URL;
         public string Expression;
         public DateTime Date;
         public string History;
