@@ -7,6 +7,21 @@ using System.Xml;
 
 namespace Murong_Xue
 {
+    [Flags]
+    public enum FeedStatus
+    {
+        // Likely no fields hold proper values. NO guarantees
+        INIT = 0,
+        //Created at any time OTHER than when loading from the file
+        //Includes being created by a user or during some other process (remote process control?)
+        //Values edited during creation should not flag MOD_XXX unless its gone through a different transformation/processing since creation
+        CREATED, //if this is FALSE, it was created
+        // Modified ID/Title/URL/Expression
+        USER_MODIFIED,
+        NEW_HISTORY, //history updated by system
+        // Feed has already been processed
+        PROCESSED,
+    };
     public record Feed
     {
         public int ID;
@@ -15,6 +30,7 @@ namespace Murong_Xue
         public string Expression;
         public DateTime Date;
         public string History;
+        public FeedStatus Status;
         public Feed() //null constructor
         {
             ID = -1;
@@ -23,15 +39,7 @@ namespace Murong_Xue
             Expression = string.Empty;
             Date = DateTime.UnixEpoch;
             History = string.Empty;
-        }
-        public Feed(int id, string title, Uri url, string expression, DateTime date, string history)
-        {
-            ID = id;
-            Title = title;
-            URL = url;
-            Expression = expression;
-            this.Date = date;
-            History = history;
+            Status = FeedStatus.INIT;
         }
         public Feed(Feed copy)
         {
@@ -41,6 +49,7 @@ namespace Murong_Xue
             Expression = copy.Expression;
             Date = copy.Date;
             History = copy.History;
+            Status = copy.Status;
         }
         public override string ToString()
         {
@@ -56,7 +65,7 @@ namespace Murong_Xue
         public string Expression { get => feed.Expression; set => feed.Expression = value; }
         public DateTime Date { get => feed.Date; set => feed.Date = value; }
         public string History { get => feed.History; set => feed.History = value; }
-        public Uri URL { get => feed.URL; set => feed.URL = value; }
+        public Uri? URL { get => feed.URL; set => feed.URL = value; }
         public Feed GetFeed() { return feed; }
         //----------------------------------------------------------------------------------------
         private static readonly Config cfg = Config.GetInstance();
