@@ -69,7 +69,7 @@ namespace Murong_Xue
         public Feed GetFeed() { return feed; }
         //----------------------------------------------------------------------------------------
         private static readonly Config cfg = Config.GetInstance();
-        private static readonly Reporter report = Logger.RequestReporter("F-DATA");
+        private new static readonly Reporter report = Logger.RequestReporter("F-DATA");
         //----------------------------------------------------------------------------------------
         public void Print()
         {
@@ -196,7 +196,8 @@ namespace Murong_Xue
                                             report.Warn($"{feed.Title} failed to add file, missing Uri");
                                             break;
                                         }
-                                        if (!HistoryUpdated) //we only store the newest download (by publication date) in the history.
+                                        //we only store the newest download (by publication date) in the history.
+                                        if (!HistoryUpdated)
                                         {
                                             Date = _date;
                                             History = _title;
