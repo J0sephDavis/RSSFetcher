@@ -195,7 +195,7 @@ namespace Murong_Xue
                     writer.WriteElementString(RSS_Title, feed.Title);
                     // 2. feed-url
                     writer.WriteStartElement(RSS_URL);
-                    writer.WriteCData(feed.URL.ToString());
+                    writer.WriteCData(feed.URL == null ? string.Empty : feed.URL.ToString());
                     writer.WriteEndElement();
                     // 3. expr
                     writer.WriteElementString(RSS_Expression, feed.Expression);
