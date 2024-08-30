@@ -145,8 +145,7 @@ namespace Murong_Xue
                                     break;
                                 case RSS_Item:
                                     feed.ID = GetPrivateKey();
-                                    Feeds.Add(new FeedEntry(new(feed)));
-                                    Feeds.Last().Print();
+                                    AddFeed(feed);
                                     break;
                                 default:
                                     break;
@@ -165,6 +164,12 @@ namespace Murong_Xue
             }
             xStream.Dispose();
             return true;
+        }
+        public void AddFeed(Feed feed)
+        {
+            feed.Status |= FeedStatus.LINKED;
+            Feeds.Add(new FeedEntry(new(feed)));
+            Feeds.Last().Print();
         }
         public void UpdateEntries()
         {

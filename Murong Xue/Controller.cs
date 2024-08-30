@@ -41,7 +41,7 @@ namespace Murong_Xue
             return null;
         }
 
-        public Feed? CreateNewFeed()
+        public Feed? CreateNewFeedRecord()
         {
             Feed tmp = new()
             {
@@ -49,6 +49,23 @@ namespace Murong_Xue
             };
             Feeds.Add(tmp);
             return tmp;
+        }
+        public void AddFeedsToEntries(Feed feed)
+        {
+            if (feed.URL == null) return;
+            //we are going to implicitly trust the caller that this feed does not already exist.
+            rss.AddFeed(feed);
+        }
+        /// <summary>
+        /// If the given feed is not represented by a FeedEntry in the model, it is sent to the model.
+        /// Otherwise, nothing changes.
+        /// </summary>
+        /// <param name="feed"></param>
+        public void  UpdateFeed(Feed feed)
+        {
+            report.Trace("Update Feed");
+            if ((feed.Status & FeedStatus.LINKED) == 0)
+                AddFeedsToEntries(feed);
         }
         /*
         public int UpdateFeed(Feed feed)
