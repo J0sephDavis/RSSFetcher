@@ -60,19 +60,18 @@ namespace Steward_Zhou
             EditingFeed.Expression = txtBoxRegex.Text;
             EditingFeed.Date =
                 (txtBoxDate.Text == string.Empty)
-                ? DateTime.UnixEpoch
-                : DateTime.Parse(txtBoxDate.Text);
+                    ? DateTime.UnixEpoch
+                    : DateTime.Parse(txtBoxDate.Text);
             EditingFeed.History = txtBoxHistory.Text;
-            //! UPDATE THE TEXT BOXES AFTER
-            //(e.g., change DATE to an empty string should display UnixEpoch immediately)
-            //! UPDATE THE FEED LIST as well
+            //----
+            UpdateFeedList(controller.GetFeeds());
+            UpdateEditorFields(EditingFeed); //TODO retain previous position scrollbar position / focus on the new element?
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
             report.Trace("btnCreate_Click");
             UpdateEditorFields(controller.CreateNewFeed());
-            //! UPDATE FEED LIST
         }
 
         private void btnSaveQuit_Click(object sender, EventArgs e)
@@ -89,11 +88,10 @@ namespace Steward_Zhou
             if (FeedListView.SelectedItems.Count == 0)
             {
                 UpdateEditorFields(null);
-                report.Trace("No items selected");
             }
-            else if (FeedListView.SelectedItems.Count == 1)
+            else
             {
-                report.Trace("One entry: " + FeedListView.SelectedItems[0]);
+                report.Trace("first entry in selection: " + FeedListView.SelectedItems[0]);
                 if (FeedListView.SelectedItems[0] is FeedListViewItem feed_payload)
                 {
                     UpdateEditorFields(feed_payload.feed);
