@@ -1,6 +1,7 @@
 using Murong_Xue;
 using Murong_Xue.Logging;
 using Murong_Xue.Logging.Reporting;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Steward_Zhou
@@ -20,8 +21,9 @@ namespace Steward_Zhou
         {
             Logger.GetInstance().AddModule(new LogOutputListView(LogListBox));
         }
-        private void UpdateFeedList(List<Feed> feeds)
+        private void UpdateFeedList()
         {
+            List<Feed> feeds = controller.GetFeeds();
             FeedListView.BeginUpdate();
             FeedListView.Items.Clear();
             foreach (var feed in feeds)
@@ -37,7 +39,7 @@ namespace Steward_Zhou
         private void btnGetFeeds_Click(object sender, EventArgs e)
         {
             report.Trace("btnGetFeeds_click");
-            UpdateFeedList(controller.GetFeeds());
+            UpdateFeedList();
         }
 
         private void btnProcess_Click(object sender, EventArgs e)
@@ -64,14 +66,25 @@ namespace Steward_Zhou
                     : DateTime.Parse(txtBoxDate.Text);
             EditingFeed.History = txtBoxHistory.Text;
             //----
-            UpdateFeedList(controller.GetFeeds());
-            UpdateEditorFields(EditingFeed); //TODO retain previous position scrollbar position / focus on the new element?
+            //TODO save change to edited feed (we save changes to created ones during UpdateFeedList).
+            controller.UpdateFeed(EditingFeed);
+            UpdateAllPanels();
+        }
+        /// <summary>
+        /// Update everything we can feasibly update. probably a better sol'n in the future,
+        /// but this should be good for now
+        /// </summary>
+        private void UpdateAllPanels() // aka Redraw?
+        {
+            UpdateFeedList();
+            UpdateEditorFields();
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
             report.Trace("btnCreate_Click");
-            UpdateEditorFields(controller.CreateNewFeed());
+            EditingFeed = controller.CreateNewFeedRecord();
+            UpdateEditorFields();
         }
 
         private void btnSaveQuit_Click(object sender, EventArgs e)
@@ -87,23 +100,26 @@ namespace Steward_Zhou
             //---
             if (FeedListView.SelectedItems.Count == 0)
             {
-                UpdateEditorFields(null);
+                report.Trace("Selection count == 0");
+                EditingFeed = null;
+            }
+            else if (FeedListView.SelectedItems[0] is FeedListViewItem feed_payload)
+            {
+                report.Trace("first entry in selection: " + FeedListView.SelectedItems[0]);
+                EditingFeed = feed_payload.feed;
             }
             else
             {
-                report.Trace("first entry in selection: " + FeedListView.SelectedItems[0]);
-                if (FeedListView.SelectedItems[0] is FeedListViewItem feed_payload)
-                {
-                    UpdateEditorFields(feed_payload.feed);
-                }
+                report.Error("Invalid selection");
+                EditingFeed = null;
             }
+            UpdateEditorFields();
         }
 
-        public void UpdateEditorFields(Feed? feed)
+        public void UpdateEditorFields()
         {
-            EditingFeed = feed;
             //---
-            if (feed == null)
+            if (EditingFeed == null)
             {
                 txtBoxID.Clear();
                 txtBoxTitle.Clear();
@@ -114,12 +130,12 @@ namespace Steward_Zhou
                 return;
             }
             //---
-            txtBoxID.Text = feed.ID.ToString();
-            txtBoxTitle.Text = feed.Title;
-            txtBoxURL.Text = feed.URL != null ? feed.URL.ToString() : string.Empty ;
-            txtBoxRegex.Text = feed.Expression;
-            txtBoxDate.Text = feed.Date.ToString();
-            txtBoxHistory.Text = feed.History;
+            txtBoxID.Text = EditingFeed.ID.ToString();
+            txtBoxTitle.Text = EditingFeed.Title;
+            txtBoxURL.Text = EditingFeed.URL != null ? EditingFeed.URL.ToString() : string.Empty ;
+            txtBoxRegex.Text = EditingFeed.Expression;
+            txtBoxDate.Text = EditingFeed.Date.ToString();
+            txtBoxHistory.Text = EditingFeed.History;
         }
     }
     [Flags]
