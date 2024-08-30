@@ -11,8 +11,15 @@ namespace Murong_Xue
      1. During what phase/when was the feed created (by user in UI or loaded from file, or ?)
      2. Has the object been replicated on both sides of the boundary?
      3. Is the object currently in the process of being downloaded? (queued, processed, handling,&c)
-     4. Is the object incomplete? Missing URL/Title?
+     4. Is the feed incomplete? Missing URL/Title?
+     5. Is the feed slated for deletion on save+quit?
     */
+    [Flags]
+    public enum FeedStatus
+    {
+        INIT = 0, //only used in constructor
+        LINKED = 1 << 0, //has a FeedEntry associated with it.
+    }
     public record Feed
     {
         public int ID;
@@ -21,6 +28,7 @@ namespace Murong_Xue
         public string Expression;
         public DateTime Date;
         public string History;
+        public FeedStatus Status;
         public Feed() //null constructor
         {
             ID = -1;
@@ -38,6 +46,7 @@ namespace Murong_Xue
             Expression = copy.Expression;
             Date = copy.Date;
             History = copy.History;
+            Status = copy.Status;
         }
         public override string ToString()
         {
