@@ -1,9 +1,13 @@
-﻿namespace Murong_Xue
+﻿using Murong_Xue.Logging;
+using Murong_Xue.Logging.Reporting;
+
+namespace Murong_Xue
 {
     public class Controller
     {
         private EntryData rss;
         private List<Feed> Feeds = [];
+        private Reporter report = Logger.RequestReporter("CONTRL");
 
         public Controller()
         {
