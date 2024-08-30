@@ -7,21 +7,12 @@ using System.Xml;
 
 namespace Murong_Xue
 {
-    [Flags]
-    public enum FeedStatus
-    {
-        // Likely no fields hold proper values. NO guarantees
-        INIT = 0,
-        //Created at any time OTHER than when loading from the file
-        //Includes being created by a user or during some other process (remote process control?)
-        //Values edited during creation should not flag MOD_XXX unless its gone through a different transformation/processing since creation
-        CREATED, //if this is FALSE, it was created
-        // Modified ID/Title/URL/Expression
-        USER_MODIFIED,
-        NEW_HISTORY, //history updated by system
-        // Feed has already been processed
-        PROCESSED,
-    };
+    /* feed status flags should answer:
+     1. During what phase/when was the feed created (by user in UI or loaded from file, or ?)
+     2. Has the object been replicated on both sides of the boundary?
+     3. Is the object currently in the process of being downloaded? (queued, processed, handling,&c)
+     4. Is the object incomplete? Missing URL/Title?
+    */
     public record Feed
     {
         public int ID;
@@ -30,7 +21,6 @@ namespace Murong_Xue
         public string Expression;
         public DateTime Date;
         public string History;
-        public FeedStatus Status;
         public Feed() //null constructor
         {
             ID = -1;
@@ -39,7 +29,6 @@ namespace Murong_Xue
             Expression = string.Empty;
             Date = DateTime.UnixEpoch;
             History = string.Empty;
-            Status = FeedStatus.INIT;
         }
         public Feed(Feed copy)
         {
@@ -49,7 +38,6 @@ namespace Murong_Xue
             Expression = copy.Expression;
             Date = copy.Date;
             History = copy.History;
-            Status = copy.Status;
         }
         public override string ToString()
         {
