@@ -100,7 +100,7 @@ namespace Steward_Zhou
         {
             report.Trace("btnCreate_Click");
             EditingFeed = controller.CreateNewFeedRecord();
-            UpdateEditorFields();
+            UpdateAllPanels();
         }
 
         private void btnSaveQuit_Click(object sender, EventArgs e)
