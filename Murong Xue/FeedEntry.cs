@@ -19,6 +19,7 @@ namespace Murong_Xue
     {
         INIT = 0, //only used in constructor
         LINKED = 1 << 0, //has a FeedEntry associated with it.
+        UPDATED = 1 << 1, //updated during processing
     }
     public record Feed
     {
@@ -198,6 +199,7 @@ namespace Murong_Xue
                                         {
                                             Date = _date;
                                             History = _title;
+                                            feed.Status |= FeedStatus.UPDATED;
                                             HistoryUpdated = true;
                                         }
                                         report.Out($"({feed.Title}) Add File {_title}\t{link}");
