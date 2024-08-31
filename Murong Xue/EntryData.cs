@@ -171,6 +171,25 @@ namespace Murong_Xue
             Feeds.Add(new FeedEntry(new(feed)));
             Feeds.Last().Print();
         }
+        public bool RemoveFeed(Feed feed)
+        {
+            feed.Status = FeedStatus.INIT;
+            var feed_remove = from f in Feeds
+                              where f.ID == feed.ID
+                              select f;
+            report.Debug($"GIVEN FEED: {feed.ID} {feed.Title}");
+            if (feed_remove.Count() > 1)
+            {
+                report.Error($"RemoveFeed retrieved too many{feed_remove.Count()} feeds with query");
+                foreach (var f in feed_remove)
+                    report.Debug($"FOUND FEED: {f.ID} {f.Title}");
+                return false;
+            }
+            var _feed = feed_remove.First();
+            report.Debug($"Removing feed: {_feed.ID} {_feed.Title}");
+            Feeds.Remove(_feed);
+            return true;
+        }
         public void UpdateEntries()
         {
             Uri newFilePath = new(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \

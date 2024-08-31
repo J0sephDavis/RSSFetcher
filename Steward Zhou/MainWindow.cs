@@ -55,7 +55,7 @@ namespace Steward_Zhou
             if (EditingFeed == null) return;
             //----
             EditingFeed.Title = txtBoxTitle.Text;
-            
+
             bool create = Uri.TryCreate(txtBoxURL.Text, UriKind.Absolute, out EditingFeed.URL);
             report.DebugVal($"TryCreate of URL: txt:{txtBoxURL.Text} success? {create}");
 
@@ -66,9 +66,25 @@ namespace Steward_Zhou
                     : DateTime.Parse(txtBoxDate.Text);
             EditingFeed.History = txtBoxHistory.Text;
             //----
-            //TODO save change to edited feed (we save changes to created ones during UpdateFeedList).
-            controller.UpdateFeed(EditingFeed);
+            if ((EditingFeed.Status & FeedStatus.LINKED) == 0)
+            {
+                if (controller.CreateFeed(EditingFeed))
+                    report.Debug("Failed to create feed");
+                else
+                    report.Debug("Created feed!");
+            }
             UpdateAllPanels();
+        }
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            report.Trace("btnDelete clicked");
+            if (EditingFeed == null)
+            {
+                report.Trace("editing feed == null");
+                return;
+            }
+            if (controller.DeleteFeed(EditingFeed))
+                UpdateAllPanels();
         }
         /// <summary>
         /// Update everything we can feasibly update. probably a better sol'n in the future,
@@ -132,7 +148,7 @@ namespace Steward_Zhou
             //---
             txtBoxID.Text = EditingFeed.ID.ToString();
             txtBoxTitle.Text = EditingFeed.Title;
-            txtBoxURL.Text = EditingFeed.URL != null ? EditingFeed.URL.ToString() : string.Empty ;
+            txtBoxURL.Text = EditingFeed.URL != null ? EditingFeed.URL.ToString() : string.Empty;
             txtBoxRegex.Text = EditingFeed.Expression;
             txtBoxDate.Text = EditingFeed.Date.ToString();
             txtBoxHistory.Text = EditingFeed.History;

@@ -61,6 +61,7 @@
             btnEdit = new Button();
             btnCreate = new Button();
             btnSaveQuit = new Button();
+            btnDelete = new Button();
             LogListBox = new ListBox();
             FeedStatusStrip = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
@@ -167,7 +168,7 @@
             tableLayoutPanel1.Controls.Add(Property_ID, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-            tableLayoutPanel1.Location = new Point(118, 0);
+            tableLayoutPanel1.Location = new Point(131, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 9;
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
@@ -179,7 +180,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(412, 252);
+            tableLayoutPanel1.Size = new Size(399, 252);
             tableLayoutPanel1.TabIndex = 21;
             // 
             // Property_History
@@ -379,10 +380,11 @@
             ButtonPanelFlowLayout.Controls.Add(btnEdit);
             ButtonPanelFlowLayout.Controls.Add(btnCreate);
             ButtonPanelFlowLayout.Controls.Add(btnSaveQuit);
+            ButtonPanelFlowLayout.Controls.Add(btnDelete);
             ButtonPanelFlowLayout.Dock = DockStyle.Left;
             ButtonPanelFlowLayout.Location = new Point(0, 0);
             ButtonPanelFlowLayout.Name = "ButtonPanelFlowLayout";
-            ButtonPanelFlowLayout.Size = new Size(118, 252);
+            ButtonPanelFlowLayout.Size = new Size(131, 252);
             ButtonPanelFlowLayout.TabIndex = 5;
             // 
             // panel1
@@ -468,6 +470,18 @@
             btnSaveQuit.Text = "Save && Quit";
             btnSaveQuit.UseVisualStyleBackColor = true;
             btnSaveQuit.Click += btnSaveQuit_Click;
+            // 
+            // btnDelete
+            // 
+            btnDelete.AutoSize = true;
+            btnDelete.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnDelete.Location = new Point(3, 158);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(125, 25);
+            btnDelete.TabIndex = 7;
+            btnDelete.Text = "Delete Selected Feed";
+            btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.Click += btnDelete_Click;
             // 
             // LogListBox
             // 
@@ -598,5 +612,6 @@
         private Panel Property_Expr;
         private Panel panel1;
         private Label label1;
+        private Button btnDelete;
     }
 }

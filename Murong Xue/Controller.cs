@@ -67,18 +67,18 @@ namespace Murong_Xue
             if ((feed.Status & FeedStatus.LINKED) == 0)
                 AddFeedsToEntries(feed);
         }
-        /*
-        public int UpdateFeed(Feed feed)
+        public bool DeleteFeed(Feed feed)
         {
-            Feed? currentFeed = GetFeed(feed.ID);
-            if (currentFeed == null) return -1;
-            currentFeed = feed; //this should update it?
-            return feed.ID;
-        }
-        public int DeleteFeed(Feed feed)
-        {
+            report.Trace("Delete feed:");
+            report.Trace(feed.ToString());
+            //remove from rss
+            if (!rss.RemoveFeed(feed))
+            {
+                report.Warn("rss.RemoveFeed return false. feed not removed.");
+                return false;
+            }
             Feeds.Remove(feed);
-            return feed.ID;
-        }*/
+            return true;
+        }
     }
 }
