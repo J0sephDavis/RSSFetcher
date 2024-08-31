@@ -16,39 +16,22 @@ namespace Steward_Zhou
             Logger.SetInteractiveMode(true);
             InitializeComponent();
         }
-
         private void MainWindow_Load(object sender, EventArgs e)
         {
             Logger.GetInstance().AddModule(new LogOutputListView(LogListBox));
         }
-        private void UpdateFeedList()
-        {
-            List<Feed> feeds = controller.GetFeeds();
-            FeedListView.BeginUpdate();
-            FeedListView.Items.Clear();
-            foreach (var feed in feeds)
-            {
-                FeedListViewItem item = new(feed, FeedFields.TITLE | FeedFields.DATE | FeedFields.STATUS);
-                FeedListView.Items.Add(item);
-            }
-            //Autosize the columns to the text.
-            foreach (ColumnHeader col in FeedListView.Columns)
-                col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            FeedListView.EndUpdate();
-        }
+        //-------------------------------BUTTONS-------------------------------
         private void btnGetFeeds_Click(object sender, EventArgs e)
         {
             report.Trace("btnGetFeeds_click");
             UpdateFeedList();
         }
-
         private void btnProcess_Click(object sender, EventArgs e)
         {
             report.Trace("btnProcess_Click");
             //queue feeds & process
             controller.DownloadFeeds();
         }
-
         private void btnEdit_Click(object sender, EventArgs e)
         {
             report.Trace("btnEdit_Click");
@@ -86,29 +69,18 @@ namespace Steward_Zhou
             if (controller.DeleteFeed(EditingFeed))
                 UpdateAllPanels();
         }
-        /// <summary>
-        /// Update everything we can feasibly update. probably a better sol'n in the future,
-        /// but this should be good for now
-        /// </summary>
-        private void UpdateAllPanels() // aka Redraw?
-        {
-            UpdateFeedList();
-            UpdateEditorFields();
-        }
-
         private void btnCreate_Click(object sender, EventArgs e)
         {
             report.Trace("btnCreate_Click");
             EditingFeed = controller.CreateNewFeedRecord();
             UpdateAllPanels();
         }
-
         private void btnSaveQuit_Click(object sender, EventArgs e)
         {
             report.Trace("btnSaveQuit_Click");
             controller.UpdateEntries();
         }
-
+        //--------------------------------EVENTS-------------------------------
         private void FeedListView_SelectedIndexChanged(object sender, EventArgs e)
         {
             StringBuilder builder = new();
@@ -131,7 +103,37 @@ namespace Steward_Zhou
             }
             UpdateEditorFields();
         }
-
+        //------------------------------HELPERS-------------------------------
+        /// <summary>
+        /// Update everything we can feasibly update. probably a better sol'n in the future,
+        /// but this should be good for now
+        /// </summary>
+        private void UpdateAllPanels() // aka Redraw?
+        {
+            UpdateFeedList();
+            UpdateEditorFields();
+        }
+        /// <summary>
+        /// Update the Feed List with all feeds from controller
+        /// </summary>
+        private void UpdateFeedList()
+        {
+            List<Feed> feeds = controller.GetFeeds();
+            FeedListView.BeginUpdate();
+            FeedListView.Items.Clear();
+            foreach (var feed in feeds)
+            {
+                FeedListViewItem item = new(feed, FeedFields.TITLE | FeedFields.DATE | FeedFields.STATUS);
+                FeedListView.Items.Add(item);
+            }
+            //Autosize the columns to the text.
+            foreach (ColumnHeader col in FeedListView.Columns)
+                col.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            FeedListView.EndUpdate();
+        }
+        /// <summary>
+        /// Update the editor text boxes to represent the current EditingFeed
+        /// </summary>
         public void UpdateEditorFields()
         {
             //---
@@ -155,6 +157,7 @@ namespace Steward_Zhou
             txtBoxStatus.Text = EditingFeed.Status.ToString();
         }
     }
+    //---------------------------------------------------------------------
     [Flags]
     enum FeedFields
     {
