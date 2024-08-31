@@ -19,13 +19,10 @@ namespace Murong_Xue
         //-----------Tasks------------------------------------------------------
         public async void DownloadFeeds()
         {
-            //TODO when a feed is updated we must update the corresponding entry in Entries?
-            //is the Feed ref linked still?
             await rss.DownloadFeeds();
         }
         public void UpdateEntries()
         {
-            //! TODO add newly created entries to the RSS list
             rss.UpdateEntries();
         }
         //----------------------------------------------------------------------
@@ -41,6 +38,10 @@ namespace Murong_Xue
             return null;
         }
 
+        /// <summary>
+        /// Get an empty feed record with an ID given by the Model + adds feeds to view/controller list
+        /// </summary>
+        /// <returns></returns>
         public Feed? CreateNewFeedRecord()
         {
             Feed tmp = new()
@@ -51,10 +52,10 @@ namespace Murong_Xue
             return tmp;
         }
         /// <summary>
-        /// If the given feed is not represented by a FeedEntry in the model, it is sent to the model.
-        /// Otherwise, nothing changes.
+        /// Add a feed to the model
         /// </summary>
         /// <param name="feed"></param>
+        /// <returns>the feed to link in the model</returns>
         public bool CreateFeed(Feed feed)
         {
             report.Trace("Create Feed");
@@ -66,7 +67,7 @@ namespace Murong_Xue
         {
             report.Trace("Delete feed:");
             report.Trace(feed.ToString());
-            //remove from rss
+
             if (!rss.RemoveFeed(feed))
             {
                 report.Warn("rss.RemoveFeed return false. feed not removed.");

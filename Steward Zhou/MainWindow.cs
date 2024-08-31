@@ -28,7 +28,7 @@ namespace Steward_Zhou
             FeedListView.Items.Clear();
             foreach (var feed in feeds)
             {
-                FeedListViewItem item = new(feed, FeedFields.TITLE | FeedFields.DATE);
+                FeedListViewItem item = new(feed, FeedFields.TITLE | FeedFields.DATE | FeedFields.STATUS);
                 FeedListView.Items.Add(item);
             }
             //Autosize the columns to the text.
@@ -152,6 +152,7 @@ namespace Steward_Zhou
             txtBoxRegex.Text = EditingFeed.Expression;
             txtBoxDate.Text = EditingFeed.Date.ToString();
             txtBoxHistory.Text = EditingFeed.History;
+            txtBoxStatus.Text = EditingFeed.Status.ToString();
         }
     }
     [Flags]
@@ -163,8 +164,9 @@ namespace Steward_Zhou
         EXPRESSION  = 1 << 3,
         DATE        = 1 << 4,
         HISTORY     = 1 << 5,
+        STATUS      = 1 << 6,
         
-        ALL = ID | TITLE | URL | EXPRESSION | DATE | HISTORY,
+        ALL = ID | TITLE | URL | EXPRESSION | DATE | HISTORY | STATUS,
     };
     internal class FeedListViewItem : ListViewItem
     {
@@ -194,6 +196,9 @@ namespace Steward_Zhou
 
             if ((fields & FeedFields.HISTORY) > 0)
                 base.SubItems.Add(feed.History);
+
+            if ((fields & FeedFields.STATUS) > 0)
+                base.SubItems.Add(feed.Status.ToString());
 
             //I have no clue why there is an empty string added by default
             if (base.SubItems.Count > 0 && base.SubItems[0].Text == string.Empty)

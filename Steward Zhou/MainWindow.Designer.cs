@@ -33,6 +33,7 @@
             FeedListView = new ListView();
             columnHeaderTitle = new ColumnHeader();
             columnHeaderDate = new ColumnHeader();
+            columnHeaderStatus = new ColumnHeader();
             RightMainSplit = new SplitContainer();
             tableLayoutPanel1 = new TableLayoutPanel();
             Property_History = new Panel();
@@ -51,6 +52,8 @@
             txtBoxTitle = new TextBox();
             lblTitle = new Label();
             Property_ID = new Panel();
+            txtBoxStatus = new TextBox();
+            lblStatus = new Label();
             txtBoxID = new TextBox();
             LblId = new Label();
             ButtonPanelFlowLayout = new FlowLayoutPanel();
@@ -118,7 +121,7 @@
             // FeedListView
             // 
             FeedListView.AllowColumnReorder = true;
-            FeedListView.Columns.AddRange(new ColumnHeader[] { columnHeaderTitle, columnHeaderDate });
+            FeedListView.Columns.AddRange(new ColumnHeader[] { columnHeaderTitle, columnHeaderDate, columnHeaderStatus });
             FeedListView.Dock = DockStyle.Fill;
             FeedListView.GridLines = true;
             FeedListView.Location = new Point(0, 0);
@@ -136,6 +139,10 @@
             // columnHeaderDate
             // 
             columnHeaderDate.Text = "Last Update";
+            // 
+            // columnHeaderStatus
+            // 
+            columnHeaderStatus.Text = "Status";
             // 
             // RightMainSplit
             // 
@@ -341,6 +348,8 @@
             // Property_ID
             // 
             Property_ID.AutoSize = true;
+            Property_ID.Controls.Add(txtBoxStatus);
+            Property_ID.Controls.Add(lblStatus);
             Property_ID.Controls.Add(txtBoxID);
             Property_ID.Controls.Add(LblId);
             Property_ID.Location = new Point(3, 3);
@@ -348,6 +357,27 @@
             Property_ID.Name = "Property_ID";
             Property_ID.Size = new Size(272, 16);
             Property_ID.TabIndex = 22;
+            // 
+            // txtBoxStatus
+            // 
+            txtBoxStatus.Dock = DockStyle.Fill;
+            txtBoxStatus.Enabled = false;
+            txtBoxStatus.Location = new Point(89, 0);
+            txtBoxStatus.Name = "txtBoxStatus";
+            txtBoxStatus.ScrollBars = ScrollBars.Horizontal;
+            txtBoxStatus.Size = new Size(183, 23);
+            txtBoxStatus.TabIndex = 13;
+            // 
+            // lblStatus
+            // 
+            lblStatus.AutoSize = true;
+            lblStatus.Dock = DockStyle.Left;
+            lblStatus.Location = new Point(50, 0);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(39, 15);
+            lblStatus.TabIndex = 11;
+            lblStatus.Text = "Status";
+            lblStatus.TextAlign = ContentAlignment.MiddleRight;
             // 
             // txtBoxID
             // 
@@ -613,5 +643,8 @@
         private Panel panel1;
         private Label label1;
         private Button btnDelete;
+        private TextBox txtBoxStatus;
+        private Label lblStatus;
+        private ColumnHeader columnHeaderStatus;
     }
 }
