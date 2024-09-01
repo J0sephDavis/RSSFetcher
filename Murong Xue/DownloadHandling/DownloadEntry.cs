@@ -17,23 +17,35 @@ namespace Murong_Xue.DownloadHandling
     internal abstract class DownloadEntryBase
     {
         private readonly static DownloadHandler downloadHandler = DownloadHandler.GetInstance();
-        public Uri link;
+        public Uri? URL;
         protected Reporter report;
         static protected EventTicker events = EventTicker.GetInstance();
-        public DownloadStatus status = DownloadStatus.INITIALIZED;
+        public DownloadStatus status = DownloadStatus.INITIALIZED; //ensuring default is 0
 
         //By accepting the reporter we can borrow the inherited classes reporter & not reallocate
         //for each individual inherited class. For each TYPE there is one reporter, not each instance.
-        public DownloadEntryBase(Uri link, Reporter? rep = null)
+        public DownloadEntryBase(Uri? link, Reporter? rep = null)
         {
-            this.link = link;
             if (rep == null)
                 report = Logger.RequestReporter("DLBASE");
             else
                 report = rep;
+
+            if (link == null)
+            {
+                status |= DownloadStatus.INVALID;
+                report.Warn("download base is INVALID, null URI provided.");
+            }
+            else
+                this.URL = link;
         }
         public void Queue()
         {
+            if (status == DownloadStatus.INVALID)
+            {
+                report.Warn("failed to queue file, status == invalid");
+                return;
+            }
             status = DownloadStatus.QUEUED;
             //----------------------------------
             downloadHandler.QueueDownload(this);
@@ -42,7 +54,7 @@ namespace Murong_Xue.DownloadHandling
         {
             status = DownloadStatus.DOWNLOADING;
 
-            Task<HttpResponseMessage> request = client.GetAsync(link);
+            Task<HttpResponseMessage> request = client.GetAsync(URL);
             _ = request.ContinueWith(OnDownload);
             await request; //only return when the request has actually been completed
             return;
@@ -88,15 +100,15 @@ namespace Murong_Xue.DownloadHandling
         override public void HandleDownload(Stream content)
         {
             events.OnFileDownloaded();
-            string fileName = Path.GetFileName(link.AbsolutePath);
+            string fileName = Path.GetFileName(URL.AbsolutePath);
             string destinationPath = DownloadPath.LocalPath + fileName;
             if (File.Exists(destinationPath))
-                report.Error($"File already exists\n\tLink:{link}\n\tPath:{destinationPath}");
+                report.Error($"File already exists\n\tLink:{URL}\n\tPath:{destinationPath}");
             else using (FileStream fs = File.Create(destinationPath))
                 {
                     content.Seek(0, SeekOrigin.Begin);
                     content.CopyTo(fs);
-                    report.Out($"FILE {link} WRITTEN TO {destinationPath}");
+                    report.Out($"FILE {URL} WRITTEN TO {destinationPath}");
                 }
             DoneProcessing();
         }
