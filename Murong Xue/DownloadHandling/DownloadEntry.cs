@@ -6,13 +6,13 @@ namespace Murong_Xue.DownloadHandling
 {
     public enum DownloadStatus
     {
-        INVALID = -1, //only used in methods, never set.
-        INITIALIZED,
-        QUEUED,
-        DOWNLOADING,
-        DOWNLOADED,
-        PROCESSING,
-        PROCESSED,
+        INITIALIZED,    //just created
+        WAITING,        //waiting to be queued
+        QUEUED,         //waiting to be downloaded
+        DOWNLOADING,    //waiting for download to finish
+        DOWNLOADED,     //waiting for processing to begin
+        PROCESSING,     //waiting for processing to end
+        PROCESSED,      //done
     };
     internal abstract class DownloadEntryBase
     {
