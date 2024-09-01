@@ -85,9 +85,9 @@ namespace Murong_Xue.DownloadHandling
             downloadHandler.ReQueue(this);
         }
     }
-
-    internal class DownloadEntryFile(Uri link, Uri DownloadPath) : DownloadEntryBase(link, Logger.RequestReporter("DLFILE"))
+    internal class DownloadEntryFile(Uri link, Uri DownloadPath) : DownloadEntryBase(link, report)
     {
+        private new static readonly Reporter report = Logger.RequestReporter("DLFILE");
         override public void HandleDownload(Stream content)
         {
             events.OnFileDownloaded();
@@ -101,6 +101,7 @@ namespace Murong_Xue.DownloadHandling
                     content.CopyTo(fs);
                     report.Out($"FILE {URL} WRITTEN TO {destinationPath}");
                 }
+            DoneProcessing();
             DoneProcessing();
         }
     }
