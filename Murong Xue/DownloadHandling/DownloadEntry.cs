@@ -1,6 +1,8 @@
-﻿using System.Net;
-using Murong_Xue.Logging;
+﻿using Murong_Xue.Logging;
 using Murong_Xue.Logging.Reporting;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace Murong_Xue.DownloadHandling
 {
@@ -32,7 +34,7 @@ namespace Murong_Xue.DownloadHandling
                 report = Logger.RequestReporter("DLBASE");
             else
                 report = rep;
-            
+
             this.URL = link;
         }
         public void Queue()
@@ -66,7 +68,7 @@ namespace Murong_Xue.DownloadHandling
                 return;
             }
             Stream content = await msg.Content.ReadAsStreamAsync();
-            
+
             status = DownloadStatus.PROCESSING;
             //----------------------------------
             _ = Task.Run(() => HandleDownload(content));
@@ -133,7 +135,7 @@ namespace Murong_Xue.DownloadHandling
                 Async = false
             };
             using XmlReader reader = XmlReader.Create(content, xSettings);
-            
+
             // Control variables
             bool IsTitle = false;
             bool IsUrl = false;
@@ -145,7 +147,7 @@ namespace Murong_Xue.DownloadHandling
             string _title = string.Empty;
             Uri? _url = null;
             DateTime _date = DateTime.UnixEpoch;
-            
+
             // Memory Variables
             DateTime _originalDate = feed.Date;
             string _originalHistory = feed.History;
