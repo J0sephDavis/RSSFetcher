@@ -30,6 +30,7 @@ namespace Murong_Xue
         public DateTime Date;
         public string History;
         public FeedStatus Status;
+        public DownloadStatus? dStatus;
         public Feed() //null constructor
         {
             ID = -1;
@@ -38,6 +39,7 @@ namespace Murong_Xue
             Expression = string.Empty;
             Date = DateTime.UnixEpoch;
             History = string.Empty;
+            dStatus = null;
         }
         public Feed(Feed copy)
         {
@@ -48,26 +50,35 @@ namespace Murong_Xue
             Date = copy.Date;
             History = copy.History;
             Status = copy.Status;
+            dStatus = copy.dStatus;
         }
         public override string ToString()
         {
             return $"T:{Title}\tU:{URL}\tE:{Expression}\tH:{History}";
         }
     }
-    internal class FeedEntry(Feed _feed) : DownloadEntryBase(_feed.URL, report)
+    internal class FeedEntry : DownloadEntryBase
     {
         //------------------Accessing Records-----------------------------------------------------
-        private readonly Feed feed = _feed;
+        private readonly Feed feed;
         public int ID { get => feed.ID; }
         public string Title { get => feed.Title; set => feed.Title = value; }
         public string Expression { get => feed.Expression; set => feed.Expression = value; }
         public DateTime Date { get => feed.Date; set => feed.Date = value; }
         public string History { get => feed.History; set => feed.History = value; }
         public Uri? URL { get => feed.URL; set => feed.URL = value; }
+        public DownloadStatus? StatusDL { get => base.status; }
         public Feed GetFeed() { return feed; }
         //----------------------------------------------------------------------------------------
         private static readonly Config cfg = Config.GetInstance();
         private new static readonly Reporter report = Logger.RequestReporter("F-DATA");
+
+        public FeedEntry(Feed _feed) : base(_feed?.URL, report)
+        {
+            feed = _feed;
+            feed.dStatus = base.status;
+        }
+
         //----------------------------------------------------------------------------------------
         public void Print()
         {
@@ -202,7 +213,7 @@ namespace Murong_Xue
                                             feed.Status |= FeedStatus.UPDATED;
                                             HistoryUpdated = true;
                                         }
-                                        report.Out($"({feed.Title}) Add File {_title}\t{link}");
+                                        report.Out($"({feed.Title}) Add File {_title}\t{base.URL}");
                                         AddFile(_url);
                                     }
                                     break;
