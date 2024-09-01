@@ -16,36 +16,27 @@ namespace Murong_Xue.DownloadHandling
     };
     internal abstract class DownloadEntryBase
     {
-        private readonly static DownloadHandler downloadHandler = DownloadHandler.GetInstance();
-        public Uri? URL;
+        private static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
+        protected static readonly Config cfg = Config.GetInstance();
+        protected static readonly EventTicker events = EventTicker.GetInstance();
+        //----
+        protected Uri URL;
         protected Reporter report;
-        static protected EventTicker events = EventTicker.GetInstance();
         public DownloadStatus status = DownloadStatus.INITIALIZED; //ensuring default is 0
 
         //By accepting the reporter we can borrow the inherited classes reporter & not reallocate
         //for each individual inherited class. For each TYPE there is one reporter, not each instance.
-        public DownloadEntryBase(Uri? link, Reporter? rep = null)
+        public DownloadEntryBase(Uri link, Reporter? rep = null)
         {
             if (rep == null)
                 report = Logger.RequestReporter("DLBASE");
             else
                 report = rep;
-
-            if (link == null)
-            {
-                status |= DownloadStatus.INVALID;
-                report.Warn("download base is INVALID, null URI provided.");
-            }
-            else
-                this.URL = link;
+            
+            this.URL = link;
         }
         public void Queue()
         {
-            if (status == DownloadStatus.INVALID)
-            {
-                report.Warn("failed to queue file, status == invalid");
-                return;
-            }
             status = DownloadStatus.QUEUED;
             //----------------------------------
             downloadHandler.QueueDownload(this);
