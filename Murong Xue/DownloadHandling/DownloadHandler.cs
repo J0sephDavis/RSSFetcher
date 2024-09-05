@@ -39,16 +39,12 @@ namespace Murong_Xue.DownloadHandling
         }
         public async Task ProcessDownloads()
         {
-            //tmp
-            int index = 0;
             report.Notice("Processing downloads");
             report.DebugVal("Downloads.Count =" + Downloads.Count);
             List<Task> CurrentBatch = [];
             //Reasons to NOT stop the while loop, we've got people doing work or wanting to do work.
             while (GetTotalHolds() != 0)
             {
-                report.Debug("ALL ENTRY STATUS:");
-                index = 0;
                 for (int i = Downloads.Count-1; i >= 0; i--)
                 {
                     if (CurrentBatch.Count >= BATCH_SIZE)
@@ -56,8 +52,6 @@ namespace Murong_Xue.DownloadHandling
                     //----
 
                     DownloadEntryBase entry = Downloads.ElementAt(i);
-
-                    report.DebugVal($"{index++} - {entry.Status}");
                     if (entry.Status == DownloadStatus.WAITING)
                     {
                         CurrentBatch.Add(Task.Run(() => entry.Request(client)));
@@ -68,12 +62,6 @@ namespace Murong_Xue.DownloadHandling
                 await Task.WhenAll(CurrentBatch);
                 CurrentBatch.Clear();
                 await Task.Delay(100); //TODO remove?
-            }
-            index = 0;
-            report.Debug("ALL ENTRY STATUS:");
-            foreach (var entry in Downloads)
-            {
-                report.DebugVal($"{index++} - {entry.Status}");
             }
             report.Notice("Download queue exhausted");
         }
