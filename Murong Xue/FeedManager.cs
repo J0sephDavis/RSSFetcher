@@ -33,16 +33,25 @@ namespace Murong_Xue
         {
             foreach (var f in feeds)
             {
+                if (f.ID != -1) throw new ApplicationException("ID already exists");
                 if (f.ID == -1)
                     f.ID = GetPrivateKey();
+                f.Status |= FeedStatus.LINKED;
+                report.TraceVal($"FEED (tobe) ADDED:\n{f.ToLongString()}");
             }
             Feeds.AddRange(feeds);
         }
-        public int AddFeed(Feed feed) //return ID or -1
+        public void AddFeed(Feed feed) //return ID or -1
         {
-            throw new NotImplementedException();
+            if (feed.ID != -1)
+            {
+                throw new System.ApplicationException("ID already exists");
+            }
+            if (feed.ID == -1)
+                feed.ID = GetPrivateKey();
             feed.Status |= FeedStatus.LINKED;
-            Feeds.Add(new(feed));
+            Feeds.Add(feed);
+            
             report.TraceVal($"FEED ADDED:\n{feed.ToLongString()}");
         }
         public bool RemoveFeed(int ID)
