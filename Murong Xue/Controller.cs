@@ -1,5 +1,7 @@
-﻿using Murong_Xue.Logging;
+﻿using Murong_Xue.DownloadHandling;
+using Murong_Xue.Logging;
 using Murong_Xue.Logging.Reporting;
+using System.ComponentModel;
 
 namespace Murong_Xue
 {
@@ -15,14 +17,13 @@ namespace Murong_Xue
     /// </summary>
     public class Controller
     {
-        private EntryData rss;
-        private List<Feed> Feeds = [];
+        private DataFile rssData;
+        private FeedManager feedManager;
         private Reporter report = Logger.RequestReporter("CONTRL");
 
         public Controller()
         {
-            rss = new EntryData(Config.GetInstance().GetRSSPath());
-            Feeds = new(rss.GetFeeds()); //copy the list
+            rssData = new(Config.GetInstance().GetRSSPath());
         }
         //-----------Tasks------------------------------------------------------
         public async void DownloadFeeds()
