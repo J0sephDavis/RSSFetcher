@@ -74,33 +74,11 @@ namespace Murong_Xue.DownloadHandling
             {
                 report.DebugVal($"{index++} - {entry.Status}");
             }
-        }
-        private DownloadEntryBase PopSwapDownload()
-        {
-            DownloadEntryBase? entry = null;
-            lock (ListLocks)
-            {
-                entry = Queued.First();
-                Queued.Remove(entry);
-                Processing.Add(entry);
-            }
-            return entry;
-        }
-        public void RemoveProcessing(DownloadEntryBase entry)
-        {
-            lock (ListLocks)
-            {
-                Processing.Remove(entry);
-            }
+            report.Notice("Download queue exhausted");
         }
         public void ReQueue(DownloadEntryBase entry)
         {
             events.OnDownloadReQueued();
-            lock (ListLocks)
-            {
-                Processing.Remove(entry);
-                Queued.Add(entry);
-            }
             //---
             lock (fail_lock)
             {
