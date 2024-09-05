@@ -100,5 +100,14 @@ namespace Murong_Xue.DownloadHandling
                 );
             }
         }
+
+        public void AddDownload(DownloadEntryBase entry)
+        {
+            lock(ListLocks)
+            {
+                Downloads.Add(entry);
+                entry.Status = DownloadStatus.WAITING;
+            }
+        }
     }
 }
