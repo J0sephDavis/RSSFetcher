@@ -56,12 +56,10 @@ namespace Murong_Xue
         }
         public bool RemoveFeed(int ID)
         {
-            throw new NotImplementedException();
-            feed.Status = FeedStatus.INIT;
             var feed_remove = from f in Feeds
-                                where f.ID == feed.ID
+                                where f.ID == ID
                                 select f;
-            report.Debug($"GIVEN FEED: {feed.ID} {feed.Title}");
+
             if (feed_remove.Count() > 1)
             {
                 report.Error($"RemoveFeed retrieved too many{feed_remove.Count()} feeds with query");
