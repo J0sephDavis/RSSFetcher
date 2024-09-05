@@ -40,7 +40,10 @@ namespace Murong_Xue
             //NEW: Seems to be  faster to queue syncronously again,
             //previously we were creating objects every time, this time its just adding to a list
             foreach (var feed in Feeds)
-                _ = new DownloadEntryFeed(feed);
+            {
+                var entry = new DownloadEntryFeed(feed);
+                feed.Status |= FeedStatus.PROCESS;
+            }
             await DownloadHandler.GetInstance().ProcessDownloads();
 
         }
@@ -145,6 +148,7 @@ namespace Murong_Xue
                                     break;
                                 case RSS_Item:
                                     feed.ID = GetPrivateKey();
+                                    feed.Status |= FeedStatus.FROM_FILE;
                                     AddFeed(feed);
                                     break;
                                 default:

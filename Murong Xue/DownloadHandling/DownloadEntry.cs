@@ -216,7 +216,7 @@ namespace Murong_Xue.DownloadHandling
                                     {
                                         feed.Date = _date;
                                         feed.History = _title;
-                                        feed.Status |= FeedStatus.UPDATED;
+                                        feed.Status |= FeedStatus.MODIFIED;
                                         HistoryUpdated = true;
                                     }
                                     report.Out($"({feed.Title}) Add File {_title}\t{base.URL}");
