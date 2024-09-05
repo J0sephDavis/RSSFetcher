@@ -18,8 +18,7 @@ namespace Murong_Xue.DownloadHandling
         private int fails = 0;
         //---c# version 12 does not have System.Threading.Lock, so we use Object()---
         private readonly object ListLocks = new();
-        private readonly List<DownloadEntryBase> Queued = [];
-        private readonly List<DownloadEntryBase> Processing = [];
+        private readonly List<DownloadEntryBase> Downloads = [];
         //---------------------------------------------------------------------------
         public static DownloadHandler GetInstance()
         {
