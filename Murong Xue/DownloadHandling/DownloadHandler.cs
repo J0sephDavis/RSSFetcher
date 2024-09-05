@@ -39,39 +39,40 @@ namespace Murong_Xue.DownloadHandling
         }
         public async Task ProcessDownloads()
         {
+            //tmp
+            int index = 0;
             report.Notice("Processing downloads");
             List<Task> CurrentBatch = [];
             //Reasons to NOT stop the while loop, we've got people doing work or wanting to do work.
             while (GetTotalHolds() != 0)
             {
-                while (Queued.Count != 0)
+                report.Debug("ALL ENTRY STATUS:");
+                index = 0;
+                for (int i = Downloads.Count-1; i >= 0; i--)
                 {
-                    report.Trace($"delay {BATCH_ADD_DELAY}");
-                    await Task.Delay(BATCH_ADD_DELAY);
-                    DownloadEntryBase entry = PopSwapDownload();
-                    CurrentBatch.Add(Task.Run(() => entry.Request(client)));
-                    //When we've filled our budget or used em all
-                    if (CurrentBatch.Count >= BATCH_SIZE || Queued.Count == 0)
+                    if (CurrentBatch.Count >= BATCH_SIZE)
+                        break;
+                    //----
+
+                    DownloadEntryBase entry = Downloads.ElementAt(i);
+
+                    report.DebugVal($"{index++} - {entry.Status}");
+                    if (entry.Status == DownloadStatus.WAITING)
                     {
-                        report.TraceVal($"\t\tQ[{Queued.Count}]  P[{Processing.Count}]");
-                        await Task.WhenAll(CurrentBatch);
-                        CurrentBatch.Clear();
+                        CurrentBatch.Add(Task.Run(() => entry.Request(client)));
+                        report.Trace($"delay {BATCH_ADD_DELAY}");
+                        await Task.Delay(BATCH_ADD_DELAY);
                     }
                 }
-                lock (ListLocks)
-                {
-                    totalWaiting = Queued.Count + Processing.Count;
-                }
-                await Task.Delay(100);
+                await Task.WhenAll(CurrentBatch);
+                CurrentBatch.Clear();
+                await Task.Delay(100); //TODO remove?
             }
-            report.DebugVal($"\t\tQ[{Queued.Count}] P[{Processing.Count}]");
-            report.Notice("Download queue exhausted");
-        }
-        public void QueueDownload(DownloadEntryBase entry)
-        {
-            lock (ListLocks)
+            index = 0;
+            report.Debug("ALL ENTRY STATUS:");
+            foreach (var entry in Downloads)
             {
-                Queued.Add(entry);
+                report.DebugVal($"{index++} - {entry.Status}");
             }
         }
         private DownloadEntryBase PopSwapDownload()
