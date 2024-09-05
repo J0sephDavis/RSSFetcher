@@ -42,6 +42,7 @@ namespace Murong_Xue.DownloadHandling
             //tmp
             int index = 0;
             report.Notice("Processing downloads");
+            report.DebugVal("Downloads.Count =" + Downloads.Count);
             List<Task> CurrentBatch = [];
             //Reasons to NOT stop the while loop, we've got people doing work or wanting to do work.
             while (GetTotalHolds() != 0)
