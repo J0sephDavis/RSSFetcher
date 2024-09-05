@@ -18,11 +18,11 @@ namespace Murong_Xue
     public enum FeedStatus
     {
         INIT = 0,
-        // Represented in EntryData.cs / EntryData class
+        // Represented in FeedManager (not a free floating feed)
         LINKED = 1 << 0,
         // added to download queue at some point
         // (says nothing about whether its waiting/downloading/processing/done)
-        PROCESS = 1 << 1,
+        DLHANDLE = 1 << 1,
         // modified by user/system
         MODIFIED = 1 << 2,
         // Added from config file T/F. F->Created by user during session
