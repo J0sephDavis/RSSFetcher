@@ -8,7 +8,7 @@ namespace Murong_Xue
     internal class EntryData(Uri RSSPath)
     {
         private readonly Uri path = RSSPath;
-        private readonly List<FeedEntry> Feeds = [];
+        private readonly List<Feed> Feeds = [];
         private readonly Reporter report = Logger.RequestReporter("ENTDAT");
         //--------------------------------------------------------------------
         private int PrivateKey = 0;
@@ -39,12 +39,12 @@ namespace Murong_Xue
             //OLD: Queueing Entries asynchronously saves 23ms (53ms sync, 32ms async)
             //NEW: Seems to be  faster to queue syncronously again,
             //previously we were creating objects every time, this time its just adding to a list
-            foreach (FeedEntry feed in Feeds)
-                feed.Queue();
+            foreach (var feed in Feeds)
+                _ = new DownloadEntryFeed(feed);
             await DownloadHandler.GetInstance().ProcessDownloads();
 
         }
-        public List<FeedEntry> GetFeeds()
+        public List<Feed> GetFeeds()
         {
             if (Feeds.Count == 0)
                 GetEntries();
@@ -168,8 +168,8 @@ namespace Murong_Xue
         public void AddFeed(Feed feed)
         {
             feed.Status |= FeedStatus.LINKED;
-            Feeds.Add(new FeedEntry(new(feed)));
-            Feeds.Last().Print();
+            Feeds.Add(new(feed));
+            report.TraceVal($"FEED ADDED:\n{feed.ToLongString()}");
         }
         public bool RemoveFeed(Feed feed)
         {
@@ -206,7 +206,7 @@ namespace Murong_Xue
                 writer.WriteStartElement(null, "root", null);
                 TimeSpan SinceLast;
                 //---- item
-                foreach (FeedEntry feed in Feeds)
+                foreach (var feed in Feeds)
                 {
                     SinceLast = _today - feed.Date;
                     if (SinceLast.Days > 10)

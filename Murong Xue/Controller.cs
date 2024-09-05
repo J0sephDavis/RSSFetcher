@@ -12,9 +12,7 @@ namespace Murong_Xue
         public Controller()
         {
             rss = new EntryData(Config.GetInstance().GetRSSPath());
-            List<FeedEntry> Entries = rss.GetFeeds();
-            foreach (FeedEntry entry in Entries)
-                Feeds.Add((entry.GetFeed())); //creates a copy of each record,
+            Feeds = new(rss.GetFeeds()); //copy the list
         }
         //-----------Tasks------------------------------------------------------
         public async void DownloadFeeds()

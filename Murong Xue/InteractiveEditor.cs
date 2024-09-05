@@ -5,10 +5,10 @@ namespace Murong_Xue
 {
     internal class InteractiveEditor
     {
-        readonly List<FeedEntry> Feeds;
+        readonly List<Feed> Feeds;
         readonly Reporter report;
 
-        public InteractiveEditor(List<FeedEntry> Feeds)
+        public InteractiveEditor(List<Feed> Feeds)
         {
             this.Feeds = Feeds;
             report = Logger.RequestReporter("EDITOR");
@@ -23,7 +23,7 @@ namespace Murong_Xue
         };
         protected void PrintHandler(int? index)
         {
-            FeedEntry? feed;
+            Feed? feed;
             DateTime _today = DateTime.Now;
             int daysSince;
             if (index != null && index > -1 && index < Feeds.Count)
@@ -89,7 +89,7 @@ namespace Murong_Xue
                 report.Log(LogType.OUTPUT | LogType.ERROR, LogMod.NORMAL, "Index out of bounds"); //output + warn
                 return;
             }
-            FeedEntry entry = Feeds[(int)index];
+            Feed entry = Feeds[(int)index];
             PrintHandler(index);
             report.Out(edit_help);
             //----
