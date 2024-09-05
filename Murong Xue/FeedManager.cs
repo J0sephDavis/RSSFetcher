@@ -17,14 +17,26 @@ namespace Murong_Xue
             }
         }
         //--------------------------------------------------------------------
-        private readonly List<Feed> feeds = [];
+        private readonly List<Feed> Feeds = [];
         public List<Feed> GetFeeds()
         {
-            return feeds;
+            return Feeds;
         }
-        public Feed GetFeed(int ID)
+        public Feed? GetFeed(int ID)
         {
-            throw new NotImplementedException();
+            foreach (var feed in Feeds)
+                if (feed.ID == ID)
+                    return feed;
+            return null;
+        }
+        public void AddFeeds(List<Feed> feeds)
+        {
+            foreach (var f in feeds)
+            {
+                if (f.ID == -1)
+                    f.ID = GetPrivateKey();
+            }
+            Feeds.AddRange(feeds);
         }
         public int AddFeed(Feed feed) //return ID or -1
         {
