@@ -8,11 +8,7 @@ namespace Murong_Xue
     internal class EntryData(Uri RSSPath)
     {
         private readonly Uri path = RSSPath;
-        private readonly List<Feed> Feeds = [];
         private readonly Reporter report = Logger.RequestReporter("ENTDAT");
-        //--------------------------------------------------------------------
-        private int PrivateKey = 0;
-        private readonly object PrivateKeyLock = new(); // a precaution
         //--------------------------------------------------------------------
         private const string RSS_Title = "title";
         private const string RSS_URL = "feed-url";
@@ -46,21 +42,6 @@ namespace Murong_Xue
             }
             await DownloadHandler.GetInstance().ProcessDownloads();
 
-        }
-        public List<Feed> GetFeeds()
-        {
-            if (Feeds.Count == 0)
-                GetEntries();
-            return Feeds;
-        }
-        public int GetPrivateKey()
-        {
-            int retVal = -1;
-            lock (PrivateKeyLock)
-            {
-                retVal = PrivateKey++;
-            }
-            return retVal;
         }
         //! Reads the XML files and populated the FeedEntry list
         private bool GetEntries()
