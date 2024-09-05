@@ -27,6 +27,8 @@ namespace Murong_Xue
         MODIFIED = 1 << 2,
         // Added from config file T/F. F->Created by user during session
         FROM_FILE = 1 << 3,
+        // STUB (not ready / not populated with data), should just be an ID
+        STUB = 1 << 4,
         //SAVE/DISCARD
     }
     public record Feed
