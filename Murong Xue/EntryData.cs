@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace Murong_Xue
 {
-    internal class EntryData(Uri RSSPath)
+    internal class DataFile(Uri RSSPath)
     {
         private readonly Uri path = RSSPath;
         private readonly Reporter report = Logger.RequestReporter("ENTDAT");
