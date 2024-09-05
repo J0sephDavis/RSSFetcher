@@ -18,139 +18,120 @@ namespace Murong_Xue
         private const string RSS_Date = "date";
         //--------------------------------------------------------------------
         //! Reads the XML files and populated the FeedEntry list
-        private bool GetEntries()
+        public async Task<List<Feed>> ReadFeeds()
         {
+            List<Feed> Feeds = [];
             /* NOTE! Running the XMLReader in Async on our config file takes 23-26ms
              * Running Synchronously it takes 13-14ms                               */
             if (File.Exists(path.LocalPath) == false)
             {
                 report.Error($"RSS Config File not found ({path})");
-                return false;
+                return Feeds;//TODO throw an err
             }
-            FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
+            
+            using FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
+            
             XmlReaderSettings xSettings = new() { Async = false };
+            using XmlReader reader = XmlReader.Create(xStream, xSettings);
+            
+            Feed? feed = null;
+            bool InTitle = false;
+            bool InUrl = false;
+            bool InExpr = false;
+            bool InHistory = false;
+            bool InDate = false;
 
-            using (XmlReader reader = XmlReader.Create(xStream, xSettings))
+            while (reader.Read())
             {
-                Feed feed = new();
-
-                bool InTitle = false;
-                bool InUrl = false;
-                bool InExpr = false;
-                bool InHistory = false;
-                bool InDate = false;
-                while (reader.Read())
+#pragma warning disable CS8602 // Dereference of a possibly null reference. (Feed? feed)
+                switch (reader.NodeType)
                 {
-                    switch (reader.NodeType)
-                    {
-                        case XmlNodeType.Element:
-                            switch (reader.Name)
-                            {
-                                case RSS_Title:
-                                    InTitle = true;
-                                    break;
-                                case RSS_URL:
-                                    InUrl = true;
-                                    break;
-                                case RSS_Expression:
-                                    InExpr = true;
-                                    break;
-                                case RSS_History:
-                                    InHistory = true;
-                                    break;
-                                case RSS_Date:
-                                    InDate = true;
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
-                        case XmlNodeType.Text:
-                            if (InTitle)
-                            {
-                                feed.Title = reader.Value;
-                            }
-                            else if (InExpr)
-                            {
-                                feed.Expression = reader.Value;
-                            }
-                            else if (InHistory)
-                            {
-                                feed.History = reader.Value;
-                            }
-                            else if (InDate)
-                            {
-                                feed.Date = DateTime.Parse(reader.Value);
-                            }
-                            break;
-                        case XmlNodeType.EndElement:
-                            switch (reader.Name)
-                            {
-                                case RSS_Title:
-                                    InTitle = false;
-                                    break;
-                                case RSS_URL:
-                                    InUrl = false;
-                                    break;
-                                case RSS_Expression:
-                                    InExpr = false;
-                                    break;
-                                case RSS_History:
-                                    InHistory = false;
-                                    break;
-                                case RSS_Date:
-                                    InDate = false;
-                                    break;
-                                case RSS_Item:
-                                    feed.ID = GetPrivateKey();
-                                    feed.Status |= FeedStatus.FROM_FILE;
-                                    AddFeed(feed);
-                                    break;
-                                default:
-                                    break;
-                            }
-                            break;
-                        case XmlNodeType.CDATA:
-                            if (InUrl)
-                            {
-                                feed.URL = new(reader.Value);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
+                    case XmlNodeType.Element:
+                        switch (reader.Name)
+                        {
+                            case RSS_Title:
+                                InTitle = true;
+                                break;
+                            case RSS_URL:
+                                InUrl = true;
+                                break;
+                            case RSS_Expression:
+                                InExpr = true;
+                                break;
+                            case RSS_History:
+                                InHistory = true;
+                                break;
+                            case RSS_Date:
+                                InDate = true;
+                                break;
+                            case RSS_Item:
+                                feed = new();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case XmlNodeType.Text:
+                        if (InTitle)
+                        {
+                            feed.Title = reader.Value;
+                        }
+                        else if (InExpr)
+                        {
+                            feed.Expression = reader.Value;
+                        }
+                        else if (InHistory)
+                        {
+                            feed.History = reader.Value;
+                        }
+                        else if (InDate)
+                        {
+                            feed.Date = DateTime.Parse(reader.Value);
+                        }
+                        break;
+                    case XmlNodeType.EndElement:
+                        switch (reader.Name)
+                        {
+                            case RSS_Title:
+                                InTitle = false;
+                                break;
+                            case RSS_URL:
+                                InUrl = false;
+                                break;
+                            case RSS_Expression:
+                                InExpr = false;
+                                break;
+                            case RSS_History:
+                                InHistory = false;
+                                break;
+                            case RSS_Date:
+                                InDate = false;
+                                break;
+                            case RSS_Item:
+                                feed.Status |= FeedStatus.FROM_FILE;
+                                Feeds.Add(feed);
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case XmlNodeType.CDATA:
+                        if (InUrl)
+                        {
+                            feed.URL = new(reader.Value);
+                        }
+                        break;
+                    default:
+                        break;
                 }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
-            xStream.Dispose();
+
             return true;
         }
-        public void AddFeed(Feed feed)
+        public bool WriteFeeds(List<Feed> feeds)
         {
-            feed.Status |= FeedStatus.LINKED;
-            Feeds.Add(new(feed));
-            report.TraceVal($"FEED ADDED:\n{feed.ToLongString()}");
-        }
-        public bool RemoveFeed(Feed feed)
-        {
-            feed.Status = FeedStatus.INIT;
-            var feed_remove = from f in Feeds
-                              where f.ID == feed.ID
-                              select f;
-            report.Debug($"GIVEN FEED: {feed.ID} {feed.Title}");
-            if (feed_remove.Count() > 1)
-            {
-                report.Error($"RemoveFeed retrieved too many{feed_remove.Count()} feeds with query");
-                foreach (var f in feed_remove)
-                    report.Debug($"FOUND FEED: {f.ID} {f.Title}");
-                return false;
-            }
-            var _feed = feed_remove.First();
-            report.Debug($"Removing feed: {_feed.ID} {_feed.Title}");
-            Feeds.Remove(_feed);
-            return true;
-        }
-        public void UpdateEntries()
-        {
+            throw new NotImplementedException();
             Uri newFilePath = new(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
             Console.WriteLine($"newPath {newFilePath.LocalPath}");
             File.Move(path.LocalPath, newFilePath.LocalPath, overwrite: true);
