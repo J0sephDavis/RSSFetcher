@@ -33,23 +33,20 @@ namespace Murong_Xue
     }
     public record Feed
     {
-        public int ID;
-        public string Title;
-        public Uri? URL;
-        public string Expression;
-        public DateTime Date;
-        public string History;
-        public FeedStatus Status;
-        public Feed() //null constructor
+        public int ID               = -1;
+        public string Title         = string.Empty;
+        public Uri? URL             = null;
+        public string Expression    = string.Empty;
+        public DateTime Date        = DateTime.UnixEpoch;
+        public string History       = string.Empty;
+        public FeedStatus Status    = FeedStatus.INIT;
+        public Feed() { }       //null constructor
+        public Feed(int PK)     //stub constructor
         {
-            ID = -1;
-            Title = string.Empty;
-            URL = null;
-            Expression = string.Empty;
-            Date = DateTime.UnixEpoch;
-            History = string.Empty;
+            ID = PK;
+            Status = FeedStatus.STUB;
         }
-        public Feed(Feed copy)
+        public Feed(Feed copy)  //copy constructor
         {
             ID = copy.ID;
             Title = copy.Title;
