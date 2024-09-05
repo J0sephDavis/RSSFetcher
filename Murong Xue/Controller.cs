@@ -3,6 +3,16 @@ using Murong_Xue.Logging.Reporting;
 
 namespace Murong_Xue
 {
+    /// <summary>
+    /// This class orchestrates the initiation and cooperation of the classes
+    /// the bundle of states and methods to rule them all, per-se
+    /// In no particular order, these are the operations the controller orchestrates
+    /// >get Feeds from file
+    /// >add feed from process (UI/&c)
+    /// >process Feeds
+    /// >edit Feeds from UI
+    /// >save Feeds
+    /// </summary>
     public class Controller
     {
         private EntryData rss;
