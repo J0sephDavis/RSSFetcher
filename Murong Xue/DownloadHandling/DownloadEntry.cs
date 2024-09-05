@@ -106,11 +106,17 @@ namespace Murong_Xue.DownloadHandling
             Status = DownloadStatus.PROCESSED;
         }
     }
-    internal class DownloadEntryFeed(Feed _feed) : DownloadEntryBase(_feed.URL, report)
+    internal class DownloadEntryFeed : DownloadEntryBase
     {
         private new static readonly Reporter report = Logger.RequestReporter("DLFEED");
         //---
-        private Feed feed = _feed;
+        private Feed feed;
+
+        public DownloadEntryFeed(Feed _feed) : base(_feed.URL, report)
+        {
+            feed = _feed;
+            feed.Status |= FeedStatus.DLHANDLE;
+        }
 
         override public void HandleDownload(Stream content)
         {
