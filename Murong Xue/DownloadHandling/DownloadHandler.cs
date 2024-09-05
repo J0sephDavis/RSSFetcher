@@ -25,13 +25,24 @@ namespace Murong_Xue.DownloadHandling
             s_DownloadHandler ??= new DownloadHandler();
             return s_DownloadHandler;
         }
+        private int GetTotalHolds()
+        {
+            lock(ListLocks)
+            {
+                var WaitingList =
+                from entry in Downloads
+                where entry.Status > DownloadStatus.INITIALIZED
+                    && entry.Status < DownloadStatus.PROCESSED
+                select entry;
+                return WaitingList.Count();
+            }
+        }
         public async Task ProcessDownloads()
         {
             report.Notice("Processing downloads");
             List<Task> CurrentBatch = [];
-            int totalWaiting = Queued.Count + Processing.Count;
-            report.DebugVal($"{totalWaiting} Entries queued for download");
-            while (totalWaiting != 0)
+            //Reasons to NOT stop the while loop, we've got people doing work or wanting to do work.
+            while (GetTotalHolds() != 0)
             {
                 while (Queued.Count != 0)
                 {
