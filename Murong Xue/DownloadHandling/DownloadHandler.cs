@@ -79,6 +79,7 @@ namespace Murong_Xue.DownloadHandling
         }
         public void ReQueue(DownloadEntryBase entry)
         {
+            entry.Status = DownloadStatus.WAITING; //download handler will pick this back up
             events.OnDownloadReQueued();
             //---
             lock (fail_lock)
