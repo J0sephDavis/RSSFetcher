@@ -168,8 +168,9 @@ namespace Steward_Zhou
         DATE        = 1 << 4,
         HISTORY     = 1 << 5,
         STATUS      = 1 << 6,
+        DSTATUS     = 1 << 7,
         
-        ALL = ID | TITLE | URL | EXPRESSION | DATE | HISTORY | STATUS,
+        ALL = ID | TITLE | URL | EXPRESSION | DATE | HISTORY | STATUS | DSTATUS,
     };
     internal class FeedListViewItem : ListViewItem
     {
@@ -202,6 +203,9 @@ namespace Steward_Zhou
 
             if ((fields & FeedFields.STATUS) > 0)
                 base.SubItems.Add(feed.Status.ToString());
+
+            if ((fields & FeedFields.DSTATUS) > 0)
+                base.SubItems.Add(feed.dStatus.ToString());
 
             //I have no clue why there is an empty string added by default
             if (base.SubItems.Count > 0 && base.SubItems[0].Text == string.Empty)
