@@ -17,32 +17,6 @@ namespace Murong_Xue
         private const string RSS_Item = "item";
         private const string RSS_Date = "date";
         //--------------------------------------------------------------------
-        public async Task Process()
-        {
-            if (GetEntries() == false)
-            {
-                report.Error("Failed to get entries");
-                return;
-            }
-            //
-            await DownloadFeeds();
-            //save changes
-            UpdateEntries();
-        }
-        public async Task DownloadFeeds()
-        {
-            report.Trace("Queueing Downloads");
-            //OLD: Queueing Entries asynchronously saves 23ms (53ms sync, 32ms async)
-            //NEW: Seems to be  faster to queue syncronously again,
-            //previously we were creating objects every time, this time its just adding to a list
-            foreach (var feed in Feeds)
-            {
-                var entry = new DownloadEntryFeed(feed);
-                feed.Status |= FeedStatus.PROCESS;
-            }
-            await DownloadHandler.GetInstance().ProcessDownloads();
-
-        }
         //! Reads the XML files and populated the FeedEntry list
         private bool GetEntries()
         {
