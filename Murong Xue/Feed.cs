@@ -17,9 +17,17 @@ namespace Murong_Xue
     [Flags]
     public enum FeedStatus
     {
-        INIT = 0, //only used in constructor
-        LINKED = 1 << 0, //has a FeedEntry associated with it.
-        UPDATED = 1 << 1, //updated during processing
+        INIT = 0,
+        // Represented in EntryData.cs / EntryData class
+        LINKED = 1 << 0,
+        // added to download queue at some point
+        // (says nothing about whether its waiting/downloading/processing/done)
+        PROCESS = 1 << 1,
+        // modified by user/system
+        MODIFIED = 1 << 2,
+        // Added from config file T/F. F->Created by user during session
+        FROM_FILE = 1 << 3,
+        //SAVE/DISCARD
     }
     public record Feed
     {
@@ -30,7 +38,6 @@ namespace Murong_Xue
         public DateTime Date;
         public string History;
         public FeedStatus Status;
-        public DownloadStatus? dStatus;
         public Feed() //null constructor
         {
             ID = -1;
@@ -39,7 +46,6 @@ namespace Murong_Xue
             Expression = string.Empty;
             Date = DateTime.UnixEpoch;
             History = string.Empty;
-            dStatus = null;
         }
         public Feed(Feed copy)
         {
@@ -50,7 +56,6 @@ namespace Murong_Xue
             Date = copy.Date;
             History = copy.History;
             Status = copy.Status;
-            dStatus = copy.dStatus;
         }
         public override string ToString()
         {
