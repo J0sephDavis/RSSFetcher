@@ -8,7 +8,7 @@ namespace Murong_Xue.DownloadHandling
 {
     public enum DownloadStatus
     {
-        INITIALIZED,    //just created
+        INITIALIZED,    //not queued / default
         WAITING,        //waiting to be queued
         QUEUED,         //waiting to be downloaded
         DOWNLOADING,    //waiting for download to finish
@@ -18,14 +18,31 @@ namespace Murong_Xue.DownloadHandling
     };
     internal abstract class DownloadEntryBase
     {
-        private static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
+        protected static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
         protected static readonly Config cfg = Config.GetInstance();
         protected static readonly EventTicker events = EventTicker.GetInstance();
         //----
         protected Uri URL;
         protected Reporter report;
-        public DownloadStatus status = DownloadStatus.INITIALIZED; //ensuring default is 0
+        public DownloadStatus Status { get => Getstatus(); set => SetStatus(value); }
+        private object status_lock = new();
+        private DownloadStatus _status = DownloadStatus.INITIALIZED;
 
+        private DownloadStatus Getstatus()
+        {
+            lock (status_lock)
+            {
+                return _status;
+            }
+        }
+
+        private void SetStatus(DownloadStatus value)
+        {
+            lock (status_lock)
+            {
+                _status = value;
+            }
+        }
         //By accepting the reporter we can borrow the inherited classes reporter & not reallocate
         //for each individual inherited class. For each TYPE there is one reporter, not each instance.
         public DownloadEntryBase(Uri link, Reporter? rep = null)
@@ -36,16 +53,11 @@ namespace Murong_Xue.DownloadHandling
                 report = rep;
 
             this.URL = link;
-        }
-        public void Queue()
-        {
-            status = DownloadStatus.QUEUED;
-            //----------------------------------
-            downloadHandler.QueueDownload(this);
+            downloadHandler.AddDownload(this);
         }
         public async Task Request(HttpClient client)
         {
-            status = DownloadStatus.DOWNLOADING;
+            Status = DownloadStatus.DOWNLOADING;
 
             Task<HttpResponseMessage> request = client.GetAsync(URL);
             _ = request.ContinueWith(OnDownload);
@@ -54,7 +66,7 @@ namespace Murong_Xue.DownloadHandling
         }
         private async Task OnDownload(Task<HttpResponseMessage> response)
         {
-            status = DownloadStatus.DOWNLOADED;
+            Status = DownloadStatus.DOWNLOADED;
             //----------------------------------
             HttpResponseMessage msg = await response;
 
@@ -64,28 +76,16 @@ namespace Murong_Xue.DownloadHandling
                     report.WarnSpam("Download failed, too many requests");
                 else
                     report.Warn($"Download failed HTTP Status Code: {msg.StatusCode}");
-                ReQueue();
+                downloadHandler.ReQueue(this);
                 return;
             }
             Stream content = await msg.Content.ReadAsStreamAsync();
 
-            status = DownloadStatus.PROCESSING;
+            Status = DownloadStatus.PROCESSING;
             //----------------------------------
             _ = Task.Run(() => HandleDownload(content));
         }
         public abstract void HandleDownload(Stream content);
-        protected void DoneProcessing()
-        {
-            status = DownloadStatus.PROCESSED;
-            //----------------------------------
-            downloadHandler.RemoveProcessing(this);
-        }
-        private void ReQueue()
-        {
-            status = DownloadStatus.QUEUED;
-            //----------------------------------
-            downloadHandler.ReQueue(this);
-        }
     }
     internal class DownloadEntryFile(Uri link, Uri DownloadPath) : DownloadEntryBase(link, report)
     {
@@ -98,12 +98,12 @@ namespace Murong_Xue.DownloadHandling
             if (File.Exists(destinationPath))
                 report.Error($"File already exists\n\tLink:{URL}\n\tPath:{destinationPath}");
             else using (FileStream fs = File.Create(destinationPath))
-                {
-                    content.Seek(0, SeekOrigin.Begin);
-                    content.CopyTo(fs);
-                    report.Out($"FILE {URL} WRITTEN TO {destinationPath}");
-                }
-            DoneProcessing();
+            {
+                content.Seek(0, SeekOrigin.Begin);
+                content.CopyTo(fs);
+                report.Out($"FILE {URL} WRITTEN TO {destinationPath}");
+            }
+            Status = DownloadStatus.PROCESSED;
         }
     }
     internal class DownloadEntryFeed : DownloadEntryBase
@@ -113,7 +113,7 @@ namespace Murong_Xue.DownloadHandling
         private Feed feed;
         public DownloadEntryFeed(Feed _feed) : base(_feed.URL, report)
         {
-            _feed.dStatus = base.status;
+            _feed.dStatus = base.Status;
             feed = _feed;
         }
         override public void HandleDownload(Stream content)
@@ -123,7 +123,7 @@ namespace Murong_Xue.DownloadHandling
             const string link_element = "link";
             const string item_element = "item";
             const string date_element = "pubDate";
-            // ---
+            // PRE-HANDLE EVENTS
             events.OnFeedDownloaded();
             report.Notice($"Feed Downloaded len:{content.Length}, {feed.Title}");
             // ---
@@ -240,8 +240,8 @@ namespace Murong_Xue.DownloadHandling
                         break;
                 }
             }
-            //----
-            DoneProcessing();
+            // POST-HANDLE EVENTS
+            Status = DownloadStatus.PROCESSED;
         }
         private void AddFile(Uri link) //TODO add title + url to a list & retrieve later?
         {
@@ -251,8 +251,8 @@ namespace Murong_Xue.DownloadHandling
                 report.Warn($"Specified download path did not exist, creating directory. {downloadPath}");
                 Directory.CreateDirectory(downloadPath.LocalPath);
             }
-            DownloadEntryFile entry = new(link, downloadPath);
-            entry.Queue();
+
+            _ = new DownloadEntryFile(link, downloadPath);
         }
     }
 }
