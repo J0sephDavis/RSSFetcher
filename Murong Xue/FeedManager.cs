@@ -72,5 +72,9 @@ namespace Murong_Xue
             Feeds.Remove(_feed);
             return true;
         }
+        public Feed GetStub()
+        {
+            return new(GetPrivateKey());
+        }
     }
 }
