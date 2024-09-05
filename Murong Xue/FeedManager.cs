@@ -9,7 +9,7 @@ namespace Murong_Xue
         //--------------------------------------------------------------------
         private int PrivateKey = 0;
         private readonly object PrivateKeyLock = new(); // a precaution
-        public int GetPrivateKey()
+        private int GetPrivateKey()
         {
             lock (PrivateKeyLock)
             {
