@@ -68,7 +68,7 @@ namespace Murong_Xue
         {
             report.Trace("Create Feed");
             if (feed.URL == null) return false;
-            rss.AddFeed(feed);
+            feedManager.AddFeed(feed);
             return true;
         }
         public bool DeleteFeed(Feed feed) => DeleteFeed(feed.ID);
