@@ -24,6 +24,12 @@ namespace Murong_Xue
         public Controller()
         {
             rssData = new(Config.GetInstance().GetRSSPath());
+            feedManager = new();
+            init();
+        }
+        private async void init()
+        {
+            feedManager.AddFeeds(await rssData.ReadFeeds());
         }
         //-----------Tasks------------------------------------------------------
         public async Task<List<Feed>> GetFeeds(bool LoadFromFile = false)
