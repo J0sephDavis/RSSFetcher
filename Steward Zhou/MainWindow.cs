@@ -79,9 +79,9 @@ namespace Steward_Zhou
             EditingFeed = new();
             UpdateEditorFields();
         }
-        private void btnSaveQuit_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
-            report.Trace("btnSaveQuit_Click");
+            report.Trace("btnSave_Click");
             controller.UpdateEntries();
             UpdateAllPanels();
         }

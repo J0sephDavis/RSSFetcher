@@ -405,9 +405,9 @@
             btnSaveQuit.Name = "btnSaveQuit";
             btnSaveQuit.Size = new Size(80, 25);
             btnSaveQuit.TabIndex = 3;
-            btnSaveQuit.Text = "Save && Quit";
+            btnSaveQuit.Text = "Save to File";
             btnSaveQuit.UseVisualStyleBackColor = true;
-            btnSaveQuit.Click += btnSaveQuit_Click;
+            btnSaveQuit.Click += btnSave_Click;
             // 
             // EditButtons
             // 
