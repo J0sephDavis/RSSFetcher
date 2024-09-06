@@ -27,11 +27,11 @@ namespace Steward_Zhou
             report.Trace("btnGetFeeds_click");
             UpdateFeedList();
         }
-        private void btnProcess_Click(object sender, EventArgs e)
+        private async void btnProcess_Click(object sender, EventArgs e)
         {
             report.Trace("btnProcess_Click");
             //queue feeds & process
-            controller.DownloadFeeds();
+            await controller.DownloadFeeds();
         }
         private void btnEdit_Click(object sender, EventArgs e)
         {
