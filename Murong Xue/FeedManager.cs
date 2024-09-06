@@ -61,6 +61,11 @@ namespace Murong_Xue
             // --- events
             FeedAddOrRemove.Invoke(this, new EventArgs());
         }
+        /// <summary>
+        /// Removes a feed from the managed list. Sets ID to -1
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
         public bool RemoveFeed(int ID)
         {
             var feed_remove =
