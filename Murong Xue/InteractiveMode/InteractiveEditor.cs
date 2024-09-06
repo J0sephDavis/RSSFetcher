@@ -2,6 +2,7 @@
 using RSSFetcher.FeedData;
 using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
+using System.Security.Cryptography;
 
 namespace Murong_Xue.InteractiveMode
 {
@@ -16,46 +17,15 @@ namespace Murong_Xue.InteractiveMode
         {
             Logger.SetInteractiveMode(true);
             report = Logger.RequestReporter("EDITOR");
+            //----
+            Commands.Add(new PrintCommand(controller));
         }
-        enum INTERACTIVE_OPTION
+        public enum INTERACTIVE_RESPONSE
         {
-            NONE,
-            EDIT,
-            DELETE,
-            PRINT,
-            CREATE,
-            LOAD,
-            SAVE,
-            EXIT
-        };
-        /// <summary>
-        /// converts single word into INTERACTIVE_OPTION
-        /// </summary>
-        /// <param name="cmd"></param>
-        /// <returns>the INTERCTIVE_OPTION associated with the word (NONE by default)</returns>
-        private static INTERACTIVE_OPTION CommandToOption(string? cmd)
-        {
-            if (cmd == null) return INTERACTIVE_OPTION.NONE;
-            switch (cmd.ToLower())
-            {
-                case "edit":
-                    return INTERACTIVE_OPTION.EDIT;
-                case "delete":
-                    return INTERACTIVE_OPTION.DELETE;
-                case "print":
-                    return INTERACTIVE_OPTION.PRINT;
-                case "create":
-                    return INTERACTIVE_OPTION.PRINT;
-                case "load":
-                    return INTERACTIVE_OPTION.LOAD;
-                case "save":
-                    return INTERACTIVE_OPTION.SAVE;
-                case "exit":
-                case "quit":
-                    return INTERACTIVE_OPTION.EXIT;
-                default:
-                    return INTERACTIVE_OPTION.NONE;
-            }
+            NONE = -1,
+            FAILURE = 0,
+            SUCCESS = 1,
+            QUIT
         }
         protected string[] PromptForInput(string prompt_msg, uint minLen = 3)
         {
@@ -69,29 +39,27 @@ namespace Murong_Xue.InteractiveMode
         }
         public void MainLoop()
         {
-            /* 1. Prompt user for input
-             * 2. process command and pass arguments to handler
-             */
-            report.Trace("MAIN LOOP 2!");
-            string[] input_string = [];
-            INTERACTIVE_OPTION command = INTERACTIVE_OPTION.NONE;
+            report.Trace("INTERACTIVE MAIN LOOP");
+            string[] input_string;
             while (true)
             {
-                //1. prompt for input & return arr<string>[]
+                // Prompt for input
                 input_string = PromptForInput(">");
                 report.DebugVal("input_string: ");
                 foreach (string s in input_string)
                     report.DebugVal($"\t{s}");
-                //2. get cmd from input[0]
-                command = CommandToOption(input_string[0]);
-                //3. pass arguments to command (if != NONE)
-                switch (command)
+                // Handle cmd
+                string command_string = input_string[0].ToLower();
+                INTERACTIVE_RESPONSE response = INTERACTIVE_RESPONSE.NONE;
+                foreach (var cmd in Commands)
                 {
-                    default:
-                        report.Warn($"{command} is not yet implemented");
+                    if (cmd.GetName() == command_string)
+                    {
+                        response = cmd.Handle(input_string);
                         break;
+                    }
                 }
-                break;
+                if (response == INTERACTIVE_RESPONSE.QUIT) return;
             }
         }
         #region Static command strings

@@ -2,6 +2,7 @@
 using RSSFetcher.FeedData;
 using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
+using static Murong_Xue.InteractiveMode.InteractiveEditor;
 
 namespace Murong_Xue.InteractiveMode
 {
@@ -9,38 +10,35 @@ namespace Murong_Xue.InteractiveMode
     {
         protected readonly Controller controller = _controller;
         protected readonly Reporter report = _report;
-        protected enum RESPONSE
-        {
-            SUCCESS = 1,
-            FAILURE = 0
-        }
         /// <summary>
         /// resturns the command name, e.g., "print"
         /// </summary>
         /// <returns></returns>
         abstract public string GetName();
+        //      TODO  abstract public string GetDescription();
+
         /// <summary>
         /// processes the command with the given arguments
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        abstract public int Handle(string[] args);
-        abstract public int Handle(int arg);
+        abstract public INTERACTIVE_RESPONSE Handle(string[] args);
+        abstract public INTERACTIVE_RESPONSE Handle(int arg); //might not keep this one, just a thought
     }
 
     internal class PrintCommand(Controller control)
         : IInteractiveCommand(control, Logger.RequestReporter("PRINT"))
     {
         public override string GetName() => "print";
-        public override int Handle(int arg)
+        public override INTERACTIVE_RESPONSE Handle(int arg)
         {
             Feed? feed = controller.GetFeed(arg);
-            if (feed == null) return (int)RESPONSE.FAILURE;
+            if (feed == null) return INTERACTIVE_RESPONSE.FAILURE;
             PrintHeader();
             PrintFeed(feed);
-            return (int)RESPONSE.SUCCESS;
+            return INTERACTIVE_RESPONSE.SUCCESS;
         }
-        public override int Handle(string[] args)
+        public override INTERACTIVE_RESPONSE Handle(string[] args)
         {
             PrintHeader();
             if (args.Length == 0)
@@ -58,7 +56,7 @@ namespace Murong_Xue.InteractiveMode
                         PrintFeed(feed);
                 }
             }
-            return (int)RESPONSE.SUCCESS;
+            return INTERACTIVE_RESPONSE.SUCCESS;
         }
         private void PrintHeader()
         {
