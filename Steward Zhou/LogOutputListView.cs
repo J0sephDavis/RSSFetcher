@@ -28,6 +28,6 @@ namespace Steward_Zhou
                 });
             else lb.Items.Add(msg.ToString()); //doubt this ever happenss
         }
-        public void Dispose() { }
+        public void Dispose() { Disposed = true; }
     }
 }
