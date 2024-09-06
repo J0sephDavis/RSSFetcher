@@ -37,7 +37,7 @@ public class Program
             //"--VERBOSE",
             //"--UNIMPORTANT",
             //"--DEBUG",
-            //"--edit",
+            "--edit",
         ];
 #endif
         ArgResult choice = HandleArgs(cfg, args);
@@ -64,14 +64,9 @@ public class Program
     public static void StartInteractive()
     {
         report.Trace("StartInteractive");
-        InteractiveEditor editor = new(RSSEntries.GetFeeds());
-        if (editor.MainLoop())
-        {
-            report.Out("Saving entries from interactive session");
-            RSSEntries.UpdateEntries();
-        }
-        else
-            report.Out("Discarding change from interactive session");
+        InteractiveEditor editor = new();
+        editor.MainLoop();
+        report.Trace("interactive mode ended");
     }
 
     private static ArgResult HandleArgs(Config cfg, string[] args)

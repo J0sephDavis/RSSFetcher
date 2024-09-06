@@ -39,7 +39,7 @@ namespace RSSFetcher.FeedData
                 if (f.ID == -1)
                     f.ID = GetPrivateKey();
                 f.Status |= FeedStatus.LINKED;
-                report.TraceVal($"FEED (tobe) ADDED:\n{f.ToLongString()}");
+                report.TraceVal($"FEED ADDED:\n{f.ToLongString()}");
             }
             Feeds.AddRange(feeds);
             // --- events
