@@ -10,7 +10,7 @@ namespace Steward_Zhou
     {
         private Reporter report = Logger.RequestReporter("W-MAIN");
         private Controller controller = new();
-        private Feed? EditingFeed = null;
+        private Feed? EditingFeed = new();
         public MainWindow()
         {
             Logger.SetInteractiveMode(true);
@@ -71,9 +71,9 @@ namespace Steward_Zhou
             if (controller.DeleteFeed(EditingFeed))
                 UpdateAllPanels();
         }
-        private void btnCreate_Click(object sender, EventArgs e)
+        private void btnClear_Click(object sender, EventArgs e)
         {
-            report.Trace("btnCreate_Click");
+            report.Trace("btnClear_Click");
             EditingFeed = controller.CreateNewFeedRecord();
             UpdateAllPanels();
         }

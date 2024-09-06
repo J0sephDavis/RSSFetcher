@@ -35,6 +35,10 @@
             columnHeaderDate = new ColumnHeader();
             columnHeaderStatus = new ColumnHeader();
             RightMainSplit = new SplitContainer();
+            Buttons = new FlowLayoutPanel();
+            btnEdit = new Button();
+            btnDelete = new Button();
+            btnCreate = new Button();
             tableLayoutPanel1 = new TableLayoutPanel();
             Property_History = new Panel();
             txtBoxHistory = new TextBox();
@@ -57,14 +61,8 @@
             txtBoxID = new TextBox();
             LblId = new Label();
             ButtonPanelFlowLayout = new FlowLayoutPanel();
-            panel1 = new Panel();
-            label1 = new Label();
-            btnGetFeeds = new Button();
             btnProcess = new Button();
-            btnEdit = new Button();
-            btnCreate = new Button();
             btnSaveQuit = new Button();
-            btnDelete = new Button();
             LogListBox = new ListBox();
             FeedStatusStrip = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
@@ -80,6 +78,7 @@
             RightMainSplit.Panel1.SuspendLayout();
             RightMainSplit.Panel2.SuspendLayout();
             RightMainSplit.SuspendLayout();
+            Buttons.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             Property_History.SuspendLayout();
             Property_Date.SuspendLayout();
@@ -88,7 +87,6 @@
             Property_Title.SuspendLayout();
             Property_ID.SuspendLayout();
             ButtonPanelFlowLayout.SuspendLayout();
-            panel1.SuspendLayout();
             FeedStatusStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -153,6 +151,7 @@
             // 
             // RightMainSplit.Panel1
             // 
+            RightMainSplit.Panel1.Controls.Add(Buttons);
             RightMainSplit.Panel1.Controls.Add(tableLayoutPanel1);
             RightMainSplit.Panel1.Controls.Add(ButtonPanelFlowLayout);
             // 
@@ -163,10 +162,61 @@
             RightMainSplit.SplitterDistance = 252;
             RightMainSplit.TabIndex = 0;
             // 
+            // Buttons
+            // 
+            Buttons.AutoSize = true;
+            Buttons.Controls.Add(btnEdit);
+            Buttons.Controls.Add(btnDelete);
+            Buttons.Controls.Add(btnCreate);
+            Buttons.Dock = DockStyle.Bottom;
+            Buttons.Location = new Point(0, 221);
+            Buttons.Name = "Buttons";
+            Buttons.Size = new Size(530, 31);
+            Buttons.TabIndex = 28;
+            // 
+            // btnEdit
+            // 
+            btnEdit.AutoSize = true;
+            btnEdit.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnEdit.Location = new Point(3, 3);
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(55, 25);
+            btnEdit.TabIndex = 1;
+            btnEdit.Text = "Submit";
+            btnEdit.UseVisualStyleBackColor = true;
+            btnEdit.Click += btnEdit_Click;
+            // 
+            // btnDelete
+            // 
+            btnDelete.AutoSize = true;
+            btnDelete.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnDelete.Location = new Point(64, 3);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(50, 25);
+            btnDelete.TabIndex = 7;
+            btnDelete.Text = "Delete";
+            btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.Click += btnDelete_Click;
+            // 
+            // btnCreate
+            // 
+            btnCreate.AutoSize = true;
+            btnCreate.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            btnCreate.Dock = DockStyle.Left;
+            btnCreate.Location = new Point(120, 3);
+            btnCreate.Name = "btnCreate";
+            btnCreate.Size = new Size(44, 25);
+            btnCreate.TabIndex = 2;
+            btnCreate.Text = "Clear";
+            btnCreate.UseVisualStyleBackColor = true;
+            btnCreate.Click += btnClear_Click;
+            // 
             // tableLayoutPanel1
             // 
+            tableLayoutPanel1.AutoSize = true;
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
             tableLayoutPanel1.Controls.Add(Property_History, 0, 5);
             tableLayoutPanel1.Controls.Add(Property_Date, 0, 4);
             tableLayoutPanel1.Controls.Add(Property_Expr, 0, 3);
@@ -175,10 +225,9 @@
             tableLayoutPanel1.Controls.Add(Property_ID, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
-            tableLayoutPanel1.Location = new Point(131, 0);
+            tableLayoutPanel1.Location = new Point(0, 31);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 9;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.RowCount = 6;
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
@@ -187,7 +236,9 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new Size(399, 252);
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.Size = new Size(530, 221);
             tableLayoutPanel1.TabIndex = 21;
             // 
             // Property_History
@@ -404,114 +455,37 @@
             // ButtonPanelFlowLayout
             // 
             ButtonPanelFlowLayout.AutoSize = true;
-            ButtonPanelFlowLayout.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ButtonPanelFlowLayout.Controls.Add(panel1);
             ButtonPanelFlowLayout.Controls.Add(btnProcess);
-            ButtonPanelFlowLayout.Controls.Add(btnEdit);
-            ButtonPanelFlowLayout.Controls.Add(btnCreate);
             ButtonPanelFlowLayout.Controls.Add(btnSaveQuit);
-            ButtonPanelFlowLayout.Controls.Add(btnDelete);
-            ButtonPanelFlowLayout.Dock = DockStyle.Left;
+            ButtonPanelFlowLayout.Dock = DockStyle.Top;
             ButtonPanelFlowLayout.Location = new Point(0, 0);
             ButtonPanelFlowLayout.Name = "ButtonPanelFlowLayout";
-            ButtonPanelFlowLayout.Size = new Size(131, 252);
+            ButtonPanelFlowLayout.Size = new Size(530, 31);
             ButtonPanelFlowLayout.TabIndex = 5;
-            // 
-            // panel1
-            // 
-            panel1.AutoSize = true;
-            panel1.Controls.Add(label1);
-            panel1.Controls.Add(btnGetFeeds);
-            panel1.Location = new Point(3, 3);
-            panel1.MinimumSize = new Size(0, 25);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(110, 25);
-            panel1.TabIndex = 6;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Dock = DockStyle.Right;
-            label1.Location = new Point(68, 0);
-            label1.MinimumSize = new Size(0, 25);
-            label1.Name = "label1";
-            label1.Size = new Size(42, 25);
-            label1.TabIndex = 5;
-            label1.Text = "#feeds";
-            label1.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // btnGetFeeds
-            // 
-            btnGetFeeds.AutoSize = true;
-            btnGetFeeds.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnGetFeeds.Dock = DockStyle.Left;
-            btnGetFeeds.Location = new Point(0, 0);
-            btnGetFeeds.Name = "btnGetFeeds";
-            btnGetFeeds.Size = new Size(68, 25);
-            btnGetFeeds.TabIndex = 4;
-            btnGetFeeds.Text = "Get Feeds";
-            btnGetFeeds.UseVisualStyleBackColor = true;
-            btnGetFeeds.Click += btnGetFeeds_Click;
             // 
             // btnProcess
             // 
             btnProcess.AutoSize = true;
             btnProcess.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnProcess.Location = new Point(3, 34);
+            btnProcess.Location = new Point(3, 3);
             btnProcess.Name = "btnProcess";
-            btnProcess.Size = new Size(90, 25);
+            btnProcess.Size = new Size(79, 25);
             btnProcess.TabIndex = 0;
-            btnProcess.Text = "Process Feeds";
+            btnProcess.Text = "Fetch Feeds";
             btnProcess.UseVisualStyleBackColor = true;
             btnProcess.Click += btnProcess_Click;
-            // 
-            // btnEdit
-            // 
-            btnEdit.AutoSize = true;
-            btnEdit.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnEdit.Location = new Point(3, 65);
-            btnEdit.Name = "btnEdit";
-            btnEdit.Size = new Size(112, 25);
-            btnEdit.TabIndex = 1;
-            btnEdit.Text = "Edit Selected Feed";
-            btnEdit.UseVisualStyleBackColor = true;
-            btnEdit.Click += btnEdit_Click;
-            // 
-            // btnCreate
-            // 
-            btnCreate.AutoSize = true;
-            btnCreate.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnCreate.Location = new Point(3, 96);
-            btnCreate.Name = "btnCreate";
-            btnCreate.Size = new Size(79, 25);
-            btnCreate.TabIndex = 2;
-            btnCreate.Text = "Create Feed";
-            btnCreate.UseVisualStyleBackColor = true;
-            btnCreate.Click += btnCreate_Click;
             // 
             // btnSaveQuit
             // 
             btnSaveQuit.AutoSize = true;
             btnSaveQuit.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnSaveQuit.Location = new Point(3, 127);
+            btnSaveQuit.Location = new Point(88, 3);
             btnSaveQuit.Name = "btnSaveQuit";
             btnSaveQuit.Size = new Size(80, 25);
             btnSaveQuit.TabIndex = 3;
             btnSaveQuit.Text = "Save && Quit";
             btnSaveQuit.UseVisualStyleBackColor = true;
             btnSaveQuit.Click += btnSaveQuit_Click;
-            // 
-            // btnDelete
-            // 
-            btnDelete.AutoSize = true;
-            btnDelete.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            btnDelete.Location = new Point(3, 158);
-            btnDelete.Name = "btnDelete";
-            btnDelete.Size = new Size(125, 25);
-            btnDelete.TabIndex = 7;
-            btnDelete.Text = "Delete Selected Feed";
-            btnDelete.UseVisualStyleBackColor = true;
-            btnDelete.Click += btnDelete_Click;
             // 
             // LogListBox
             // 
@@ -577,6 +551,8 @@
             RightMainSplit.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)RightMainSplit).EndInit();
             RightMainSplit.ResumeLayout(false);
+            Buttons.ResumeLayout(false);
+            Buttons.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             Property_History.ResumeLayout(false);
@@ -593,8 +569,6 @@
             Property_ID.PerformLayout();
             ButtonPanelFlowLayout.ResumeLayout(false);
             ButtonPanelFlowLayout.PerformLayout();
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             FeedStatusStrip.ResumeLayout(false);
             FeedStatusStrip.PerformLayout();
             ResumeLayout(false);
@@ -615,8 +589,6 @@
         private Button btnEdit;
         private Button btnProcess;
         private Button btnSaveQuit;
-        private Button btnCreate;
-        private Button btnGetFeeds;
         private FlowLayoutPanel ButtonPanelFlowLayout;
         private ListView FeedListView;
         private ColumnHeader columnHeaderTitle;
@@ -640,11 +612,11 @@
         private Panel Property_History;
         private Panel Property_Date;
         private Panel Property_Expr;
-        private Panel panel1;
-        private Label label1;
         private Button btnDelete;
         private TextBox txtBoxStatus;
         private Label lblStatus;
         private ColumnHeader columnHeaderStatus;
+        private Button btnCreate;
+        private FlowLayoutPanel Buttons;
     }
 }
