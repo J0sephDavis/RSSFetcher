@@ -78,6 +78,9 @@ namespace Murong_Xue
             var _feed = feed_remove.First();
             report.Debug($"Removing feed: {_feed.ID} {_feed.Title}");
             Feeds.Remove(_feed);
+            //reset the feed left in the editor so that it can be resubmitted.
+            _feed.ID = -1; //no ID if its not LINKED
+            _feed.Status -= FeedStatus.LINKED; //if it weren't LINKED it wouldn't be here
             // --- events
             FeedAddOrRemove.Invoke(this, new());
             return true;

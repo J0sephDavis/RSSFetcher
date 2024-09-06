@@ -21,7 +21,7 @@ namespace Steward_Zhou
         }
         private void OnFeedAdded(object? sender, EventArgs e)
         {
-            UpdateFeedList();
+            UpdateAllPanels();
             report.Trace("ON FEED ADDED");
         }
         private void MainWindow_Load(object sender, EventArgs e)
