@@ -1,7 +1,6 @@
 using Murong_Xue;
 using Murong_Xue.Logging;
 using Murong_Xue.Logging.Reporting;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Steward_Zhou
@@ -187,7 +186,7 @@ namespace Steward_Zhou
             base.SubItems.Clear();
             feed = _feed;
 
-            if ((fields & FeedFields.ID)>0)
+            if ((fields & FeedFields.ID) > 0)
                 base.SubItems.Add(feed.ID.ToString());
 
             if ((fields & FeedFields.TITLE) > 0)

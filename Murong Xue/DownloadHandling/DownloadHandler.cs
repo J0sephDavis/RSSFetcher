@@ -13,7 +13,7 @@ namespace Murong_Xue.DownloadHandling
         //---------------------------------------------------------------------------
         public int BATCH_SIZE { get; protected set; } = 7;
         const int batch_delay_unit = 100;
-        public int BATCH_ADD_DELAY { get; protected set; } = batch_delay_unit * 5/4;
+        public int BATCH_ADD_DELAY { get; protected set; } = batch_delay_unit * 5 / 4;
         private readonly object fail_lock = new();
         private int fails = 0;
         //---c# version 12 does not have System.Threading.Lock, so we use Object()---
@@ -27,7 +27,7 @@ namespace Murong_Xue.DownloadHandling
         }
         private int GetTotalHolds()
         {
-            lock(ListLocks)
+            lock (ListLocks)
             {
                 var WaitingList =
                 from entry in Downloads
@@ -45,7 +45,7 @@ namespace Murong_Xue.DownloadHandling
             //Reasons to NOT stop the while loop, we've got people doing work or wanting to do work.
             while (GetTotalHolds() != 0)
             {
-                for (int i = Downloads.Count-1; i >= 0; i--)
+                for (int i = Downloads.Count - 1; i >= 0; i--)
                 {
                     if (CurrentBatch.Count >= BATCH_SIZE)
                         break;
@@ -93,7 +93,7 @@ namespace Murong_Xue.DownloadHandling
 
         public void AddDownload(DownloadEntryBase entry)
         {
-            lock(ListLocks)
+            lock (ListLocks)
             {
                 Downloads.Add(entry);
                 entry.Status = DownloadStatus.WAITING;

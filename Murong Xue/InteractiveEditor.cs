@@ -295,14 +295,14 @@ namespace Murong_Xue
         protected void CreateHandler()
         {
             Feed feed = new();
-            
+
             string? input;
             while (feed.Title == string.Empty)
             {
                 report.Out("Title:");
                 input = Console.ReadLine();
                 if (input == null) continue;
-                feed.Title= input;
+                feed.Title = input;
             }
             while (feed.URL.ToString() == string.Empty)
             {
@@ -341,7 +341,7 @@ namespace Murong_Xue
                 report.Error("No Entries found");
                 return false;
             }
-            
+
             report.Debug("\n!!!---INTERACTIVE MODE---!!!");
             Logger.SetInteractiveMode(true);
             string? input;

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
 using Murong_Xue.Logging.OutputHandling;
 using Murong_Xue.Logging.Reporting;
 
@@ -36,7 +32,7 @@ namespace Murong_Xue.Logging
         {
             LogPut.EnableConsoleOutput();
         }
-        public  void AddModule(IOutputModule mod)
+        public void AddModule(IOutputModule mod)
         {
             LogPut.AddModule(mod);
         }

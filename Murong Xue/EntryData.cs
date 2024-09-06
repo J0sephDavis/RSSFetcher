@@ -1,5 +1,4 @@
-﻿using Murong_Xue.DownloadHandling;
-using Murong_Xue.Logging;
+﻿using Murong_Xue.Logging;
 using Murong_Xue.Logging.Reporting;
 using System.Xml;
 
@@ -28,12 +27,12 @@ namespace Murong_Xue
                 report.Error($"RSS Config File not found ({path})");
                 return Feeds;//TODO throw an err
             }
-            
+
             using FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
-            
+
             XmlReaderSettings xSettings = new() { Async = false };
             using XmlReader reader = XmlReader.Create(xStream, xSettings);
-            
+
             Feed? feed = null;
             bool InTitle = false;
             bool InUrl = false;

@@ -17,7 +17,7 @@ namespace Murong_Xue
             string rootDir = Path.GetDirectoryName(System.AppContext.BaseDirectory) + Path.DirectorySeparatorChar;
             DownloadDirectory = rootDir + @"Downloads" + Path.DirectorySeparatorChar;
             RSSConfigPath = new Uri(rootDir + "rss-config.xml");
-            
+
             _Logger = Logger.GetInstance();
             _Logger.SetPath(new(rootDir + @"MurongLie.log"));
             report = Logger.RequestReporter("CONFIG");
