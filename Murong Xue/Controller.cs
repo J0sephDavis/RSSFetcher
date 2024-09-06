@@ -69,20 +69,23 @@ namespace Murong_Xue
             feedManager.AddFeed(feed);
             return true;
         }
-        public bool DeleteFeed(Feed feed) => DeleteFeed(feed.ID);
-        public bool DeleteFeed(int ID)
+        public bool DeleteFeed(Feed? feed)
         {
-            report.Trace($"Delete feed {ID}");
-#if DEBUG
-            Feed? feed = GetFeed(ID);
-            if (feed != null)
-                report.Trace(feed.ToString());
-#endif
-            bool IsRemoved = feedManager.RemoveFeed(ID);
-            if (IsRemoved == false)
+            if (feed == null)
             {
-                report.Warn("rss.RemoveFeed return false. feed not removed.");
+                report.Warn("Attempting to delete null feed");
+                return false;
             }
+            report.Trace($"Delete feed {feed}");
+            bool IsRemoved = false;
+            if ((feed.Status & FeedStatus.LINKED) != 0)
+            {
+                IsRemoved = feedManager.RemoveFeed(feed.ID);
+                if (IsRemoved == false)
+                    report.Warn("rss.RemoveFeed - feed not removed.");
+                return IsRemoved;
+            }
+            else report.TraceVal($"RemoveFeed: feed not linked, status={feed.Status}");
             return IsRemoved;
         }
     }
