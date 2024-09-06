@@ -15,8 +15,14 @@ namespace Steward_Zhou
         {
             Logger.SetInteractiveMode(true);
             InitializeComponent();
+            controller.SubscribeFeedAddOrRemove(OnFeedAdded);
             //Things I wanted to add in MainWindowDesigner, but they get overwritten
             mainSplitContainer.Panel1MinSize = ControlsPanel.MinimumSize.Width;
+        }
+        private void OnFeedAdded(object? sender, EventArgs e)
+        {
+            UpdateFeedList();
+            report.Trace("ON FEED ADDED");
         }
         private void MainWindow_Load(object sender, EventArgs e)
         {
@@ -24,11 +30,6 @@ namespace Steward_Zhou
             UpdateAllPanels();
         }
         //-------------------------------BUTTONS-------------------------------
-        private void btnGetFeeds_Click(object sender, EventArgs e)
-        {
-            report.Trace("btnGetFeeds_click");
-            UpdateFeedList();
-        }
         private async void btnProcess_Click(object sender, EventArgs e)
         {
             report.Trace("btnProcess_Click");
@@ -60,7 +61,6 @@ namespace Steward_Zhou
                 else
                     report.Debug("Failed to create feed");
             }
-            UpdateAllPanels();
         }
         private void btnDelete_Click(object sender, EventArgs e)
         {
@@ -70,19 +70,20 @@ namespace Steward_Zhou
                 report.Trace("editing feed == null");
                 return;
             }
-            if (controller.DeleteFeed(EditingFeed))
-                UpdateAllPanels();
+            //TODO check if editingfeed is even in the feed manager? If its not, just clear the editing feed
+            controller.DeleteFeed(EditingFeed);
         }
         private void btnClear_Click(object sender, EventArgs e)
         {
             report.Trace("btnClear_Click");
             EditingFeed = controller.CreateNewFeedRecord();
-            UpdateAllPanels();
+            UpdateEditorFields();
         }
         private void btnSaveQuit_Click(object sender, EventArgs e)
         {
             report.Trace("btnSaveQuit_Click");
             controller.UpdateEntries();
+            UpdateAllPanels();
         }
         //--------------------------------EVENTS-------------------------------
         private void FeedListView_SelectedIndexChanged(object sender, EventArgs e)

@@ -6,7 +6,8 @@ namespace Murong_Xue
     internal class FeedManager()
     {
         private readonly Reporter report = Logger.RequestReporter("FEED-M");
-        public event EventHandler FeedsAdded;
+        //--------------------------------------------------------------------
+        public event EventHandler FeedAddOrRemove = delegate { };
         //--------------------------------------------------------------------
         private int PrivateKey = 0;
         private readonly object PrivateKeyLock = new(); // a precaution
@@ -42,7 +43,7 @@ namespace Murong_Xue
             }
             Feeds.AddRange(feeds);
             // --- events
-            FeedsAdded.Invoke(this,new EventArgs());
+            FeedAddOrRemove.Invoke(this,new EventArgs());
         }
         public void AddFeed(Feed feed) //return ID or -1
         {
@@ -58,7 +59,7 @@ namespace Murong_Xue
             
             report.TraceVal($"FEED ADDED:\n{feed.ToLongString()}");
             // --- events
-            FeedsAdded.Invoke(this, new EventArgs());
+            FeedAddOrRemove.Invoke(this, new EventArgs());
         }
         public bool RemoveFeed(int ID)
         {
@@ -76,6 +77,8 @@ namespace Murong_Xue
             var _feed = feed_remove.First();
             report.Debug($"Removing feed: {_feed.ID} {_feed.Title}");
             Feeds.Remove(_feed);
+            // --- events
+            FeedAddOrRemove.Invoke(this, new());
             return true;
         }
         public Feed GetStub()
