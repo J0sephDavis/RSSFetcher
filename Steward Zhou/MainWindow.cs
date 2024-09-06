@@ -10,7 +10,7 @@ namespace Steward_Zhou
     {
         private readonly Reporter report = Logger.RequestReporter("W-MAIN");
         private readonly Controller controller = new();
-        private readonly Feed? EditingFeed = new();
+        private Feed? EditingFeed = new();
         public MainWindow()
         {
             Logger.SetInteractiveMode(true);
