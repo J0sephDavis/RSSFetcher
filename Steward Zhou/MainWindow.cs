@@ -8,9 +8,9 @@ namespace Steward_Zhou
 {
     public partial class MainWindow : Form
     {
-        private Reporter report = Logger.RequestReporter("W-MAIN");
-        private Controller controller = new();
-        private Feed? EditingFeed = new();
+        private readonly Reporter report = Logger.RequestReporter("W-MAIN");
+        private readonly Controller controller = new();
+        private readonly Feed? EditingFeed = new();
         public MainWindow()
         {
             Logger.SetInteractiveMode(true);
