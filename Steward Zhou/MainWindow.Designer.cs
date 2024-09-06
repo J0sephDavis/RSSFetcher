@@ -30,6 +30,7 @@
         {
             BasePanel = new Panel();
             splitContainer1 = new SplitContainer();
+            LogListBox = new ListBox();
             panel1 = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
             Property_ID = new Panel();
@@ -59,7 +60,6 @@
             btnEdit = new Button();
             btnDelete = new Button();
             btnCreate = new Button();
-            LogListBox = new ListBox();
             FeedListView = new ListView();
             columnHeaderTitle = new ColumnHeader();
             columnHeaderDate = new ColumnHeader();
@@ -104,8 +104,8 @@
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(panel1);
             splitContainer1.Panel1.Controls.Add(LogListBox);
+            splitContainer1.Panel1.Controls.Add(panel1);
             // 
             // splitContainer1.Panel2
             // 
@@ -113,6 +113,17 @@
             splitContainer1.Size = new Size(800, 428);
             splitContainer1.SplitterDistance = 266;
             splitContainer1.TabIndex = 1;
+            // 
+            // LogListBox
+            // 
+            LogListBox.Dock = DockStyle.Fill;
+            LogListBox.FormattingEnabled = true;
+            LogListBox.HorizontalScrollbar = true;
+            LogListBox.ItemHeight = 15;
+            LogListBox.Location = new Point(0, 194);
+            LogListBox.Name = "LogListBox";
+            LogListBox.Size = new Size(266, 234);
+            LogListBox.TabIndex = 0;
             // 
             // panel1
             // 
@@ -442,17 +453,6 @@
             btnCreate.Text = "Clear";
             btnCreate.UseVisualStyleBackColor = true;
             btnCreate.Click += btnClear_Click;
-            // 
-            // LogListBox
-            // 
-            LogListBox.Dock = DockStyle.Fill;
-            LogListBox.FormattingEnabled = true;
-            LogListBox.HorizontalScrollbar = true;
-            LogListBox.ItemHeight = 15;
-            LogListBox.Location = new Point(0, 0);
-            LogListBox.Name = "LogListBox";
-            LogListBox.Size = new Size(266, 428);
-            LogListBox.TabIndex = 0;
             // 
             // FeedListView
             // 
