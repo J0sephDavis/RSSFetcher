@@ -127,11 +127,12 @@ namespace Murong_Xue
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
 
-            return true;
+            return Feeds;
         }
         public bool WriteFeeds(List<Feed> feeds)
         {
             throw new NotImplementedException();
+            /*
             Uri newFilePath = new(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
             Console.WriteLine($"newPath {newFilePath.LocalPath}");
             File.Move(path.LocalPath, newFilePath.LocalPath, overwrite: true);
@@ -174,6 +175,7 @@ namespace Murong_Xue
                 writer.WriteEndElement();
                 writer.Flush();
             }
+            */
         }
     }
 }
