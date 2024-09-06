@@ -94,36 +94,6 @@ namespace Murong_Xue.InteractiveMode
                 break;
             }
         }
-        protected void PrintHandler(int? index)
-        {
-            Feed? feed;
-            DateTime _today = DateTime.Now;
-            int daysSince;
-            if (index != null && index > -1 && index < Feeds.Count)
-            {
-                feed = Feeds[(int)index];
-                if (feed.Date != DateTime.UnixEpoch)
-                {
-                    daysSince = (_today - feed.Date).Days;
-                }
-                else daysSince = -1;
-                report.Out(feed.ToLongString());
-                return;
-            }
-            int totalFeeds = Feeds.Count;
-            report.Out("ID\tDays\tTitle");
-            for (int idx = 0; idx < totalFeeds; idx++)
-            {
-                feed = Feeds[idx];
-                if (feed.Date != DateTime.UnixEpoch)
-                {
-                    daysSince = (_today - feed.Date).Days;
-                }
-                else daysSince = -1;
-
-                report.Out($"{idx}\t{daysSince}\t{feed.Title}");
-            }
-        }
         #region Static command strings
         static readonly string[] edit_cmds_title = ["title", "t"];
         static readonly string[] edit_cmds_history = ["history", "h"];
