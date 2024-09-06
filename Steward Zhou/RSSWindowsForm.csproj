@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Murong Xue\Murong Xue.csproj" />
+    <ProjectReference Include="..\Murong Xue\RSSFetcher.csproj" />
   </ItemGroup>
 
   <ItemGroup>
