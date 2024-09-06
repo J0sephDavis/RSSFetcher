@@ -43,7 +43,7 @@ namespace Murong_Xue
             }
             Feeds.AddRange(feeds);
             // --- events
-            FeedAddOrRemove.Invoke(this,new EventArgs());
+            FeedAddOrRemove.Invoke(this, new EventArgs());
         }
         public void AddFeed(Feed feed) //return ID or -1
         {
@@ -56,16 +56,17 @@ namespace Murong_Xue
                 feed.ID = GetPrivateKey();
             feed.Status |= FeedStatus.LINKED;
             Feeds.Add(feed);
-            
+
             report.TraceVal($"FEED ADDED:\n{feed.ToLongString()}");
             // --- events
             FeedAddOrRemove.Invoke(this, new EventArgs());
         }
         public bool RemoveFeed(int ID)
         {
-            var feed_remove = from f in Feeds
-                                where f.ID == ID
-                                select f;
+            var feed_remove =
+                from f in Feeds
+                where f.ID == ID
+                select f;
 
             if (feed_remove.Count() > 1)
             {

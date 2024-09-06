@@ -1,7 +1,6 @@
 ﻿using Murong_Xue.DownloadHandling;
 using Murong_Xue.Logging;
 using Murong_Xue.Logging.Reporting;
-using System.ComponentModel;
 
 namespace Murong_Xue
 {
@@ -89,7 +88,6 @@ namespace Murong_Xue
             {
                 report.Warn("rss.RemoveFeed return false. feed not removed.");
             }
-            
             return IsRemoved;
         }
     }
