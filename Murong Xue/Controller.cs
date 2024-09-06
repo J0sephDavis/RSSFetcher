@@ -32,11 +32,8 @@ namespace Murong_Xue
             feedManager.AddFeeds(await rssData.ReadFeeds());
         }
         //-----------Tasks------------------------------------------------------
-        public async Task<List<Feed>> GetFeeds(bool LoadFromFile = false)
+        public List<Feed> GetFeeds()
         {
-            if (LoadFromFile)
-                feedManager.AddFeeds(await rssData.ReadFeeds());
-            // ---
             return feedManager.GetFeeds();
         }
         public Feed? GetFeed(int ID)
@@ -46,15 +43,15 @@ namespace Murong_Xue
         public async Task DownloadFeeds()
         {
             report.Trace("DownloadFeeds()");
-            foreach (var feed in await GetFeeds())
+            foreach (var feed in GetFeeds())
             {
                 var entry = new DownloadEntryFeed(feed);
             }
             await DownloadHandler.GetInstance().ProcessDownloads();
         }
-        public async void UpdateEntries()
+        public void UpdateEntries()
         {
-            rssData.WriteFeeds(await GetFeeds());
+            rssData.WriteFeeds(GetFeeds());
         }
         //----------------------------------------------------------------------
 
