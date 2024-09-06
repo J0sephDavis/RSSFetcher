@@ -19,6 +19,7 @@ namespace Steward_Zhou
         private void MainWindow_Load(object sender, EventArgs e)
         {
             Logger.GetInstance().AddModule(new LogOutputListView(LogListBox));
+            UpdateAllPanels();
         }
         //-------------------------------BUTTONS-------------------------------
         private void btnGetFeeds_Click(object sender, EventArgs e)
