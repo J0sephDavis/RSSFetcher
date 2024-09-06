@@ -1,7 +1,7 @@
-﻿using Murong_Xue.DownloadHandling;
+﻿using RSSFetcher.DownloadHandling;
 using System.Text;
 
-namespace Murong_Xue
+namespace RSSFetcher
 {
     /// <summary>
     /// To keep counts for each event that has happened & print at the end

@@ -1,8 +1,8 @@
-﻿using Murong_Xue.Logging;
-using Murong_Xue.Logging.Reporting;
+﻿using RSSFetcher.Logging;
+using RSSFetcher.Logging.Reporting;
 using System.Xml;
 
-namespace Murong_Xue.FeedData
+namespace RSSFetcher.FeedData
 {
     internal class DataFile(Uri RSSPath)
     {
@@ -17,7 +17,7 @@ namespace Murong_Xue.FeedData
         private const string RSS_Date = "date";
         //--------------------------------------------------------------------
         //! Reads the XML files and populated the FeedEntry list
-        public async Task<List<Feed>> ReadFeeds()
+        public List<Feed> ReadFeeds()
         {
             List<Feed> Feeds = [];
             /* NOTE! Running the XMLReader in Async on our config file takes 23-26ms

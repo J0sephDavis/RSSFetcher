@@ -1,7 +1,7 @@
-using Murong_Xue.Logging.OutputHandling;
-using Murong_Xue.Logging.Reporting;
+using RSSFetcher.Logging.OutputHandling;
+using RSSFetcher.Logging.Reporting;
 
-namespace Murong_Xue.Logging
+namespace RSSFetcher.Logging
 {
     public class Logger
     {

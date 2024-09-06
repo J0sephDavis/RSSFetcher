@@ -1,4 +1,4 @@
-﻿namespace Murong_Xue.Logging.OutputHandling
+﻿namespace RSSFetcher.Logging.OutputHandling
 {
     internal class LogOutputManager
     {

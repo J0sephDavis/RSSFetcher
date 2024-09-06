@@ -1,4 +1,4 @@
-﻿namespace Murong_Xue.Logging.Reporting
+﻿namespace RSSFetcher.Logging.Reporting
 {
     /// <summary>
     /// Responsible for

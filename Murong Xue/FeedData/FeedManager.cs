@@ -1,7 +1,7 @@
-﻿using Murong_Xue.Logging;
-using Murong_Xue.Logging.Reporting;
+﻿using RSSFetcher.Logging;
+using RSSFetcher.Logging.Reporting;
 
-namespace Murong_Xue.FeedData
+namespace RSSFetcher.FeedData
 {
     internal class FeedManager()
     {

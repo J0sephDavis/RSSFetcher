@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Murong_Xue.FeedData
+namespace RSSFetcher.FeedData
 {
     /* feed status flags should answer:
      1. During what phase/when was the feed created (by user in UI or loaded from file, or ?)

@@ -1,7 +1,7 @@
-using Murong_Xue;
-using Murong_Xue.FeedData;
-using Murong_Xue.Logging;
-using Murong_Xue.Logging.Reporting;
+using RSSFetcher;
+using RSSFetcher.FeedData;
+using RSSFetcher.Logging;
+using RSSFetcher.Logging.Reporting;
 using System.Text;
 
 namespace Steward_Zhou

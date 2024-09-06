@@ -1,11 +1,11 @@
-﻿using Murong_Xue.FeedData;
-using Murong_Xue.Logging;
-using Murong_Xue.Logging.Reporting;
+﻿using RSSFetcher.FeedData;
+using RSSFetcher.Logging;
+using RSSFetcher.Logging.Reporting;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace Murong_Xue.DownloadHandling
+namespace RSSFetcher.DownloadHandling
 {
     public enum DownloadStatus
     {

@@ -1,7 +1,7 @@
-﻿using Murong_Xue.Logging;
-using Murong_Xue.Logging.Reporting;
+﻿using RSSFetcher.Logging;
+using RSSFetcher.Logging.Reporting;
 
-namespace Murong_Xue
+namespace RSSFetcher
 {
     public class Config : IDisposable
     {

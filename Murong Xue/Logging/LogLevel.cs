@@ -1,4 +1,4 @@
-﻿namespace Murong_Xue.Logging
+﻿namespace RSSFetcher.Logging
 {
     [Flags]
     public enum LogMod

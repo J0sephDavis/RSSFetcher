@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Murong_Xue.Logging.Reporting
+namespace RSSFetcher.Logging.Reporting
 {
     /// <summary>
     /// Reporter constructor, reporters handle interfacing with the logger class and scheduling messages.

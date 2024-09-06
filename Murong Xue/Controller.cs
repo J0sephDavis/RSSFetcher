@@ -1,9 +1,9 @@
-﻿using Murong_Xue.DownloadHandling;
-using Murong_Xue.FeedData;
-using Murong_Xue.Logging;
-using Murong_Xue.Logging.Reporting;
+﻿using RSSFetcher.DownloadHandling;
+using RSSFetcher.FeedData;
+using RSSFetcher.Logging;
+using RSSFetcher.Logging.Reporting;
 
-namespace Murong_Xue
+namespace RSSFetcher
 {
     /// <summary>
     /// This class orchestrates the initiation and cooperation of the classes
@@ -29,7 +29,7 @@ namespace Murong_Xue
         }
         private async void Init()
         {
-            feedManager.AddFeeds(await rssData.ReadFeeds());
+            feedManager.AddFeeds(rssData.ReadFeeds());
         }
         public void SubscribeFeedAddOrRemove(EventHandler method)
         {

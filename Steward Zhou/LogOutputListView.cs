@@ -1,5 +1,5 @@
-﻿using Murong_Xue.Logging;
-using Murong_Xue.Logging.OutputHandling;
+﻿using RSSFetcher.Logging;
+using RSSFetcher.Logging.OutputHandling;
 
 namespace Steward_Zhou
 {

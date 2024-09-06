@@ -1,4 +1,4 @@
-﻿namespace Murong_Xue.Logging
+﻿namespace RSSFetcher.Logging
 {
     /// <summary>
     /// Class representing a message to be logged
