@@ -1,7 +1,7 @@
 ﻿using Murong_Xue.Logging;
 using Murong_Xue.Logging.Reporting;
 
-namespace Murong_Xue
+namespace Murong_Xue.FeedData
 {
     internal class FeedManager()
     {
@@ -50,7 +50,7 @@ namespace Murong_Xue
             report.Trace($"AddFeed {feed}");
             if (feed.ID != -1)
             {
-                throw new System.ApplicationException("ID already exists");
+                throw new ApplicationException("ID already exists");
             }
             if (feed.ID == -1)
                 feed.ID = GetPrivateKey();

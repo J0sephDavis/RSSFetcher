@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Murong_Xue
+namespace Murong_Xue.FeedData
 {
     /* feed status flags should answer:
      1. During what phase/when was the feed created (by user in UI or loaded from file, or ?)
@@ -28,13 +28,13 @@ namespace Murong_Xue
     }
     public record Feed
     {
-        public int ID               = -1;
-        public string Title         = string.Empty;
-        public Uri? URL             = null;
-        public string Expression    = string.Empty;
-        public DateTime Date        = DateTime.UnixEpoch;
-        public string History       = string.Empty;
-        public FeedStatus Status    = FeedStatus.INIT;
+        public int ID = -1;
+        public string Title = string.Empty;
+        public Uri? URL = null;
+        public string Expression = string.Empty;
+        public DateTime Date = DateTime.UnixEpoch;
+        public string History = string.Empty;
+        public FeedStatus Status = FeedStatus.INIT;
         public Feed() { }       //null constructor
         public Feed(int PK)     //stub constructor
         {

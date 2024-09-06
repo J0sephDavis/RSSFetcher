@@ -1,4 +1,5 @@
 ﻿using Murong_Xue.DownloadHandling;
+using Murong_Xue.FeedData;
 using Murong_Xue.Logging;
 using Murong_Xue.Logging.Reporting;
 

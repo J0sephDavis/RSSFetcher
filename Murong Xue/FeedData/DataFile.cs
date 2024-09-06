@@ -2,7 +2,7 @@
 using Murong_Xue.Logging.Reporting;
 using System.Xml;
 
-namespace Murong_Xue
+namespace Murong_Xue.FeedData
 {
     internal class DataFile(Uri RSSPath)
     {
@@ -28,7 +28,7 @@ namespace Murong_Xue
                 return Feeds;//TODO throw an err
             }
 
-            using FileStream xStream = System.IO.File.Open(path.LocalPath, FileMode.Open);
+            using FileStream xStream = File.Open(path.LocalPath, FileMode.Open);
 
             XmlReaderSettings xSettings = new() { Async = false };
             using XmlReader reader = XmlReader.Create(xStream, xSettings);
