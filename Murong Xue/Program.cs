@@ -1,4 +1,5 @@
-﻿using RSSFetcher.FeedData;
+﻿using Murong_Xue.InteractiveMode;
+using RSSFetcher.FeedData;
 using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
 
@@ -10,7 +11,6 @@ public class Program
     static readonly int PATCH = 0;
     //---
     static Reporter report; //cannot be readonly. Must be set AFTER Config has been created
-    static DataFile? RSSEntries = null;
     static readonly EventTicker events = EventTicker.GetInstance();
 
     [Flags]
@@ -40,17 +40,12 @@ public class Program
             //"--edit",
         ];
 #endif
-        report.Trace($"Started program with {args.Length}args");
-        foreach (string s in args)
-            report.TraceVal(s);
         ArgResult choice = HandleArgs(cfg, args);
-
-        report.Notice("Program starting");
-        RSSEntries = new DataFile(cfg.GetRSSPath());
+        report.DebugVal($"Choice: {choice}");
         switch (choice)
         {
             case (ArgResult.EDIT):
-                await StartEditor();
+                StartInteractive();
                 break;
             case (ArgResult.RUN):
                 //await RSSEntries.Process();
@@ -66,16 +61,10 @@ public class Program
         report.Out(events.GetSummary());
         report.Notice("Program STOP");
     }
-    public static async Task StartEditor()
+    public static void StartInteractive()
     {
-        if (RSSEntries == null)
-        {
-            report.Error("RSSEntries == NULL");
-            return;
-        }
-        //---
-        throw new NotImplementedException();
-        /*InteractiveEditor editor = new(RSSEntries.GetFeeds());
+        report.Trace("StartInteractive");
+        InteractiveEditor editor = new(RSSEntries.GetFeeds());
         if (editor.MainLoop())
         {
             report.Out("Saving entries from interactive session");
@@ -83,7 +72,6 @@ public class Program
         }
         else
             report.Out("Discarding change from interactive session");
-        */
     }
 
     private static ArgResult HandleArgs(Config cfg, string[] args)
