@@ -70,7 +70,6 @@ namespace Steward_Zhou
                 report.Trace("editing feed == null");
                 return;
             }
-            //TODO check if editingfeed is even in the feed manager? If its not, just clear the editing feed
             controller.DeleteFeed(EditingFeed);
         }
         private void btnClear_Click(object sender, EventArgs e)
