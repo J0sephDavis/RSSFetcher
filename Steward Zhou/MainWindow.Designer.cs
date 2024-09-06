@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             BasePanel = new Panel();
-            splitContainer1 = new SplitContainer();
+            mainSplitContainer = new SplitContainer();
             LogListBox = new ListBox();
-            panel1 = new Panel();
+            ControlsPanel = new Panel();
             tableLayoutPanel1 = new TableLayoutPanel();
             Property_ID = new Panel();
             txtBoxStatus = new TextBox();
@@ -70,11 +70,11 @@
             toolStripStatusLabel3 = new ToolStripStatusLabel();
             toolStripStatusLabel4 = new ToolStripStatusLabel();
             BasePanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
-            splitContainer1.Panel1.SuspendLayout();
-            splitContainer1.Panel2.SuspendLayout();
-            splitContainer1.SuspendLayout();
-            panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)mainSplitContainer).BeginInit();
+            mainSplitContainer.Panel1.SuspendLayout();
+            mainSplitContainer.Panel2.SuspendLayout();
+            mainSplitContainer.SuspendLayout();
+            ControlsPanel.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             Property_ID.SuspendLayout();
             Property_Title.SuspendLayout();
@@ -89,30 +89,30 @@
             // 
             // BasePanel
             // 
-            BasePanel.Controls.Add(splitContainer1);
+            BasePanel.Controls.Add(mainSplitContainer);
             BasePanel.Dock = DockStyle.Fill;
             BasePanel.Location = new Point(0, 0);
             BasePanel.Name = "BasePanel";
             BasePanel.Size = new Size(800, 428);
             BasePanel.TabIndex = 0;
             // 
-            // splitContainer1
+            // mainSplitContainer
             // 
-            splitContainer1.Dock = DockStyle.Fill;
-            splitContainer1.Location = new Point(0, 0);
-            splitContainer1.Name = "splitContainer1";
+            mainSplitContainer.Dock = DockStyle.Fill;
+            mainSplitContainer.Location = new Point(0, 0);
+            mainSplitContainer.Name = "mainSplitContainer";
             // 
-            // splitContainer1.Panel1
+            // mainSplitContainer.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(LogListBox);
-            splitContainer1.Panel1.Controls.Add(panel1);
+            mainSplitContainer.Panel1.Controls.Add(LogListBox);
+            mainSplitContainer.Panel1.Controls.Add(ControlsPanel);
             // 
-            // splitContainer1.Panel2
+            // mainSplitContainer.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(FeedListView);
-            splitContainer1.Size = new Size(800, 428);
-            splitContainer1.SplitterDistance = 266;
-            splitContainer1.TabIndex = 1;
+            mainSplitContainer.Panel2.Controls.Add(FeedListView);
+            mainSplitContainer.Size = new Size(800, 428);
+            mainSplitContainer.SplitterDistance = 334;
+            mainSplitContainer.TabIndex = 1;
             // 
             // LogListBox
             // 
@@ -120,28 +120,28 @@
             LogListBox.FormattingEnabled = true;
             LogListBox.HorizontalScrollbar = true;
             LogListBox.ItemHeight = 15;
-            LogListBox.Location = new Point(0, 194);
+            LogListBox.Location = new Point(0, 200);
             LogListBox.Name = "LogListBox";
-            LogListBox.Size = new Size(266, 234);
+            LogListBox.Size = new Size(334, 228);
             LogListBox.TabIndex = 0;
             // 
-            // panel1
+            // ControlsPanel
             // 
-            panel1.AutoSize = true;
-            panel1.Controls.Add(tableLayoutPanel1);
-            panel1.Controls.Add(ManageButtons);
-            panel1.Controls.Add(EditButtons);
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(266, 194);
-            panel1.TabIndex = 32;
+            ControlsPanel.Controls.Add(tableLayoutPanel1);
+            ControlsPanel.Controls.Add(ManageButtons);
+            ControlsPanel.Controls.Add(EditButtons);
+            ControlsPanel.Dock = DockStyle.Top;
+            ControlsPanel.Location = new Point(0, 0);
+            ControlsPanel.MinimumSize = new Size(255, 0);
+            ControlsPanel.Name = "ControlsPanel";
+            ControlsPanel.Size = new Size(334, 200);
+            ControlsPanel.TabIndex = 32;
             // 
             // tableLayoutPanel1
             // 
             tableLayoutPanel1.AutoSize = true;
             tableLayoutPanel1.ColumnCount = 1;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.Controls.Add(Property_ID, 0, 0);
             tableLayoutPanel1.Controls.Add(Property_Title, 0, 1);
             tableLayoutPanel1.Controls.Add(Property_URL, 0, 2);
@@ -158,7 +158,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.Size = new Size(266, 132);
+            tableLayoutPanel1.Size = new Size(334, 138);
             tableLayoutPanel1.TabIndex = 21;
             // 
             // Property_ID
@@ -168,10 +168,11 @@
             Property_ID.Controls.Add(lblStatus);
             Property_ID.Controls.Add(txtBoxID);
             Property_ID.Controls.Add(LblId);
+            Property_ID.Dock = DockStyle.Fill;
             Property_ID.Location = new Point(3, 3);
             Property_ID.MinimumSize = new Size(255, 16);
             Property_ID.Name = "Property_ID";
-            Property_ID.Size = new Size(255, 16);
+            Property_ID.Size = new Size(328, 16);
             Property_ID.TabIndex = 22;
             // 
             // txtBoxStatus
@@ -181,7 +182,7 @@
             txtBoxStatus.Location = new Point(89, 0);
             txtBoxStatus.Name = "txtBoxStatus";
             txtBoxStatus.ScrollBars = ScrollBars.Horizontal;
-            txtBoxStatus.Size = new Size(166, 23);
+            txtBoxStatus.Size = new Size(239, 23);
             txtBoxStatus.TabIndex = 13;
             // 
             // lblStatus
@@ -222,10 +223,11 @@
             Property_Title.AutoSize = true;
             Property_Title.Controls.Add(txtBoxTitle);
             Property_Title.Controls.Add(lblTitle);
+            Property_Title.Dock = DockStyle.Fill;
             Property_Title.Location = new Point(3, 25);
             Property_Title.MinimumSize = new Size(255, 16);
             Property_Title.Name = "Property_Title";
-            Property_Title.Size = new Size(255, 16);
+            Property_Title.Size = new Size(328, 16);
             Property_Title.TabIndex = 23;
             // 
             // txtBoxTitle
@@ -234,7 +236,7 @@
             txtBoxTitle.Location = new Point(29, 0);
             txtBoxTitle.Name = "txtBoxTitle";
             txtBoxTitle.ScrollBars = ScrollBars.Horizontal;
-            txtBoxTitle.Size = new Size(226, 23);
+            txtBoxTitle.Size = new Size(299, 23);
             txtBoxTitle.TabIndex = 12;
             // 
             // lblTitle
@@ -253,10 +255,11 @@
             Property_URL.AutoSize = true;
             Property_URL.Controls.Add(txtBoxURL);
             Property_URL.Controls.Add(lblURL);
+            Property_URL.Dock = DockStyle.Fill;
             Property_URL.Location = new Point(3, 47);
             Property_URL.MinimumSize = new Size(255, 16);
             Property_URL.Name = "Property_URL";
-            Property_URL.Size = new Size(255, 16);
+            Property_URL.Size = new Size(328, 16);
             Property_URL.TabIndex = 24;
             // 
             // txtBoxURL
@@ -265,7 +268,7 @@
             txtBoxURL.Location = new Point(28, 0);
             txtBoxURL.Name = "txtBoxURL";
             txtBoxURL.ScrollBars = ScrollBars.Horizontal;
-            txtBoxURL.Size = new Size(227, 23);
+            txtBoxURL.Size = new Size(300, 23);
             txtBoxURL.TabIndex = 14;
             // 
             // lblURL
@@ -284,10 +287,11 @@
             Property_Expr.AutoSize = true;
             Property_Expr.Controls.Add(txtBoxRegex);
             Property_Expr.Controls.Add(lblExpr);
+            Property_Expr.Dock = DockStyle.Fill;
             Property_Expr.Location = new Point(3, 69);
             Property_Expr.MinimumSize = new Size(255, 16);
             Property_Expr.Name = "Property_Expr";
-            Property_Expr.Size = new Size(255, 16);
+            Property_Expr.Size = new Size(328, 16);
             Property_Expr.TabIndex = 25;
             // 
             // txtBoxRegex
@@ -296,7 +300,7 @@
             txtBoxRegex.Location = new Point(39, 0);
             txtBoxRegex.Name = "txtBoxRegex";
             txtBoxRegex.ScrollBars = ScrollBars.Horizontal;
-            txtBoxRegex.Size = new Size(216, 23);
+            txtBoxRegex.Size = new Size(289, 23);
             txtBoxRegex.TabIndex = 16;
             // 
             // lblExpr
@@ -315,10 +319,11 @@
             Property_Date.AutoSize = true;
             Property_Date.Controls.Add(txtBoxDate);
             Property_Date.Controls.Add(lblDate);
+            Property_Date.Dock = DockStyle.Fill;
             Property_Date.Location = new Point(3, 91);
             Property_Date.MinimumSize = new Size(255, 16);
             Property_Date.Name = "Property_Date";
-            Property_Date.Size = new Size(255, 16);
+            Property_Date.Size = new Size(328, 16);
             Property_Date.TabIndex = 26;
             // 
             // txtBoxDate
@@ -327,7 +332,7 @@
             txtBoxDate.Location = new Point(31, 0);
             txtBoxDate.Name = "txtBoxDate";
             txtBoxDate.ScrollBars = ScrollBars.Horizontal;
-            txtBoxDate.Size = new Size(224, 23);
+            txtBoxDate.Size = new Size(297, 23);
             txtBoxDate.TabIndex = 18;
             // 
             // lblDate
@@ -346,10 +351,11 @@
             Property_History.AutoSize = true;
             Property_History.Controls.Add(txtBoxHistory);
             Property_History.Controls.Add(lblHistory);
+            Property_History.Dock = DockStyle.Fill;
             Property_History.Location = new Point(3, 113);
             Property_History.MinimumSize = new Size(255, 16);
             Property_History.Name = "Property_History";
-            Property_History.Size = new Size(255, 16);
+            Property_History.Size = new Size(328, 22);
             Property_History.TabIndex = 27;
             // 
             // txtBoxHistory
@@ -358,7 +364,7 @@
             txtBoxHistory.Location = new Point(45, 0);
             txtBoxHistory.Name = "txtBoxHistory";
             txtBoxHistory.ScrollBars = ScrollBars.Horizontal;
-            txtBoxHistory.Size = new Size(210, 23);
+            txtBoxHistory.Size = new Size(283, 23);
             txtBoxHistory.TabIndex = 20;
             // 
             // lblHistory
@@ -374,13 +380,12 @@
             // 
             // ManageButtons
             // 
-            ManageButtons.AutoSize = true;
             ManageButtons.Controls.Add(btnProcess);
             ManageButtons.Controls.Add(btnSaveQuit);
             ManageButtons.Dock = DockStyle.Bottom;
-            ManageButtons.Location = new Point(0, 163);
+            ManageButtons.Location = new Point(0, 169);
             ManageButtons.Name = "ManageButtons";
-            ManageButtons.Size = new Size(266, 31);
+            ManageButtons.Size = new Size(334, 31);
             ManageButtons.TabIndex = 5;
             // 
             // btnProcess
@@ -406,7 +411,6 @@
             // 
             // EditButtons
             // 
-            EditButtons.AutoSize = true;
             EditButtons.Controls.Add(btnEdit);
             EditButtons.Controls.Add(btnDelete);
             EditButtons.Controls.Add(btnCreate);
@@ -414,7 +418,7 @@
             EditButtons.Location = new Point(0, 0);
             EditButtons.MinimumSize = new Size(0, 30);
             EditButtons.Name = "EditButtons";
-            EditButtons.Size = new Size(266, 31);
+            EditButtons.Size = new Size(334, 31);
             EditButtons.TabIndex = 28;
             // 
             // btnEdit
@@ -462,7 +466,7 @@
             FeedListView.GridLines = true;
             FeedListView.Location = new Point(0, 0);
             FeedListView.Name = "FeedListView";
-            FeedListView.Size = new Size(530, 428);
+            FeedListView.Size = new Size(462, 428);
             FeedListView.TabIndex = 1;
             FeedListView.UseCompatibleStateImageBehavior = false;
             FeedListView.View = View.Details;
@@ -525,13 +529,12 @@
             Text = "MainWindow";
             Load += MainWindow_Load;
             BasePanel.ResumeLayout(false);
-            splitContainer1.Panel1.ResumeLayout(false);
-            splitContainer1.Panel1.PerformLayout();
-            splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
-            splitContainer1.ResumeLayout(false);
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            mainSplitContainer.Panel1.ResumeLayout(false);
+            mainSplitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)mainSplitContainer).EndInit();
+            mainSplitContainer.ResumeLayout(false);
+            ControlsPanel.ResumeLayout(false);
+            ControlsPanel.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             Property_ID.ResumeLayout(false);
@@ -559,7 +562,7 @@
 
         private Panel BasePanel;
         private StatusStrip FeedStatusStrip;
-        private SplitContainer splitContainer1;
+        private SplitContainer mainSplitContainer;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripStatusLabel toolStripStatusLabel2;
         private ToolStripStatusLabel toolStripStatusLabel3;
@@ -597,6 +600,6 @@
         private Button btnCreate;
         private FlowLayoutPanel EditButtons;
         private ListBox LogListBox;
-        private Panel panel1;
+        private Panel ControlsPanel;
     }
 }

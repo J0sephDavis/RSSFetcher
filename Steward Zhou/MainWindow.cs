@@ -15,6 +15,8 @@ namespace Steward_Zhou
         {
             Logger.SetInteractiveMode(true);
             InitializeComponent();
+            //Things I wanted to add in MainWindowDesigner, but they get overwritten
+            mainSplitContainer.Panel1MinSize = ControlsPanel.MinimumSize.Width;
         }
         private void MainWindow_Load(object sender, EventArgs e)
         {
