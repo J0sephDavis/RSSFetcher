@@ -9,7 +9,7 @@ public class Program
     static readonly int PATCH = 7;
     //---
     static Reporter report; //cannot be readonly. Must be set AFTER Config has been created
-    static EntryData? RSSEntries = null;
+    static DataFile? RSSEntries = null;
     static readonly EventTicker events = EventTicker.GetInstance();
 
     [Flags]
@@ -45,14 +45,15 @@ public class Program
         ArgResult choice = HandleArgs(cfg, args);
 
         report.Notice("Program starting");
-        RSSEntries = new EntryData(cfg.GetRSSPath());
+        RSSEntries = new DataFile(cfg.GetRSSPath());
         switch (choice)
         {
             case (ArgResult.EDIT):
                 await StartEditor();
                 break;
             case (ArgResult.RUN):
-                await RSSEntries.Process();
+                //await RSSEntries.Process();
+                throw new NotImplementedException();
                 break;
             case (ArgResult.NONE):
             default:
@@ -72,7 +73,8 @@ public class Program
             return;
         }
         //---
-        InteractiveEditor editor = new(RSSEntries.GetFeeds());
+        throw new NotImplementedException();
+        /*InteractiveEditor editor = new(RSSEntries.GetFeeds());
         if (editor.MainLoop())
         {
             report.Out("Saving entries from interactive session");
@@ -80,6 +82,7 @@ public class Program
         }
         else
             report.Out("Discarding change from interactive session");
+        */
     }
 
     private static ArgResult HandleArgs(Config cfg, string[] args)

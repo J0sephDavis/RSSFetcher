@@ -43,6 +43,7 @@ namespace Murong_Xue
         }
         public void AddFeed(Feed feed) //return ID or -1
         {
+            report.Trace($"AddFeed {feed}");
             if (feed.ID != -1)
             {
                 throw new System.ApplicationException("ID already exists");
