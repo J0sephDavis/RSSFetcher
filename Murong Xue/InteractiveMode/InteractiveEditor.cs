@@ -1,27 +1,113 @@
-﻿using RSSFetcher.FeedData;
+﻿using RSSFetcher;
+using RSSFetcher.FeedData;
 using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
 
-namespace RSSFetcher
+namespace Murong_Xue.InteractiveMode
 {
+    internal interface IInteractiveCommand
+    {
+        /// <summary>
+        /// processes the command with the given arguments
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        int Handle(string[] args);
+        /// <summary>
+        /// resturns the command name, e.g., "print"
+        /// </summary>
+        /// <returns></returns>
+        string GetName();
+    }
+
     internal class InteractiveEditor
     {
-        readonly List<Feed> Feeds;
-        readonly Reporter report;
-
-        public InteractiveEditor(List<Feed> Feeds)
+        private readonly List<Feed> Feeds = [];
+        private readonly Controller controller = new();
+        private readonly Reporter report = Logger.RequestReporter("EDITOR");
+        private readonly List<IInteractiveCommand> Commands = [];
+        public InteractiveEditor()
         {
-            this.Feeds = Feeds;
+            Logger.SetInteractiveMode(true);
             report = Logger.RequestReporter("EDITOR");
         }
-        enum INTERACTIVE_OPTIONS
+        enum INTERACTIVE_OPTION
         {
             NONE,
             EDIT,
             DELETE,
             PRINT,
             CREATE,
+            LOAD,
+            SAVE,
+            EXIT
         };
+        /// <summary>
+        /// converts single word into INTERACTIVE_OPTION
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <returns>the INTERCTIVE_OPTION associated with the word (NONE by default)</returns>
+        private static INTERACTIVE_OPTION CommandToOption(string? cmd)
+        {
+            if (cmd == null) return INTERACTIVE_OPTION.NONE;
+            switch (cmd.ToLower())
+            {
+                case "edit":
+                    return INTERACTIVE_OPTION.EDIT;
+                case "delete":
+                    return INTERACTIVE_OPTION.DELETE;
+                case "print":
+                    return INTERACTIVE_OPTION.PRINT;
+                case "create":
+                    return INTERACTIVE_OPTION.PRINT;
+                case "load":
+                    return INTERACTIVE_OPTION.LOAD;
+                case "save":
+                    return INTERACTIVE_OPTION.SAVE;
+                case "exit":
+                case "quit":
+                    return INTERACTIVE_OPTION.EXIT;
+                default:
+                    return INTERACTIVE_OPTION.NONE;
+            }
+        }
+        protected string[] PromptForInput(string prompt_msg, uint minLen = 3)
+        {
+            report.Interactive(prompt_msg); //TODO make a dedicate method in Logger that will delay output until we've set a flag/gotten the user input
+
+            string? input = Console.ReadLine();
+            report.DebugVal($"PromptForInput, input={input}");
+            if (input == null)
+                return [string.Empty];
+            return input.Split(" ");
+        }
+        public void MainLoop()
+        {
+            /* 1. Prompt user for input
+             * 2. process command and pass arguments to handler
+             */
+            report.Trace("MAIN LOOP 2!");
+            string[] input_string = [];
+            INTERACTIVE_OPTION command = INTERACTIVE_OPTION.NONE;
+            while (true)
+            {
+                //1. prompt for input & return arr<string>[]
+                input_string = PromptForInput(">");
+                report.DebugVal("input_string: ");
+                foreach (string s in input_string)
+                    report.DebugVal($"\t{s}");
+                //2. get cmd from input[0]
+                command = CommandToOption(input_string[0]);
+                //3. pass arguments to command (if != NONE)
+                switch (command)
+                {
+                    default:
+                        report.Warn($"{command} is not yet implemented");
+                        break;
+                }
+                break;
+            }
+        }
         protected void PrintHandler(int? index)
         {
             Feed? feed;
@@ -52,25 +138,14 @@ namespace RSSFetcher
                 report.Out($"{idx}\t{daysSince}\t{feed.Title}");
             }
         }
-
-        protected void PromptForInput(string prompt, out string? input, uint minLen = 3)
-        {
-            report.Interactive(prompt);
-            input = Console.ReadLine();
-            if (input != null && input.Length < minLen)
-            {
-                report.Warn("input len < minimum or NULL.");
-                report.Out("Input discarded");
-                input = null;
-            }
-        }
-
+        #region Static command strings
         static readonly string[] edit_cmds_title = ["title", "t"];
         static readonly string[] edit_cmds_history = ["history", "h"];
         static readonly string[] edit_cmds_expr = ["expr", "regex", "e", "expression"];
         static readonly string[] edit_cmds_url = ["url", "u"];
         static readonly string[] edit_cmds_conf = ["confirm", "conf", "save", "quit", "x"];
         static readonly string[] edit_cmds_print = ["print", "p"];
+        #endregion
         [Flags]
         enum EditFlag
         {
@@ -217,7 +292,7 @@ namespace RSSFetcher
                                 if ((edits & EditFlag.URL) > 0)
                                     entry.URL = new(_url);
                             }
-                            catch (System.UriFormatException e)
+                            catch (UriFormatException e)
                             {
                                 report.Error($"{e.Message}");
                                 report.Warn("Change to URL DISCARDED");
@@ -334,7 +409,7 @@ namespace RSSFetcher
             feed.ID = Feeds.Count;
             Feeds.Add(new(feed));
         }
-        public bool MainLoop()
+        public bool MainLoop_old()
         {
             int totalFeeds = Feeds.Count;
             if (totalFeeds == 0)
@@ -351,7 +426,7 @@ namespace RSSFetcher
             bool parsedInt;
             while (true)
             {
-                INTERACTIVE_OPTIONS op = INTERACTIVE_OPTIONS.NONE;
+                INTERACTIVE_OPTION op = INTERACTIVE_OPTION.NONE;
                 report.Interactive("");
                 input = Console.ReadLine();
                 if (input != null)
@@ -364,45 +439,19 @@ namespace RSSFetcher
                 else parsedInt = false;
                 if (!parsedInt)
                     value = -1;
-                //-------- SET OP
-                switch (input_args[0])
-                {
-                    case "help":
-                        report.Out("print #?/Edit #/Delete #/Create/Save/Exit/Help");
-                        break;
-                    case "print":
-                        op = INTERACTIVE_OPTIONS.PRINT;
-                        break;
-                    case "delete":
-                        op = INTERACTIVE_OPTIONS.DELETE;
-                        break;
-                    case "edit":
-                        op = INTERACTIVE_OPTIONS.EDIT;
-                        break;
-                    case "create":
-                        op = INTERACTIVE_OPTIONS.CREATE;
-                        break;
-                    case "exit":
-                        return false;
-                    case "save":
-                        return true;
-                    default:
-                        op = INTERACTIVE_OPTIONS.NONE;
-                        break;
-                }
                 //---------- HANDLE OPS
                 switch (op)
                 {
-                    case INTERACTIVE_OPTIONS.PRINT:
+                    case INTERACTIVE_OPTION.PRINT:
                         PrintHandler(value);
                         break;
-                    case INTERACTIVE_OPTIONS.EDIT:
+                    case INTERACTIVE_OPTION.EDIT:
                         EditHandler(value);
                         break;
-                    case INTERACTIVE_OPTIONS.DELETE:
+                    case INTERACTIVE_OPTION.DELETE:
                         DeleteHandler(value);
                         break;
-                    case INTERACTIVE_OPTIONS.CREATE:
+                    case INTERACTIVE_OPTION.CREATE:
                         CreateHandler();
                         break;
                     default:
