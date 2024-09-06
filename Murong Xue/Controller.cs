@@ -71,18 +71,22 @@ namespace Murong_Xue
             rss.AddFeed(feed);
             return true;
         }
-        public bool DeleteFeed(Feed feed)
+        public bool DeleteFeed(Feed feed) => DeleteFeed(feed.ID);
+        public bool DeleteFeed(int ID)
         {
-            report.Trace("Delete feed:");
-            report.Trace(feed.ToString());
-
-            if (!rss.RemoveFeed(feed))
+            report.Trace($"Delete feed {ID}");
+#if DEBUG
+            Feed? feed = GetFeed(ID);
+            if (feed != null)
+                report.Trace(feed.ToString());
+#endif
+            bool IsRemoved = feedManager.RemoveFeed(ID);
+            if (IsRemoved == false)
             {
                 report.Warn("rss.RemoveFeed return false. feed not removed.");
-                return false;
             }
-            Feeds.Remove(feed);
-            return true;
+            
+            return IsRemoved;
         }
     }
 }
