@@ -25,8 +25,14 @@ namespace Murong_Xue
         {
             rssData = new(Config.GetInstance().GetRSSPath());
             feedManager = new();
+            feedManager.FeedsAdded += OnFeedAdded;
             init();
         }
+        private void OnFeedAdded(object? sender, EventArgs args)
+        {
+            report.Trace("FEED ADDED?!?!?!!");
+        }
+
         private async void init()
         {
             feedManager.AddFeeds(await rssData.ReadFeeds());

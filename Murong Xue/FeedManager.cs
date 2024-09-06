@@ -6,6 +6,7 @@ namespace Murong_Xue
     internal class FeedManager()
     {
         private readonly Reporter report = Logger.RequestReporter("FEED-M");
+        public event EventHandler FeedsAdded;
         //--------------------------------------------------------------------
         private int PrivateKey = 0;
         private readonly object PrivateKeyLock = new(); // a precaution
@@ -40,6 +41,8 @@ namespace Murong_Xue
                 report.TraceVal($"FEED (tobe) ADDED:\n{f.ToLongString()}");
             }
             Feeds.AddRange(feeds);
+            // --- events
+            FeedsAdded.Invoke(this,new EventArgs());
         }
         public void AddFeed(Feed feed) //return ID or -1
         {
@@ -54,6 +57,8 @@ namespace Murong_Xue
             Feeds.Add(feed);
             
             report.TraceVal($"FEED ADDED:\n{feed.ToLongString()}");
+            // --- events
+            FeedsAdded.Invoke(this, new EventArgs());
         }
         public bool RemoveFeed(int ID)
         {
