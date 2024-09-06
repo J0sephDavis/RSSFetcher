@@ -88,6 +88,11 @@ public class Program
 
     private static ArgResult HandleArgs(Config cfg, string[] args)
     {
+#if DEBUG
+        report.Trace($"HandleArgs provided with {args.Length}args");
+        foreach (string s in args)
+            report.TraceVal(s);
+#endif
         bool NextIsConfig = false;
         bool NextIsDownloadDir = false;
         bool SetLogLevel = false;
@@ -173,6 +178,7 @@ public class Program
         report.Log(LogType.DEBUG, LogMod.UNIMPORTANT, $"HandleArgs returning: {retVal}");
         return retVal;
     }
+    #region Static strings for arguments
     //---------- STATIC STRINGS -----------
     protected static readonly string[] version_cmds = ["--version", "-version", "-v", "--v"];
     protected static readonly string version_cmd_desc = "(void) Show version information";
@@ -205,3 +211,4 @@ public class Program
         $"{download_cmds[0]}:\t{download_cmd_desc}\n" +
         $"{log_cmd_desc}";
 }
+#endregion
