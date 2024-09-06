@@ -129,13 +129,21 @@ namespace Murong_Xue
 
             return Feeds;
         }
-        public bool WriteFeeds(List<Feed> feeds)
+        private void RenameOldFile()
         {
-            throw new NotImplementedException();
-            /*
-            Uri newFilePath = new(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
-            Console.WriteLine($"newPath {newFilePath.LocalPath}");
-            File.Move(path.LocalPath, newFilePath.LocalPath, overwrite: true);
+            report.Trace("RenameOldFile");
+            if (File.Exists(path.LocalPath))
+            {
+                report.Debug("file does exist");
+                Uri newFilePath = new(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
+                report.TraceVal($"NewFilePath: {newFilePath}");
+                File.Move(path.LocalPath, newFilePath.LocalPath, overwrite: true);
+            }
+            else report.Trace("file does not already exist");
+        }
+        public void WriteFeeds(List<Feed> feeds)
+        {
+            RenameOldFile();
             FileStream xStream = File.Open(path.LocalPath, FileMode.Create);
 
             //NOTICE: async saving takes ~4ms longer than just saving syncronously (6ms -> 1-2ms)
@@ -147,7 +155,7 @@ namespace Murong_Xue
                 writer.WriteStartElement(null, "root", null);
                 TimeSpan SinceLast;
                 //---- item
-                foreach (var feed in Feeds)
+                foreach (var feed in feeds)
                 {
                     SinceLast = _today - feed.Date;
                     if (SinceLast.Days > 10)
@@ -175,7 +183,6 @@ namespace Murong_Xue
                 writer.WriteEndElement();
                 writer.Flush();
             }
-            */
         }
     }
 }
