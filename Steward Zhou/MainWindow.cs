@@ -76,7 +76,7 @@ namespace Steward_Zhou
         private void btnClear_Click(object sender, EventArgs e)
         {
             report.Trace("btnClear_Click");
-            EditingFeed = controller.CreateNewFeedRecord();
+            EditingFeed = new();
             UpdateEditorFields();
         }
         private void btnSaveQuit_Click(object sender, EventArgs e)

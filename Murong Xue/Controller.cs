@@ -57,11 +57,6 @@ namespace Murong_Xue
             rssData.WriteFeeds(GetFeeds());
         }
         //----------------------------------------------------------------------
-        public Feed CreateNewFeedRecord()
-        {
-            report.Trace("CreateNewFeedRecord");
-            return new();
-        }
         /// <summary>
         /// Add a feed to the model
         /// </summary>
