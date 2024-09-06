@@ -54,19 +54,10 @@ namespace Murong_Xue
             rssData.WriteFeeds(GetFeeds());
         }
         //----------------------------------------------------------------------
-
-        /// <summary>
-        /// Get an empty feed record with an ID given by the Model + adds Feeds to view/controller list
-        /// </summary>
-        /// <returns></returns>
-        public Feed? CreateNewFeedRecord()
+        public Feed CreateNewFeedRecord()
         {
-            Feed tmp = new()
-            {
-                ID = rss.GetPrivateKey()
-            };
-            Feeds.Add(tmp);
-            return tmp;
+            report.Trace("CreateNewFeedRecord");
+            return new();
         }
         /// <summary>
         /// Add a feed to the model
