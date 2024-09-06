@@ -52,10 +52,11 @@ namespace Steward_Zhou
             //----
             if ((EditingFeed.Status & FeedStatus.LINKED) == 0)
             {
+                report.Trace($"btnEdit: {EditingFeed}");
                 if (controller.CreateFeed(EditingFeed))
-                    report.Debug("Failed to create feed");
-                else
                     report.Debug("Created feed!");
+                else
+                    report.Debug("Failed to create feed");
             }
             UpdateAllPanels();
         }
@@ -119,6 +120,7 @@ namespace Steward_Zhou
         /// </summary>
         private void UpdateFeedList()
         {
+            report.Trace("UpdateFeedList()");
             List<Feed> feeds = controller.GetFeeds();
             FeedListView.BeginUpdate();
             FeedListView.Items.Clear();
