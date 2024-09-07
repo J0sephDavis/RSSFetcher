@@ -23,21 +23,12 @@ namespace Murong_Xue.InteractiveMode
         /// <param name="args"></param>
         /// <returns></returns>
         abstract public INTERACTIVE_RESPONSE Handle(string[] args);
-        abstract public INTERACTIVE_RESPONSE Handle(int arg); //might not keep this one, just a thought
     }
 
     internal class PrintCommand(Controller control, InteractiveReporter report)
         : IInteractiveCommand(control, report)
     {
         public override string GetName() => "print";
-        public override INTERACTIVE_RESPONSE Handle(int arg)
-        {
-            Feed? feed = controller.GetFeed(arg);
-            if (feed == null) return INTERACTIVE_RESPONSE.FAILURE;
-            PrintHeader();
-            PrintFeed(feed);
-            return INTERACTIVE_RESPONSE.SUCCESS;
-        }
         public override INTERACTIVE_RESPONSE Handle(string[] args)
         {
             PrintHeader();
