@@ -1,3 +1,4 @@
+using Murong_Xue.Logging.Output.Modules;
 using RSSFetcher.Logging.OutputHandling;
 using RSSFetcher.Logging.Reporting;
 

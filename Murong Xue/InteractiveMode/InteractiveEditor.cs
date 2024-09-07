@@ -1,7 +1,7 @@
-﻿using RSSFetcher;
+﻿using Murong_Xue.Logging.Output.Modules;
+using RSSFetcher;
 using RSSFetcher.FeedData;
 using RSSFetcher.Logging;
-using RSSFetcher.Logging.OutputHandling;
 using RSSFetcher.Logging.Reporting;
 using System.Security.Cryptography;
 
