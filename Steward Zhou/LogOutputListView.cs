@@ -17,7 +17,7 @@ namespace Steward_Zhou
         {
             Disposed = true;
         }
-        public void WriteMsg(LogMsg msg, bool InteractiveMode)
+        public void WriteMsg(LogMsg msg)
         {
             if (Disposed) return;
 
