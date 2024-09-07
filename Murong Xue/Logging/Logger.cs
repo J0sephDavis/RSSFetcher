@@ -49,6 +49,10 @@ namespace RSSFetcher.Logging
         {
             return GetInstance().RepManager.GetReporter(ModuleName, type, mod);
         }
+        public static InteractiveReporter RequestInteractive(string ModuleName, LogConsole console, LogType type = LogType.NONE, LogMod mod = LogMod.NONE)
+        {
+            return GetInstance().RepManager.GetReporter(ModuleName, console, type, mod);
+        }
         public static void SetInteractiveMode(bool mode)
         {
             GetInstance().LogPut.InteractiveMode = mode;
