@@ -68,4 +68,12 @@ namespace Murong_Xue.InteractiveMode
             report.Out($"{feed.ID}\t{days}\t{feed.Title}");
         }
     }
+    internal class QuitCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
+    {
+        public override string GetName() => "quit";
+        public override INTERACTIVE_RESPONSE Handle(string[] args)
+        {
+            return INTERACTIVE_RESPONSE.QUIT;
+        }
+    }
 }
