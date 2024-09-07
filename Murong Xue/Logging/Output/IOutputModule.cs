@@ -2,13 +2,13 @@
 {
     public interface IOutputModule
     {
-        public void WriteMsg(LogMsg msg, bool InteractiveMode); //accept a copy of the buffer?
+        public void WriteMsg(LogMsg msg); //accept a copy of the buffer?
         public void Dispose();
     }
     internal class LogConsole : IOutputModule
     {
         //rcvs msg
-        public void WriteMsg(LogMsg msg, bool InteractiveMode)
+        public void WriteMsg(LogMsg msg)
         {
             Console.WriteLine(InteractiveMode ? msg.ToInteractiveString() : msg.ToString());
         }
@@ -35,7 +35,7 @@
             FilePath = path;
             FileStream = new(FilePath.LocalPath);
         }
-        public void WriteMsg(LogMsg msg, bool InteractiveMode)
+        public void WriteMsg(LogMsg msg)
         {
             //ignores interactive mode
             FileStream?.WriteLine(msg);

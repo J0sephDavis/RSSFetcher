@@ -71,7 +71,7 @@
             foreach (LogMsg msg in buffer_copy)
             {
                 foreach (var module in modules)
-                    module.WriteMsg(msg, InteractiveMode);
+                    module.WriteMsg(msg);
             }
         }
         private void Main()
