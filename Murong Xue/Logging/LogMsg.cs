@@ -10,7 +10,7 @@
     {
         public string IDENTIFIER = identifier;
         public string CONTENT = content;
-        public string TIMESTAMP = DateTime.Now.ToLongTimeString();
+        public DateTime TIMESTAMP = DateTime.Now;
 
         public override string ToString()
         {
