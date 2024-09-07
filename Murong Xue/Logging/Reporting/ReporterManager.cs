@@ -11,9 +11,7 @@
     {
         LogLevel Level = _level;
         private readonly List<Reporter> reporters = [];
-        public Reporter GetReporter(string name,
-            LogType type = LogType.NONE,
-            LogMod mod = LogMod.NONE)
+        public Reporter GetReporter(string name, LogType type = LogType.NONE, LogMod mod = LogMod.NONE)
         {
             LogLevel _level = Level | mod | type;
             lock (reporters)
