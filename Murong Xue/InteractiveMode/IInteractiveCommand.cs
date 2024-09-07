@@ -6,10 +6,10 @@ using static Murong_Xue.InteractiveMode.InteractiveEditor;
 
 namespace Murong_Xue.InteractiveMode
 {
-    abstract class IInteractiveCommand(Controller _controller, Reporter _report)
+    abstract class IInteractiveCommand(Controller _controller, InteractiveReporter _report)
     {
         protected readonly Controller controller = _controller;
-        protected readonly Reporter report = _report;
+        protected readonly InteractiveReporter report = _report;
         /// <summary>
         /// resturns the command name, e.g., "print"
         /// </summary>
@@ -26,8 +26,8 @@ namespace Murong_Xue.InteractiveMode
         abstract public INTERACTIVE_RESPONSE Handle(int arg); //might not keep this one, just a thought
     }
 
-    internal class PrintCommand(Controller control)
-        : IInteractiveCommand(control, Logger.RequestReporter("PRINT"))
+    internal class PrintCommand(Controller control, InteractiveReporter report)
+        : IInteractiveCommand(control, report)
     {
         public override string GetName() => "print";
         public override INTERACTIVE_RESPONSE Handle(int arg)
