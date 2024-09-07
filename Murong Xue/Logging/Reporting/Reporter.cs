@@ -60,10 +60,6 @@ namespace RSSFetcher.Logging.Reporting
         {
             Log(LogType.OUTPUT, LogMod.NORMAL, msg);
         }
-        public void Interactive(string msg)
-        {
-            Log(LogType.OUTPUT, LogMod.INTERACTIVE, msg);
-        }
         public void Log(LogType type, LogMod mod, string msg)
         {
             LogMsg log = new(type, mod, ReportIdentifier, msg);
@@ -93,19 +89,6 @@ namespace RSSFetcher.Logging.Reporting
             logLevel.Mask(mod);
             logLevel.Mask(type);
             TraceVal($"New flags {logLevel}");
-        }
-    }
-    public class InteractiveReporter(LogConsole _console, LogLevel level, string identifier)
-        : Reporter(level,identifier)
-    {
-        LogConsole console = _console;
-        public void PauseOutput()
-        {
-            console.Pause();    
-        }
-        public void UnpauseOutput()
-        {
-            console.Unpause();
         }
     }
 }
