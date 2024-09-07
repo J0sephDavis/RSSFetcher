@@ -16,6 +16,7 @@
         // When InteractiveMode is enabled, only show the short strings in the viewport & decrease either buffer_timeout or threshold
         // OR whenever a msg if flagged interactive & added to the queue immediately end the wait
         public bool InteractiveMode { get; set; } = false;
+        // ---
         const int BUFFER_THRESHOLD = 10;
         const int BUFFER_TIMEOUT = 5000;
         const int INTERACTIVE_TIMEOUT = 250;
@@ -27,10 +28,6 @@
         public void SetPath(Uri path)
         {
             AddModule(new LogFile(path));
-        }
-        public void EnableConsoleOutput()
-        {
-            AddModule(new LogConsole());
         }
         public void AddModule(IOutputModule mod)
         {
