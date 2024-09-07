@@ -95,4 +95,17 @@ namespace RSSFetcher.Logging.Reporting
             TraceVal($"New flags {logLevel}");
         }
     }
+    public class InteractiveReporter(LogConsole _console, LogLevel level, string identifier)
+        : Reporter(level,identifier)
+    {
+        LogConsole console = _console;
+        public void PauseOutput()
+        {
+            console.Pause();    
+        }
+        public void UnpauseOutput()
+        {
+            console.Unpause();
+        }
+    }
 }
