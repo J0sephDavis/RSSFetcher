@@ -1,4 +1,5 @@
 ﻿using RSSFetcher.FeedData;
+using RSSFetcher.InteractiveMode.Commands;
 using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
 

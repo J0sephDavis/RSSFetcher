@@ -3,7 +3,7 @@ using RSSFetcher.Logging.Reporting;
 using System.Text;
 using static RSSFetcher.InteractiveMode.InteractiveEditor;
 
-namespace RSSFetcher.InteractiveMode
+namespace RSSFetcher.InteractiveMode.Commands
 {
     abstract class IInteractiveCommand(Controller _controller, InteractiveReporter _report)
     {
@@ -46,7 +46,7 @@ namespace RSSFetcher.InteractiveMode
                 Feed? feed;
                 for (int i = 1; i < args.Length; i++)
                 {
-                    feed = (int.TryParse(args[i], out int idx)) ? controller.GetFeed(idx) : null;
+                    feed = int.TryParse(args[i], out int idx) ? controller.GetFeed(idx) : null;
                     if (feed != null)
                     {
                         int days = (DateTime.Now - feed.Date).Days;
