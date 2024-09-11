@@ -19,6 +19,7 @@ namespace RSSFetcher.FeedData
         //! Reads the XML files and populated the FeedEntry list
         public List<Feed> ReadFeeds()
         {
+            report.Trace($"Reading from {path}");
             List<Feed> Feeds = [];
             /* NOTE! Running the XMLReader in Async on our config file takes 23-26ms
              * Running Synchronously it takes 13-14ms                               */
@@ -142,6 +143,7 @@ namespace RSSFetcher.FeedData
         }
         public void WriteFeeds(List<Feed> feeds)
         {
+            report.Trace($"Writing to {path}");
             RenameOldFile();
             FileStream xStream = File.Open(path.LocalPath, FileMode.Create);
 
