@@ -36,7 +36,7 @@ namespace RSSFetcher.InteractiveMode
             // ---
             report.UnpauseOutput();
             // ---
-            if (input == null)
+            if (input == null || input.Length < minLen)
                 return [string.Empty];
             return input.Split(" ");
         }
