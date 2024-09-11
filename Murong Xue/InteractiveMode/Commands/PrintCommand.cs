@@ -8,7 +8,15 @@ namespace RSSFetcher.InteractiveMode.Commands
     internal class PrintCommand(Controller control, InteractiveReporter report)
         : IInteractiveCommand(control, report)
     {
-        public override string GetName() => "print";
+        static readonly string[] valid_commands = ["print"];
+        public override bool CommandMatch(string command)
+        {
+            foreach (string cmd in valid_commands)
+                if (cmd == command)
+                    return true;
+            return false;
+        }
+        public override string GetName() => valid_commands[0];
         public override INTERACTIVE_RESPONSE Handle(string[] args)
         {
             const string MsgHeader = "ID\tDays\tTitle";

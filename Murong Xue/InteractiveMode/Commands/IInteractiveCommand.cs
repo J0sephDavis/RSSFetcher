@@ -12,6 +12,14 @@ namespace RSSFetcher.InteractiveMode.Commands
         /// </summary>
         /// <returns></returns>
         abstract public string GetName();
+        /// <summary>
+        /// provide a command e.g., "quit" or "exit" and
+        /// the command will return true if this class can handle it.
+        /// Expects command in lowercases
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns>Whether the input command string is valid for this command</returns>
+        abstract public bool CommandMatch(string command);
         //      TODO  abstract public string GetDescription();
 
         /// <summary>

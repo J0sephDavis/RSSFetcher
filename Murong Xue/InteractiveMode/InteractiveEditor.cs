@@ -55,7 +55,7 @@ namespace RSSFetcher.InteractiveMode
                 report.PauseOutput();
                 foreach (var cmd in Commands)
                 {
-                    if (cmd.GetName() == input_command)
+                    if (cmd.CommandMatch(input_command))
                     {
                         response = cmd.Handle(input_string);
                         break;
