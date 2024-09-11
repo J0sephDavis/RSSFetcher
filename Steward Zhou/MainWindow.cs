@@ -13,7 +13,6 @@ namespace Steward_Zhou
         private Feed? EditingFeed = new();
         public MainWindow()
         {
-            Logger.SetInteractiveMode(true);
             InitializeComponent();
             controller.SubscribeFeedAddOrRemove(OnFeedAdded);
             //Things I wanted to add in MainWindowDesigner, but they get overwritten
