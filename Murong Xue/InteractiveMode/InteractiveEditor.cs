@@ -30,12 +30,8 @@ namespace RSSFetcher.InteractiveMode
         }
         protected string[] PromptForInput(string prompt_msg, uint minLen = 3)
         {
-            report.PauseOutput();
-            // ---
             Console.Write(prompt_msg);
             string? input = Console.ReadLine();
-            // ---
-            report.UnpauseOutput();
             // ---
             if (input == null || input.Length < minLen)
                 return [string.Empty];
@@ -44,12 +40,14 @@ namespace RSSFetcher.InteractiveMode
         public void MainLoop()
         {
             report.Trace("INTERACTIVE MAIN LOOP");
-            string[] input_string = ["help"];
+            string[] input_string;
             string input_command;
             INTERACTIVE_RESPONSE response = INTERACTIVE_RESPONSE.NONE;
             // ---
             do
             {
+                report.PauseOutput();
+                input_string = PromptForInput("> ");
                 input_command = input_string[0].ToLower();
                 // ---
                 report.PauseOutput();
@@ -58,13 +56,11 @@ namespace RSSFetcher.InteractiveMode
                     if (cmd.CommandMatch(input_command))
                     {
                         response = cmd.Handle(input_string);
+                        report.Interactive($"RESPONSE->{response}");
                         break;
                     }
                 }
                 report.UnpauseOutput();
-                // ---
-                input_string = PromptForInput("> ");
-
             } while (response != INTERACTIVE_RESPONSE.QUIT);
         }
     }
