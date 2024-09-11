@@ -1,11 +1,11 @@
-﻿using Murong_Xue.Logging.Output.Modules;
+﻿using RSSFetcher.Logging.Output.Modules;
 using RSSFetcher;
 using RSSFetcher.FeedData;
 using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
 using System.Security.Cryptography;
 
-namespace Murong_Xue.InteractiveMode
+namespace RSSFetcher.InteractiveMode
 {
 
     internal class InteractiveEditor

@@ -2,9 +2,11 @@
 using RSSFetcher.FeedData;
 using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
-using static Murong_Xue.InteractiveMode.InteractiveEditor;
+using System.Data;
+using System.Text;
+using static RSSFetcher.InteractiveMode.InteractiveEditor;
 
-namespace Murong_Xue.InteractiveMode
+namespace RSSFetcher.InteractiveMode
 {
     abstract class IInteractiveCommand(Controller _controller, InteractiveReporter _report)
     {
