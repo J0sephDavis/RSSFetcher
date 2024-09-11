@@ -7,17 +7,17 @@ using System.Security.Cryptography;
 
 namespace RSSFetcher.InteractiveMode
 {
-
     internal class InteractiveEditor
     {
         private readonly List<Feed> Feeds = [];
-        private readonly Controller controller = new();
+        private readonly Controller controller;
         private readonly InteractiveReporter report;
         private readonly List<IInteractiveCommand> Commands = [];
-        public InteractiveEditor(LogConsole console)
+        internal InteractiveEditor(Controller _controller)
         {
-            Logger.SetInteractiveMode(true);
-            report = Logger.RequestInteractive("EDITOR", console);
+            controller = _controller;
+            // ---
+            report = Logger.RequestInteractive("EDITOR");
             report.PauseOutput();
             //----
             Commands.Add(new PrintCommand(controller, report));
@@ -33,7 +33,7 @@ namespace RSSFetcher.InteractiveMode
         protected string[] PromptForInput(string prompt_msg, uint minLen = 3)
         {
             report.PauseOutput();
-            Console.Write("\n" + prompt_msg);
+            Console.Write(prompt_msg);
             string? input = Console.ReadLine();
             report.UnpauseOutput();
             if (input == null)
@@ -58,7 +58,6 @@ namespace RSSFetcher.InteractiveMode
                 }
                 report.Trace("AFTER FOREACH");
                 if (response == INTERACTIVE_RESPONSE.QUIT) return;
-
                 // ---
                 input_string = PromptForInput("> ");
             }

@@ -33,32 +33,32 @@ namespace RSSFetcher.InteractiveMode
         public override string GetName() => "print";
         public override INTERACTIVE_RESPONSE Handle(string[] args)
         {
-            PrintHeader();
-            if (args.Length == 0)
+            const string MsgHeader = "ID\tDays\tTitle";
+            StringBuilder response = new(MsgHeader);
+            //throw new NotImplementedException("build a message with stringbuilder and then send it back, not 1 bajillion prints");
+            if (args.Length == 1)
             {
                 foreach (var feed in controller.GetFeeds())
-                    PrintFeed(feed);
+                {
+                    int days = (DateTime.Now - feed.Date).Days;
+                    response.AppendLine($"{feed.ID}\t{days}\t{feed.Title}");
+                }
             }
             else
             {
                 Feed? feed;
-                foreach (string arg in args)
+                for (int i = 1; i < args.Length; i++)
                 {
-                    feed = (int.TryParse(arg, out int idx)) ? controller.GetFeed(idx) : null;
+                    feed = (int.TryParse(args[i], out int idx)) ? controller.GetFeed(idx) : null;
                     if (feed != null)
-                        PrintFeed(feed);
+                    {
+                        int days = (DateTime.Now - feed.Date).Days;
+                        response.AppendLine($"{feed.ID}\t{days}\t{feed.Title}");
+                    }
                 }
             }
+            report.Interactive(response.ToString());
             return INTERACTIVE_RESPONSE.SUCCESS;
-        }
-        private void PrintHeader()
-        {
-            report.Out("ID\tDays\tTitle");
-        }
-        private void PrintFeed(Feed feed)
-        {
-            int days = (DateTime.Now - feed.Date).Days;
-            report.Out($"{feed.ID}\t{days}\t{feed.Title}");
         }
     }
     internal class QuitCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
