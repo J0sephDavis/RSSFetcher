@@ -20,6 +20,7 @@ namespace RSSFetcher.InteractiveMode
             //----
             Commands.Add(new PrintCommand(controller, report));
             Commands.Add(new QuitCommand(controller, report));
+            Commands.Add(new SaveCommand(controller, report));
         }
         public enum INTERACTIVE_RESPONSE //INTERACTIVE_STATUS?
         {
@@ -56,7 +57,7 @@ namespace RSSFetcher.InteractiveMode
                     if (cmd.CommandMatch(input_command))
                     {
                         response = cmd.Handle(input_string);
-                        report.Interactive($"RESPONSE->{response}");
+                        //if response == failure, print help?
                         break;
                     }
                 }
