@@ -18,7 +18,6 @@ namespace Steward_Zhou
         [STAThread]
         static void Main()
         {
-            using Config cfg = Config.GetInstance();
             report ??= Logger.RequestReporter("W-PROG");
             report.Notice(VERSION);
             Logger.SetLogLevel(new(LogType.ALL, LogMod.ALL));
