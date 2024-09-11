@@ -23,7 +23,6 @@ namespace RSSFetcher
 
         private readonly Logger logger = Logger.GetInstance();
         private readonly DownloadHandler downloadHandler;
-        //download handler exists here as a non-singleton class?
         private readonly DataFile rssData;
         private readonly FeedManager feedManager = new();
         private readonly Reporter report = Logger.RequestReporter("CONTRL");

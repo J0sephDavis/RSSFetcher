@@ -67,6 +67,7 @@ namespace RSSFetcher.InteractiveMode
                 }
                 report.UnpauseOutput();
             } while (response != INTERACTIVE_RESPONSE.QUIT);
+            //TODO remind user of unsaved changes
         }
     }
 }
