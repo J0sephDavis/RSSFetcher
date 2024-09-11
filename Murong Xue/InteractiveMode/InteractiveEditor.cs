@@ -44,17 +44,17 @@ namespace RSSFetcher.InteractiveMode
         {
             report.Trace("INTERACTIVE MAIN LOOP");
             string[] input_string = ["help"];
-            INTERACTIVE_RESPONSE response;
+            string input_command;
+            INTERACTIVE_RESPONSE response = INTERACTIVE_RESPONSE.NONE;
             // ---
-            while (true)
+            do
             {
-                string command_string = input_string[0].ToLower();
-                response = INTERACTIVE_RESPONSE.NONE;
+                input_command = input_string[0].ToLower();
                 // ---
                 report.PauseOutput();
                 foreach (var cmd in Commands)
                 {
-                    if (cmd.GetName() == command_string)
+                    if (cmd.GetName() == input_command)
                     {
                         response = cmd.Handle(input_string, out string command_response);
                         report.Interactive(command_response);
@@ -63,10 +63,9 @@ namespace RSSFetcher.InteractiveMode
                 }
                 report.UnpauseOutput();
                 // ---
-                if (response == INTERACTIVE_RESPONSE.QUIT) return;
                 input_string = PromptForInput("> ");
 
-            }
+            } while (response != INTERACTIVE_RESPONSE.QUIT);
         }
     }
 }
