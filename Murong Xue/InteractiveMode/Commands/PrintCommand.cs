@@ -19,7 +19,7 @@ namespace RSSFetcher.InteractiveMode.Commands
         public override string GetName() => valid_commands[0];
         public override INTERACTIVE_RESPONSE Handle(string[] args)
         {
-            const string MsgHeader = "ID\tDays\tTitle";
+            const string MsgHeader = "ID\tDays\tTitle\n";
             StringBuilder responseBuilder = new(MsgHeader);
 
             if (args.Length == 1)
