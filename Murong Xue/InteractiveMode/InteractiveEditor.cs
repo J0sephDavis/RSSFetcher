@@ -28,7 +28,7 @@ namespace RSSFetcher.InteractiveMode
             SUCCESS = 1,
             QUIT
         }
-        protected string[] PromptForInput(string prompt_msg, uint minLen = 3)
+        protected static string[] PromptForInput(string prompt_msg, uint minLen = 3)
         {
             Console.Write(prompt_msg);
             string? input = Console.ReadLine();
