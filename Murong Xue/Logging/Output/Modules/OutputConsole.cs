@@ -1,18 +1,34 @@
 ﻿using RSSFetcher.Logging;
 
-namespace Murong_Xue.Logging.Output.Modules
+namespace RSSFetcher.Logging.Output.Modules
 {
-    public class LogConsole() : IOutputModule
+
+    public interface IOutputConsole
     {
-        //rcvs msg
+        void Pause();
+        void Unpause();
+        bool IsPaused();
+        bool IsInteractive();
+    }
+
+    public class LogConsole() : IOutputModule, IOutputConsole
+    {
+        public OutputModuleClassification Type { get => OutputModuleClassification.CONSOLE; }
         public void WriteMsg(LogMsg msg)
         {
             Console.WriteLine(msg.ToString());
         }
         public void Dispose() { }
+        public void Pause() { }
+        public void Unpause() { }
+        public bool IsPaused() { return false; }
+        public bool IsInteractive() => false;
     }
-    public class InteractiveConsole() : IOutputModule
+
+    public class InteractiveConsole() : IOutputModule, IOutputConsole
     {
+        public bool IsInteractive() => true;
+        public OutputModuleClassification Type { get => OutputModuleClassification.CONSOLE; }
         /* diregard all print statements tagged with INTERACTIVE
          * msgs tagged with INTERACTIVE are assumed to have been sent through the interactive
          * reporter and thus have their own pathway to display
@@ -36,7 +52,12 @@ namespace Murong_Xue.Logging.Output.Modules
         }
         public void Unpause()
         {
+            PrintBuff();
             lock (tv_remote) Paused = false;
+        }
+        public bool IsPaused()
+        {
+            lock (tv_remote) return Paused;
         }
         // ---
         private readonly object bufflock = new();
@@ -47,23 +68,33 @@ namespace Murong_Xue.Logging.Output.Modules
             {
                 foreach (var msg in buffer)
                 {
-                    if ((msg & LogMod.INTERACTIVE) == 0)
-                        Console.WriteLine(msg);
-                    else
-                        Console.WriteLine("REDACTED");
+                    DoMsg(msg);
                 }
+                buffer.Clear();
             }
         }
         // ---
+        private void DoMsg(LogMsg msg)
+        {
+            if ((msg & LogMod.INTERACTIVE) != 0)
+                Console.WriteLine(msg.ToInteractiveString());
+            else if ((msg & LogType.ERROR) != 0)
+                Console.WriteLine(msg);
+            else
+                Console.WriteLine("REDACTED");
+        }
         public void WriteMsg(LogMsg msg)
         {
-            if (Paused)
+            lock(tv_remote)
             {
-                lock (bufflock)
-                    buffer.Add(msg);
+                if (Paused)
+                {
+                    lock (bufflock)
+                        buffer.Add(msg);
+                }
+                else
+                    DoMsg(msg);
             }
-            else
-                Console.WriteLine(msg);
         }
         public void Dispose() { }
     }
