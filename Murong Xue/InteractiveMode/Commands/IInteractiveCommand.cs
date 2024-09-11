@@ -12,6 +12,14 @@ namespace RSSFetcher.InteractiveMode.Commands
         /// </summary>
         /// <returns></returns>
         abstract public string GetName();
+        protected static string? Prompt(string msg, int minLen = 1)
+        {
+            Console.Write(msg);
+            string? input = Console.ReadLine();
+            if (input != null && input.Length < minLen)
+                return null;
+            return input;
+        }
         /// <summary>
         /// provide a command e.g., "quit" or "exit" and
         /// the command will return true if this class can handle it.
