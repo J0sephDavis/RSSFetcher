@@ -10,7 +10,7 @@ namespace RSSFetcher.InteractiveMode
         private readonly List<Feed> Feeds = [];
         private readonly Controller controller;
         private readonly InteractiveReporter report;
-        private readonly List<IInteractiveCommand> Commands = [];
+        private readonly List<IInteractiveCommand> Commands;
         internal InteractiveEditor(Controller _controller)
         {
             controller = _controller;
@@ -18,10 +18,12 @@ namespace RSSFetcher.InteractiveMode
             report = Logger.RequestInteractive("EDITOR");
             report.PauseOutput();
             //----
-            Commands.Add(new PrintCommand(controller, report));
-            Commands.Add(new QuitCommand(controller, report));
-            Commands.Add(new SaveCommand(controller, report));
-            Commands.Add(new EditCommand(controller, report));
+            Commands = [
+                new PrintCommand(controller,report),
+                new QuitCommand(controller, report),
+                new SaveCommand(controller, report),
+                new EditCommand(controller, report),
+            ];
         }
         public enum INTERACTIVE_RESPONSE //INTERACTIVE_STATUS?
         {
