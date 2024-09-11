@@ -4,6 +4,7 @@ using RSSFetcher.InteractiveMode;
 using RSSFetcher.Logging;
 using RSSFetcher.Logging.Output.Modules;
 using RSSFetcher.Logging.Reporting;
+using RSSFetcher.Summary;
 
 namespace RSSFetcher
 {
@@ -31,7 +32,6 @@ namespace RSSFetcher
         private readonly DataFile rssData;
         private readonly FeedManager feedManager = new();
         private readonly Reporter report = Logger.RequestReporter("CONTRL");
-        private readonly EventTicker events = EventTicker.GetInstance();
         private readonly ArgResult result;
         public Controller()
         {
@@ -81,6 +81,7 @@ namespace RSSFetcher
                 default:
                     break;
             }
+            GetSummary();
         }
         void IDisposable.Dispose() => logger.Dispose(); //TODO https://stackoverflow.com/questions/151051/when-should-i-use-gc-suppressfinalize
         public void SubscribeFeedAddOrRemove(EventHandler method) => feedManager.FeedAddOrRemove += method;
@@ -140,6 +141,11 @@ namespace RSSFetcher
             return IsRemoved;
         }
         // ---
-        public string GetSummary() => events.GetSummary();
+        public string GetSummary()
+        {
+            SummaryBuilder summary = new();
+            summary.Add(downloadHandler);
+            return summary.ToString();
+        }
     }
 }

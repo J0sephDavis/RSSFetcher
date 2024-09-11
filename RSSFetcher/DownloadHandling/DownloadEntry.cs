@@ -20,7 +20,6 @@ namespace RSSFetcher.DownloadHandling
     internal abstract class DownloadEntryBase
     {
         protected readonly DownloadHandler downloadHandler;
-        protected static readonly EventTicker events = EventTicker.GetInstance();
         //----
         protected Uri URL;
         protected Reporter report;
@@ -90,7 +89,7 @@ namespace RSSFetcher.DownloadHandling
         private new static readonly Reporter report = Logger.RequestReporter("DLFILE");
         override public void HandleDownload(Stream content)
         {
-            events.OnFileDownloaded();
+            Task.Run(()=> downloadHandler.FileDownloaded()); //prevent blocking of congested lock
             Uri destinationPath = new(downloadHandler.DownloadFolder + Path.GetFileName(URL.AbsolutePath));
             if (File.Exists(destinationPath.LocalPath))
                 report.Error($"File already exists\n\tLink:{URL}\n\tPath:{destinationPath}");
@@ -123,7 +122,7 @@ namespace RSSFetcher.DownloadHandling
             const string item_element = "item";
             const string date_element = "pubDate";
             // PRE-HANDLE EVENTS
-            events.OnFeedDownloaded();
+            Task.Run(()=>downloadHandler.FeedDownloaded()); //prevent blocking due to locks. summary info is secondary to finishing the downloads
             report.Notice($"Feed Downloaded len:{content.Length}, {feed.Title}");
             // ---
             XmlReaderSettings xSettings = new()

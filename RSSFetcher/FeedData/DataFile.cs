@@ -134,7 +134,6 @@ namespace RSSFetcher.FeedData
             report.Trace("RenameOldFile");
             if (File.Exists(path.LocalPath))
             {
-                report.Debug("file does exist");
                 Uri newFilePath = new(Path.ChangeExtension(path.LocalPath, null) + "_OLD.xml"); //insane that this is the easiest way without worrying about platform specific / & \
                 report.TraceVal($"NewFilePath: {newFilePath}");
                 File.Move(path.LocalPath, newFilePath.LocalPath, overwrite: true);
