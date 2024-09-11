@@ -1,9 +1,6 @@
-﻿using RSSFetcher.Logging.Output.Modules;
-using RSSFetcher;
-using RSSFetcher.FeedData;
+﻿using RSSFetcher.FeedData;
 using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
-using System.Security.Cryptography;
 
 namespace RSSFetcher.InteractiveMode
 {

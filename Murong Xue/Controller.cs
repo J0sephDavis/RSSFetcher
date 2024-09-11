@@ -1,8 +1,8 @@
-﻿using RSSFetcher.InteractiveMode;
-using RSSFetcher.Logging.Output.Modules;
-using RSSFetcher.DownloadHandling;
+﻿using RSSFetcher.DownloadHandling;
 using RSSFetcher.FeedData;
+using RSSFetcher.InteractiveMode;
 using RSSFetcher.Logging;
+using RSSFetcher.Logging.Output.Modules;
 using RSSFetcher.Logging.Reporting;
 
 namespace RSSFetcher

@@ -1,8 +1,5 @@
-﻿using RSSFetcher;
-using RSSFetcher.FeedData;
-using RSSFetcher.Logging;
+﻿using RSSFetcher.FeedData;
 using RSSFetcher.Logging.Reporting;
-using System.Data;
 using System.Text;
 using static RSSFetcher.InteractiveMode.InteractiveEditor;
 

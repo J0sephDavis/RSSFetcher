@@ -1,9 +1,5 @@
-﻿using RSSFetcher.InteractiveMode;
-using RSSFetcher.Logging.Output.Modules;
-using RSSFetcher.FeedData;
-using RSSFetcher.Logging;
+﻿using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
-using System.Text;
 
 namespace RSSFetcher;
 public partial class Program
