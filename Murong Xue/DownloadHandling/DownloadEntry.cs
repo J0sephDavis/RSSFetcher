@@ -19,7 +19,7 @@ namespace RSSFetcher.DownloadHandling
     };
     internal abstract class DownloadEntryBase
     {
-        protected readonly DownloadHandlerNew downloadHandler;
+        protected readonly DownloadHandler downloadHandler;
         protected static readonly EventTicker events = EventTicker.GetInstance();
         //----
         protected Uri URL;
@@ -43,7 +43,7 @@ namespace RSSFetcher.DownloadHandling
         }
         //By accepting the reporter we can borrow the inherited classes reporter & not reallocate
         //for each individual inherited class. For each TYPE there is one reporter, not each instance.
-        public DownloadEntryBase(Uri link, DownloadHandlerNew _dlHandle, Reporter? rep = null)
+        public DownloadEntryBase(Uri link, DownloadHandler _dlHandle, Reporter? rep = null)
         {
             downloadHandler = _dlHandle;
             if (rep == null)
@@ -85,7 +85,7 @@ namespace RSSFetcher.DownloadHandling
         }
         public abstract void HandleDownload(Stream content);
     }
-    internal class DownloadEntryFile(Uri link, DownloadHandlerNew _dlHandle) : DownloadEntryBase(link, _dlHandle, report)
+    internal class DownloadEntryFile(Uri link, DownloadHandler _dlHandle) : DownloadEntryBase(link, _dlHandle, report)
     {
         private new static readonly Reporter report = Logger.RequestReporter("DLFILE");
         override public void HandleDownload(Stream content)
@@ -109,7 +109,7 @@ namespace RSSFetcher.DownloadHandling
         //---
         private Feed feed;
 
-        public DownloadEntryFeed(Feed _feed, DownloadHandlerNew _dlHandle) : base(_feed.URL, _dlHandle, report)
+        public DownloadEntryFeed(Feed _feed, DownloadHandler _dlHandle) : base(_feed.URL, _dlHandle, report)
         {
             feed = _feed;
             feed.Status |= FeedStatus.DLHANDLE;
