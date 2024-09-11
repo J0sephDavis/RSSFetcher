@@ -14,7 +14,10 @@ namespace RSSFetcher.InteractiveMode.Commands
                     return true;
             return false;
         }
-
+        public const string field_title =      "Title:  ";
+        public const string field_url =        "URL:    ";
+        public const string field_expr =       "Regex:  ";
+        public const string field_history =    "History:";
         public override INTERACTIVE_RESPONSE Handle(string[] args)
         {
             throw new NotImplementedException();

@@ -26,19 +26,19 @@ namespace RSSFetcher.InteractiveMode.Commands
             report.Interactive(feed.ToLongString());
             //TITLE
             string? input;
-            input = Prompt("Title: ");
+            input = Prompt(CreateCommand.field_title);
             if (input != null)
                 feed.Title = input;
             // URL
-            input = Prompt("URL: ", 8); //magic number,  has no real meaning. I doubt there is an RSS feed shorter than this
+            input = Prompt(CreateCommand.field_url, 8); //magic number,  has no real meaning. I doubt there is an RSS feed shorter than this
             if (input != null)
                 Uri.TryCreate(input, UriKind.Absolute, out feed.URL);
             // EXPRESSION
-            input = Prompt("Regex: ");
+            input = Prompt(CreateCommand.field_expr);
             if (input != null)
                 feed.Expression = input;
             // HISTORY
-            input = Prompt("History: ");
+            input = Prompt(CreateCommand.field_history);
             if (input != null)
             {
                 feed.History = input;
