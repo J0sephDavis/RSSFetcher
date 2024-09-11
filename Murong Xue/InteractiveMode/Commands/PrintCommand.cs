@@ -9,7 +9,7 @@ namespace RSSFetcher.InteractiveMode.Commands
         : IInteractiveCommand(control, report)
     {
         public override string GetName() => "print";
-        public override INTERACTIVE_RESPONSE Handle(string[] args, out string response)
+        public override INTERACTIVE_RESPONSE Handle(string[] args)
         {
             const string MsgHeader = "ID\tDays\tTitle";
             StringBuilder responseBuilder = new(MsgHeader);
@@ -35,8 +35,7 @@ namespace RSSFetcher.InteractiveMode.Commands
                     }
                 }
             }
-            //report.Interactive(responseBuilder.ToString());
-            response = responseBuilder.ToString();
+            report.Interactive(responseBuilder.ToString());
             return INTERACTIVE_RESPONSE.SUCCESS;
         }
     }

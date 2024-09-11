@@ -57,8 +57,7 @@ namespace RSSFetcher.InteractiveMode
                 {
                     if (cmd.GetName() == input_command)
                     {
-                        response = cmd.Handle(input_string, out string command_response);
-                        report.Interactive(command_response);
+                        response = cmd.Handle(input_string);
                         break;
                     }
                 }

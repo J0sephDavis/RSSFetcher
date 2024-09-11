@@ -6,9 +6,9 @@ namespace RSSFetcher.InteractiveMode.Commands
     internal class QuitCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
     {
         public override string GetName() => "quit";
-        public override INTERACTIVE_RESPONSE Handle(string[] args, out string response)
+        public override INTERACTIVE_RESPONSE Handle(string[] args)
         {
-            response = "OK";
+            report.Interactive("Quitting");
             return INTERACTIVE_RESPONSE.QUIT;
         }
     }

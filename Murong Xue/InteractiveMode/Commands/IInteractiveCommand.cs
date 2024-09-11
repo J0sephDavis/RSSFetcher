@@ -19,6 +19,6 @@ namespace RSSFetcher.InteractiveMode.Commands
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        abstract public INTERACTIVE_RESPONSE Handle(string[] args, out string response);
+        abstract public INTERACTIVE_RESPONSE Handle(string[] args);
     }
 }
