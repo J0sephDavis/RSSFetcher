@@ -29,31 +29,24 @@ namespace RSSFetcher.Logging.Output.Modules
     {
         public bool IsInteractive() => true;
         public OutputModuleClassification Type { get => OutputModuleClassification.CONSOLE; }
-        /* diregard all print statements tagged with INTERACTIVE
-         * msgs tagged with INTERACTIVE are assumed to have been sent through the interactive
-         * reporter and thus have their own pathway to display
-         */
-        /* 1. report.Interactive(foo)
-         * 1.1. IMMEDIATELY display in console -> WriteMsg
-         * 1.2. Send through the normal channels to replicate in all logs
-         * 2. Pause()
-         * 2.1. Places all msgs not written through Interactive in a buffer
-         * 3. Unpause()
-         * 3.1. Unpauses output and prints buffer
-         * ### must block the acceptance of any message tagged INTERACTIVE
-         * (because we likely already handled it)
-         */
         // ---
         private readonly object tv_remote = new();
-        private bool Paused = false;
+        private bool Paused = false; //todo, set a timeout?
         public void Pause()
         {
-            lock (tv_remote) Paused = true;
+            lock (tv_remote)
+            {
+                Paused = true;
+                PrintBuff();
+            }
         }
         public void Unpause()
         {
-            PrintBuff();
-            lock (tv_remote) Paused = false;
+            lock (tv_remote)
+            {
+                Paused = false;
+                PrintBuff();
+            }
         }
         public bool IsPaused()
         {
@@ -74,26 +67,27 @@ namespace RSSFetcher.Logging.Output.Modules
             }
         }
         // ---
-        private void DoMsg(LogMsg msg)
+        private static void DoMsg(LogMsg msg)
         {
-            if ((msg & LogMod.INTERACTIVE) != 0)
-                Console.WriteLine(msg.ToInteractiveString());
-            else if ((msg & LogType.ERROR) != 0)
+            if ((msg & LogType.ERROR) != 0)
                 Console.WriteLine(msg);
-            else
-                Console.WriteLine("REDACTED");
         }
         public void WriteMsg(LogMsg msg)
         {
+            if ((msg & LogMod.INTERACTIVE) != 0) return; //ignore msgs marked interactive, they are output immediately by the InteractiveReporter
+
             lock(tv_remote)
             {
-                if (Paused)
+                lock (bufflock)
                 {
-                    lock (bufflock)
-                        buffer.Add(msg);
+                    if (Paused) buffer.Add(msg);
+                    else
+                    {
+                        if (buffer.Count != 0)
+                            PrintBuff();
+                        DoMsg(msg);
+                    }
                 }
-                else
-                    DoMsg(msg);
             }
         }
         public void Dispose() { }

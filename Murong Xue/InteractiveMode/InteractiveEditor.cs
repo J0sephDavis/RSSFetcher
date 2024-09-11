@@ -20,7 +20,7 @@ namespace RSSFetcher.InteractiveMode
             Commands.Add(new PrintCommand(controller, report));
             Commands.Add(new QuitCommand(controller, report));
         }
-        public enum INTERACTIVE_RESPONSE
+        public enum INTERACTIVE_RESPONSE //INTERACTIVE_STATUS?
         {
             NONE = -1,
             FAILURE = 0,
@@ -30,9 +30,12 @@ namespace RSSFetcher.InteractiveMode
         protected string[] PromptForInput(string prompt_msg, uint minLen = 3)
         {
             report.PauseOutput();
+            // ---
             Console.Write(prompt_msg);
             string? input = Console.ReadLine();
+            // ---
             report.UnpauseOutput();
+            // ---
             if (input == null)
                 return [string.Empty];
             return input.Split(" ");
@@ -41,22 +44,28 @@ namespace RSSFetcher.InteractiveMode
         {
             report.Trace("INTERACTIVE MAIN LOOP");
             string[] input_string = ["help"];
+            INTERACTIVE_RESPONSE response;
+            // ---
             while (true)
             {
                 string command_string = input_string[0].ToLower();
-                INTERACTIVE_RESPONSE response = INTERACTIVE_RESPONSE.NONE;
+                response = INTERACTIVE_RESPONSE.NONE;
+                // ---
+                report.PauseOutput();
                 foreach (var cmd in Commands)
                 {
                     if (cmd.GetName() == command_string)
                     {
-                        response = cmd.Handle(input_string);
+                        response = cmd.Handle(input_string, out string command_response);
+                        report.Interactive(command_response);
                         break;
                     }
                 }
-                report.Trace("AFTER FOREACH");
-                if (response == INTERACTIVE_RESPONSE.QUIT) return;
+                report.UnpauseOutput();
                 // ---
+                if (response == INTERACTIVE_RESPONSE.QUIT) return;
                 input_string = PromptForInput("> ");
+
             }
         }
     }

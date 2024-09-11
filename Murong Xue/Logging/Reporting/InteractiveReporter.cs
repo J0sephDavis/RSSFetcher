@@ -8,6 +8,7 @@ namespace RSSFetcher.Logging.Reporting
         public void Interactive(string msg)
         {
             Log(LogType.OUTPUT, LogMod.INTERACTIVE, msg);
+            Console.WriteLine(msg);
         }
 
         readonly IOutputConsole? console = Logger.GetInstance().GetConsole();

@@ -21,24 +21,24 @@ namespace RSSFetcher.InteractiveMode
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        abstract public INTERACTIVE_RESPONSE Handle(string[] args);
+        abstract public INTERACTIVE_RESPONSE Handle(string[] args, out string response);
     }
 
     internal class PrintCommand(Controller control, InteractiveReporter report)
         : IInteractiveCommand(control, report)
     {
         public override string GetName() => "print";
-        public override INTERACTIVE_RESPONSE Handle(string[] args)
+        public override INTERACTIVE_RESPONSE Handle(string[] args, out string response)
         {
             const string MsgHeader = "ID\tDays\tTitle";
-            StringBuilder response = new(MsgHeader);
-            //throw new NotImplementedException("build a message with stringbuilder and then send it back, not 1 bajillion prints");
+            StringBuilder responseBuilder = new(MsgHeader);
+
             if (args.Length == 1)
             {
                 foreach (var feed in controller.GetFeeds())
                 {
                     int days = (DateTime.Now - feed.Date).Days;
-                    response.AppendLine($"{feed.ID}\t{days}\t{feed.Title}");
+                    responseBuilder.AppendLine($"{feed.ID}\t{days}\t{feed.Title}");
                 }
             }
             else
@@ -50,19 +50,21 @@ namespace RSSFetcher.InteractiveMode
                     if (feed != null)
                     {
                         int days = (DateTime.Now - feed.Date).Days;
-                        response.AppendLine($"{feed.ID}\t{days}\t{feed.Title}");
+                        responseBuilder.AppendLine($"{feed.ID}\t{days}\t{feed.Title}");
                     }
                 }
             }
-            report.Interactive(response.ToString());
+            //report.Interactive(responseBuilder.ToString());
+            response = responseBuilder.ToString();
             return INTERACTIVE_RESPONSE.SUCCESS;
         }
     }
     internal class QuitCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
     {
         public override string GetName() => "quit";
-        public override INTERACTIVE_RESPONSE Handle(string[] args)
+        public override INTERACTIVE_RESPONSE Handle(string[] args, out string response)
         {
+            response = "OK";
             return INTERACTIVE_RESPONSE.QUIT;
         }
     }
