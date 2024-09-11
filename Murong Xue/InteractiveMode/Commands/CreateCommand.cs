@@ -1,4 +1,5 @@
-﻿using RSSFetcher.Logging.Reporting;
+﻿using RSSFetcher.FeedData;
+using RSSFetcher.Logging.Reporting;
 using static RSSFetcher.InteractiveMode.InteractiveEditor;
 
 namespace RSSFetcher.InteractiveMode.Commands
@@ -20,7 +21,43 @@ namespace RSSFetcher.InteractiveMode.Commands
         public const string field_history =    "History:";
         public override INTERACTIVE_RESPONSE Handle(string[] args)
         {
-            throw new NotImplementedException();
+            Feed feed = new();
+            report.Interactive("leave fields blank for default values");
+            string? input;
+            // TITLE
+            input = Prompt(field_title);
+            if (input != null)
+                feed.Title = input;
+            else
+            {
+                report.Error("Title may not be empty");
+                return INTERACTIVE_RESPONSE.FAILURE;
+            }
+            // URL
+            input = Prompt(field_url);
+            if (input != null)
+                Uri.TryCreate(input, UriKind.Absolute, out feed.URL);
+            else
+            {
+                report.Error($"URL may not be null. input->{input}");
+                return INTERACTIVE_RESPONSE.FAILURE;
+            }
+            // EXPR
+            input = Prompt(field_expr);
+            feed.Expression = input ?? ".*";
+            // HISTORY
+            input = Prompt(field_history);
+            feed.History = input ?? "no-history";
+            feed.Date = DateTime.UnixEpoch;
+            // ---
+            report.Interactive(feed.ToLongString());
+            if (controller.CreateFeed(feed))
+                return INTERACTIVE_RESPONSE.SUCCESS;
+            else
+            {
+                report.Warn("failed to create feed");
+                return INTERACTIVE_RESPONSE.FAILURE;
+            }
         }
     }
 }

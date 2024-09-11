@@ -23,6 +23,7 @@ namespace RSSFetcher.InteractiveMode
                 new QuitCommand(controller, report),
                 new SaveCommand(controller, report),
                 new EditCommand(controller, report),
+                new CreateCommand(controller,report),
             ];
         }
         public enum INTERACTIVE_RESPONSE //INTERACTIVE_STATUS?
