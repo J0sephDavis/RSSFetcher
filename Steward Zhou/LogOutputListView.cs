@@ -1,10 +1,10 @@
-﻿using Murong_Xue.Logging.Output.Modules;
+﻿using RSSFetcher.Logging.Output.Modules;
 using RSSFetcher.Logging;
-
 namespace Steward_Zhou
 {
     internal class LogOutputListView : IOutputModule
     {
+        public OutputModuleClassification Type { get => OutputModuleClassification.UI; }
         ListBox lb;
         bool Disposed = false;
         public LogOutputListView(ListBox ListBox)
