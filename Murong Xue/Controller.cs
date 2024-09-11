@@ -1,3 +1,4 @@
+﻿using RSSFetcher.InteractiveMode;
 ﻿using RSSFetcher.DownloadHandling;
 using RSSFetcher.FeedData;
 using RSSFetcher.Logging;
@@ -15,26 +16,64 @@ namespace RSSFetcher
     /// >edit Feeds from UI
     /// >save Feeds
     /// </summary>
-    public class Controller
+    public class Controller : IDisposable
     {
-        private DataFile rssData;
-        private FeedManager feedManager;
-        private Reporter report = Logger.RequestReporter("CONTRL");
+        public static readonly string AppRootDirectory = Path.GetDirectoryName(System.AppContext.BaseDirectory) + Path.DirectorySeparatorChar;
 
+        private readonly Logger logger = Logger.GetInstance();
+        private readonly DownloadHandlerNew downloadHandler;
+        //download handler exists here as a non-singleton class?
+        private readonly DataFile rssData;
+        private readonly FeedManager feedManager = new();
+        private readonly Reporter report = Logger.RequestReporter("CONTRL");
+        private readonly EventTicker events = EventTicker.GetInstance();
+        private readonly ArgResult result;
         public Controller()
         {
-            rssData = new(Config.GetInstance().GetRSSPath());
-            feedManager = new();
-            Init();
-        }
-        private async void Init()
-        {
+            logger.AddModule(new LogConsole());
+            logger.AddModule(new LogFile(new(AppRootDirectory + "RSS-F.log")));
+            // ---
+
+            rssData = new(new(AppRootDirectory + "rss-config.xml"));
+            downloadHandler = new(new(AppRootDirectory + "Downloads" + Path.DirectorySeparatorChar));
             feedManager.AddFeeds(rssData.ReadFeeds());
+            result = ArgResult.RUN;
         }
-        public void SubscribeFeedAddOrRemove(EventHandler method)
+        internal Controller(CommandLineArguments args)
         {
-            feedManager.FeedAddOrRemove += method;
+            if (args.Result == ArgResult.EDIT)
+                logger.AddModule(new InteractiveConsole());
+            else
+                logger.AddModule(new LogConsole());
+
+            logger.AddModule(new LogFile(args.LogPath));
+            rssData = new(args.RSSPath);
+            downloadHandler = new(args.DownloadDirectory);
+            result = args.Result;
         }
+        /// <summary>
+        /// runs the main part of the program
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public void Run()
+        {
+            report.TraceVal($"result: {result}");
+            switch (result)
+            {
+                case (ArgResult.EDIT):
+                    InteractiveEditor editor = new(this);
+                    editor.MainLoop();
+                    break;
+                case (ArgResult.RUN):
+                    throw new NotImplementedException("normal prog not implemented. RSSEntries.Process()");
+                case (ArgResult.NONE):
+                case (ArgResult.EXIT):
+                default:
+                    break;
+            }
+        }
+        void IDisposable.Dispose() => logger.Dispose(); //TODO https://stackoverflow.com/questions/151051/when-should-i-use-gc-suppressfinalize
+        public void SubscribeFeedAddOrRemove(EventHandler method) => feedManager.FeedAddOrRemove += method;
         //-----------Tasks------------------------------------------------------
         public List<Feed> GetFeeds()
         {
@@ -89,5 +128,7 @@ namespace RSSFetcher
             else report.TraceVal($"RemoveFeed: feed not linked, status={feed.Status}");
             return IsRemoved;
         }
+        // ---
+        public string GetSummary() => events.GetSummary();
     }
 }
