@@ -1,4 +1,4 @@
-﻿using Murong_Xue.Logging.Output.Modules;
+﻿using RSSFetcher.Logging.Output.Modules;
 
 namespace RSSFetcher.Logging.Reporting
 {
@@ -24,12 +24,12 @@ namespace RSSFetcher.Logging.Reporting
                 return _r;
             }
         }
-        public InteractiveReporter GetReporter(string name, LogConsole console, LogType type = LogType.NONE, LogMod mod = LogMod.NONE)
+        public InteractiveReporter GetInteractiveReporter(string name, LogType type = LogType.NONE, LogMod mod = LogMod.NONE)
         {
             LogLevel _level = Level | mod | type;
             lock (reporters)
             {
-                InteractiveReporter _r = new(console, _level, name);
+                InteractiveReporter _r = new(_level, name);
                 Subscribe(_r);
                 return _r;
             }
