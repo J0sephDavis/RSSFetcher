@@ -7,6 +7,7 @@ namespace RSSFetcher.InteractiveMode.Commands
     internal class CreateCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
     {
         static readonly string[] valid_commands = ["create", "new"];
+        public override string GetHelp() => "run interactive feed creator";
         public override string GetName() => valid_commands[0];
         public override bool CommandMatch(string command)
         {

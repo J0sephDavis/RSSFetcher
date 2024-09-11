@@ -20,6 +20,7 @@ namespace RSSFetcher.InteractiveMode.Commands
                 return null;
             return input;
         }
+        abstract public string GetHelp();
         /// <summary>
         /// provide a command e.g., "quit" or "exit" and
         /// the command will return true if this class can handle it.

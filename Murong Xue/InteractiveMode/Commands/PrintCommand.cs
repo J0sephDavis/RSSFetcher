@@ -9,6 +9,7 @@ namespace RSSFetcher.InteractiveMode.Commands
         : IInteractiveCommand(control, report)
     {
         static readonly string[] valid_commands = ["print"];
+        public override string GetHelp() => "no args prints all feeds. or provide indexes separated by a space to only print those feeds";
         public override bool CommandMatch(string command)
         {
             foreach (string cmd in valid_commands)

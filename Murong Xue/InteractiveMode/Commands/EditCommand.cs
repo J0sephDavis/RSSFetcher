@@ -8,6 +8,7 @@ namespace RSSFetcher.InteractiveMode.Commands
     {
         static readonly string[] valid_commands = ["edit"];
         public override string GetName() => valid_commands[0];
+        public override string GetHelp() => "accepts the index of the feed to be edited";
         public override bool CommandMatch(string command)
         {
             foreach (string cmd in valid_commands)

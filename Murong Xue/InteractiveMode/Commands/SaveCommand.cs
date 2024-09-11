@@ -7,6 +7,7 @@ namespace RSSFetcher.InteractiveMode.Commands
     internal class SaveCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
     {
         static readonly string[] valid_commands = ["save", "write"];
+        public override string GetHelp() => "no args, saves any changes to disk";
         public override string GetName() => valid_commands[0];
         public override bool CommandMatch(string command)
         {
