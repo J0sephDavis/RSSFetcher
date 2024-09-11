@@ -34,10 +34,11 @@ namespace RSSFetcher
             logger.AddModule(new LogConsole());
             logger.AddModule(new LogFile(new(AppRootDirectory + "RSS-F.log")));
             // ---
-
             rssData = new(new(AppRootDirectory + "rss-config.xml"));
-            downloadHandler = new(new(AppRootDirectory + "Downloads" + Path.DirectorySeparatorChar));
             feedManager.AddFeeds(rssData.ReadFeeds());
+            // ---
+            downloadHandler = new(new(AppRootDirectory + "Downloads" + Path.DirectorySeparatorChar));
+            // ---
             result = ArgResult.RUN;
         }
         internal Controller(CommandLineArguments args)
@@ -46,9 +47,11 @@ namespace RSSFetcher
                 logger.AddModule(new InteractiveConsole());
             else
                 logger.AddModule(new LogConsole());
-
             logger.AddModule(new LogFile(args.LogPath));
+            // ---
             rssData = new(args.RSSPath);
+            feedManager.AddFeeds(rssData.ReadFeeds());
+            // ---
             downloadHandler = new(args.DownloadDirectory);
             result = args.Result;
         }
