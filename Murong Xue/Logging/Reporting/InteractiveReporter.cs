@@ -1,8 +1,8 @@
-﻿using Murong_Xue.Logging.Output.Modules;
+﻿using RSSFetcher.Logging.Output.Modules;
 
 namespace RSSFetcher.Logging.Reporting
 {
-    public class InteractiveReporter(LogConsole _console, LogLevel level, string identifier)
+    public class InteractiveReporter(LogLevel level, string identifier)
         : Reporter(level,identifier)
     {
         public void Interactive(string msg)
@@ -10,26 +10,24 @@ namespace RSSFetcher.Logging.Reporting
             Log(LogType.OUTPUT, LogMod.INTERACTIVE, msg);
         }
 
-        LogConsole console = _console;
+        readonly IOutputConsole? console = Logger.GetInstance().GetConsole();
         public void PauseOutput()
         {
-            console.Pause();    
+            console?.Pause();    
         }
         public void UnpauseOutput()
         {
-            console.Unpause();
+            console?.Unpause();
         }
-        public void StartMsg()
+        public bool IsPaused()
         {
-            console.StartMessage();
+            if (console != null) return console.IsPaused();
+            else return false;
         }
-        public void EndMsg()
+        public bool IsInteractive()
         {
-            console.EndMessage();
-        }
-        public bool InMessage()
-        {
-            return console.GetInMessage();
+            if (console != null) return console.IsInteractive();
+            else return false;
         }
     }
 }
