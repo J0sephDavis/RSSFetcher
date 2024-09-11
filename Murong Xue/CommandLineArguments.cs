@@ -66,7 +66,7 @@ namespace RSSFetcher
                 }
                 if (version_cmds.Contains(_arg))
                 {
-                    report.Out($"VERSION {Program.MAJOR_VERSION}.{Program.MINOR_VERSION}.{Program.PATCH}");
+                    report.Out(Controller.versionString);
                     Result = ArgResult.EXIT;
                     continue;
                 }

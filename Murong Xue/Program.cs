@@ -4,15 +4,12 @@ using RSSFetcher.Logging.Reporting;
 namespace RSSFetcher;
 public partial class Program
 {
-    public static readonly int MAJOR_VERSION = 1;
-    public static readonly int MINOR_VERSION = 7;
-    public static readonly int PATCH = 0;
     //---
     static Reporter report;
     public static void Main(string[] args)
     {
         report = Logger.RequestReporter("PROGRM");
-        report.Notice($"VERSION {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}");
+        report.Notice(Controller.versionString);
 #if DEBUG
         report.Trace("compilation flag DEBUG was set");
         Logger.SetLogLevel(new(LogType.ALL, LogMod.ALL));

@@ -19,8 +19,13 @@ namespace RSSFetcher
     /// </summary>
     public class Controller : IDisposable
     {
+        public const int MAJOR_VERSION = 1;
+        public const int MINOR_VERSION = 7;
+        public const int PATCH = 0;
+        public static readonly string versionString = $"VERSION: {MAJOR_VERSION} {MINOR_VERSION} {PATCH}";
+        // ---
         public static readonly string AppRootDirectory = Path.GetDirectoryName(System.AppContext.BaseDirectory) + Path.DirectorySeparatorChar;
-
+        // ---
         private readonly Logger logger = Logger.GetInstance();
         private readonly DownloadHandler downloadHandler;
         private readonly DataFile rssData;
