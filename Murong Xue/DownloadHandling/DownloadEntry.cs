@@ -19,8 +19,7 @@ namespace RSSFetcher.DownloadHandling
     };
     internal abstract class DownloadEntryBase
     {
-        protected static readonly DownloadHandler downloadHandler = DownloadHandler.GetInstance();
-        protected static readonly Config cfg = Config.GetInstance();
+        protected readonly DownloadHandlerNew downloadHandler;
         protected static readonly EventTicker events = EventTicker.GetInstance();
         //----
         protected Uri URL;
@@ -28,7 +27,6 @@ namespace RSSFetcher.DownloadHandling
         public DownloadStatus Status { get => Getstatus(); set => SetStatus(value); }
         private object status_lock = new();
         private DownloadStatus _status = DownloadStatus.INITIALIZED;
-
         private DownloadStatus Getstatus()
         {
             lock (status_lock)
@@ -36,7 +34,6 @@ namespace RSSFetcher.DownloadHandling
                 return _status;
             }
         }
-
         private void SetStatus(DownloadStatus value)
         {
             lock (status_lock)
@@ -46,15 +43,15 @@ namespace RSSFetcher.DownloadHandling
         }
         //By accepting the reporter we can borrow the inherited classes reporter & not reallocate
         //for each individual inherited class. For each TYPE there is one reporter, not each instance.
-        public DownloadEntryBase(Uri link, Reporter? rep = null)
+        public DownloadEntryBase(Uri link, DownloadHandlerNew _dlHandle, Reporter? rep = null)
         {
+            downloadHandler = _dlHandle;
             if (rep == null)
                 report = Logger.RequestReporter("DLBASE");
             else
                 report = rep;
 
             this.URL = link;
-            downloadHandler.AddDownload(this);
         }
         public async Task Request(HttpClient client)
         {
@@ -88,17 +85,16 @@ namespace RSSFetcher.DownloadHandling
         }
         public abstract void HandleDownload(Stream content);
     }
-    internal class DownloadEntryFile(Uri link, Uri DownloadPath) : DownloadEntryBase(link, report)
+    internal class DownloadEntryFile(Uri link, DownloadHandlerNew _dlHandle) : DownloadEntryBase(link, _dlHandle, report)
     {
         private new static readonly Reporter report = Logger.RequestReporter("DLFILE");
         override public void HandleDownload(Stream content)
         {
             events.OnFileDownloaded();
-            string fileName = Path.GetFileName(URL.AbsolutePath);
-            string destinationPath = DownloadPath.LocalPath + fileName;
-            if (File.Exists(destinationPath))
+            Uri destinationPath = new(downloadHandler.DownloadFolder + Path.GetFileName(URL.AbsolutePath));
+            if (File.Exists(destinationPath.LocalPath))
                 report.Error($"File already exists\n\tLink:{URL}\n\tPath:{destinationPath}");
-            else using (FileStream fs = File.Create(destinationPath))
+            else using (FileStream fs = File.Create(destinationPath.LocalPath))
             {
                 content.Seek(0, SeekOrigin.Begin);
                 content.CopyTo(fs);
@@ -113,7 +109,7 @@ namespace RSSFetcher.DownloadHandling
         //---
         private Feed feed;
 
-        public DownloadEntryFeed(Feed _feed) : base(_feed.URL, report)
+        public DownloadEntryFeed(Feed _feed, DownloadHandlerNew _dlHandle) : base(_feed.URL, _dlHandle, report)
         {
             feed = _feed;
             feed.Status |= FeedStatus.DLHANDLE;
@@ -248,14 +244,13 @@ namespace RSSFetcher.DownloadHandling
         }
         private void AddFile(Uri link) //TODO add title + url to a list & retrieve later?
         {
-            Uri downloadPath = new(cfg.GetDownloadPath());
-            if (Path.Exists(downloadPath.LocalPath) == false)
+            if (Path.Exists(downloadHandler.DownloadFolder.LocalPath) == false)
             {
-                report.Warn($"Specified download path did not exist, creating directory. {downloadPath}");
-                Directory.CreateDirectory(downloadPath.LocalPath);
+                throw new NotImplementedException("this should be handleded in the DownloadHandler class when the path is set");
+                //report.Warn($"Specified download path did not exist, creating directory. {downloadHandler.DownloadDir.LocalPath}");
+                //Directory.CreateDirectory(downloadHandler.DownloadDir.LocalPath);
             }
-
-            _ = new DownloadEntryFile(link, downloadPath);
+            downloadHandler.AddDownload(new DownloadEntryFile(link, downloadHandler));
         }
     }
 }
