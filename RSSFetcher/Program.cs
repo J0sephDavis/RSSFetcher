@@ -6,12 +6,13 @@ public partial class Program
 {
     //---
     static Reporter report;
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         report = Logger.RequestReporter("PROGRM");
         report.Notice(Controller.versionString);
 #if DEBUG
         report.Trace("compilation flag DEBUG was set");
+        /*
         Logger.SetLogLevel(new(LogType.ALL, LogMod.ALL));
         args = [
             //"--version"
@@ -20,11 +21,11 @@ public partial class Program
             //"--VERBOSE",
             //"--UNIMPORTANT",
             //"--DEBUG",
-            "--edit",
-        ];
+            //"--edit",
+        ];*/
 #endif
         using Controller controller = new(new(args));
-        controller.Run();
+        await controller.Run();
         report.Out(controller.GetSummary());
         report.Notice("Program STOP");
     }

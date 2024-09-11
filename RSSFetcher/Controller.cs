@@ -63,7 +63,7 @@ namespace RSSFetcher
         /// runs the main part of the program
         /// </summary>
         /// <exception cref="NotImplementedException"></exception>
-        public void Run()
+        public async Task Run()
         {
             report.TraceVal($"result: {result}");
             switch (result)
@@ -73,7 +73,9 @@ namespace RSSFetcher
                     editor.MainLoop();
                     break;
                 case (ArgResult.RUN):
-                    throw new NotImplementedException("normal prog not implemented. RSSEntries.Process()");
+                    await DownloadFeeds();
+                    UpdateEntries();
+                    break;
                 case (ArgResult.NONE):
                 case (ArgResult.EXIT):
                 default:
@@ -99,6 +101,7 @@ namespace RSSFetcher
                 downloadHandler.AddDownload(new DownloadEntryFeed(feed, downloadHandler));
             }
             await downloadHandler.ProcessDownloads();
+            return;
         }
         public void UpdateEntries()
         {
