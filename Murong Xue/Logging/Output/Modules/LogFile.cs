@@ -1,19 +1,21 @@
 ﻿using RSSFetcher.Logging;
 
-namespace Murong_Xue.Logging.Output.Modules
+namespace RSSFetcher.Logging.Output.Modules
 {
     internal class LogFile : IOutputModule
     {
+        public OutputModuleClassification Type { get => OutputModuleClassification.FILE; }
+        // ---
         private readonly StreamWriter? FileStream;
         private readonly Uri? FilePath;
         public LogFile(Uri path)
         {
             if (path?.IsFile != true)
             {
-                Logger.Log(new(LogType.ERROR, LogMod.NORMAL, "LOGPUT", "SetPath FAILED, path does not lead to file"));
+                Logger.Log(new(LogType.ERROR, LogMod.NORMAL, "LOGPUT", "LogToFile FAILED, path does not lead to file"));
                 return;
             }
-            Logger.Log(new(LogType.DEBUG, LogMod.SPAM | LogMod.VERBOSE, "LOGPUT", $"SetPath: [{path}]")); //traceval
+            Logger.Log(new(LogType.DEBUG, LogMod.SPAM | LogMod.VERBOSE, "LOGPUT", $"LogToFile: [{path}]")); //traceval
 
             if (File.Exists(path.LocalPath))
             {
