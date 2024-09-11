@@ -1,5 +1,6 @@
 ﻿using RSSFetcher.InteractiveMode;
-﻿using RSSFetcher.DownloadHandling;
+using RSSFetcher.Logging.Output.Modules;
+using RSSFetcher.DownloadHandling;
 using RSSFetcher.FeedData;
 using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
@@ -21,7 +22,7 @@ namespace RSSFetcher
         public static readonly string AppRootDirectory = Path.GetDirectoryName(System.AppContext.BaseDirectory) + Path.DirectorySeparatorChar;
 
         private readonly Logger logger = Logger.GetInstance();
-        private readonly DownloadHandlerNew downloadHandler;
+        private readonly DownloadHandler downloadHandler;
         //download handler exists here as a non-singleton class?
         private readonly DataFile rssData;
         private readonly FeedManager feedManager = new();
@@ -88,9 +89,9 @@ namespace RSSFetcher
             report.Trace("DownloadFeeds()");
             foreach (var feed in GetFeeds())
             {
-                var entry = new DownloadEntryFeed(feed);
+                downloadHandler.AddDownload(new DownloadEntryFeed(feed, downloadHandler));
             }
-            await DownloadHandler.GetInstance().ProcessDownloads();
+            await downloadHandler.ProcessDownloads();
         }
         public void UpdateEntries()
         {
