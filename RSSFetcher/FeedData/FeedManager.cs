@@ -35,7 +35,8 @@ namespace RSSFetcher.FeedData
         {
             foreach (var f in feeds)
             {
-                if (f.ID != -1) throw new ApplicationException("ID already exists");
+                if (f.ID != -1) //check LINKED instead?
+                    throw new ApplicationException("ID already exists");
                 if (f.ID == -1)
                     f.ID = GetPrivateKey();
                 f.Status |= FeedStatus.LINKED;
@@ -75,6 +76,7 @@ namespace RSSFetcher.FeedData
 
             if (feed_remove.Count() > 1)
             {
+                //TODO this should probably throw an exception
                 report.Error($"RemoveFeed retrieved too many{feed_remove.Count()} feeds with query");
                 foreach (var f in feed_remove)
                     report.Debug($"FOUND FEED: {f.ID} {f.Title}");
