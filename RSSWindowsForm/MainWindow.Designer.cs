@@ -527,6 +527,7 @@
             Controls.Add(FeedStatusStrip);
             Name = "MainWindow";
             Text = "MainWindow";
+            FormClosed += MainWindow_FormClosed;
             Load += MainWindow_Load;
             BasePanel.ResumeLayout(false);
             mainSplitContainer.Panel1.ResumeLayout(false);

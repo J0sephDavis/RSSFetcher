@@ -6,7 +6,7 @@ namespace Steward_Zhou
     internal static class Program
     {
         const int MAJOR_VERSION = 1;
-        const int MINOR_VERSION = 0;
+        const int MINOR_VERSION = 1;
         const int PATCH = 0;
         static readonly string VERSION = $"Version: {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}";
         /*------------------------------------------------------------------------------

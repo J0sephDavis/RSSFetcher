@@ -28,6 +28,10 @@ namespace Steward_Zhou
             Logger.GetInstance().AddModule(new LogOutputListView(LogListBox));
             UpdateAllPanels();
         }
+        private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            controller.Dispose();
+        }
         //-------------------------------BUTTONS-------------------------------
         private async void btnProcess_Click(object sender, EventArgs e)
         {
