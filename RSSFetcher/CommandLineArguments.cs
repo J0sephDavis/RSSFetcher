@@ -11,7 +11,7 @@ namespace RSSFetcher
         EDIT = 1 << 1,
         RUN = 1 << 2,
     };
-    internal class CommandLineArguments //TODO rename Controller Configuration? Controller Arguments?
+    public class CommandLineArguments //TODO rename Controller Configuration? Controller Arguments?
     {
         const string rss_file = "rss-config.xml";
         const string download_folder = "Downloads";
@@ -22,11 +22,11 @@ namespace RSSFetcher
         Reporter report = Logger.RequestReporter("CLIARG");
         public ArgResult Result { get; private set; } = ArgResult.RUN;
         // --- eventually set by args
-        public readonly Uri LogPath = new(AppRootDirectory + "RSS-F.log");
+        public readonly Uri LogPath = new(AppRootDirectory + log_file);
         // --- can be set by command line!!!
-        public readonly Uri DownloadDirectory = new(AppRootDirectory + @"Downloads" + Path.DirectorySeparatorChar);
+        public readonly Uri DownloadDirectory = new(AppRootDirectory + download_folder + Path.DirectorySeparatorChar);
         // --- can be set by command line!!!
-        public readonly Uri RSSPath = new(AppRootDirectory + "rss-config.xml");
+        public readonly Uri RSSPath = new(AppRootDirectory + rss_file);
 
         public CommandLineArguments(string[] args)
         {

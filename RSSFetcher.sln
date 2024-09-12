@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RSSFetcher", "RSSFetcher\RS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RSSWindowsForm", "RSSWindowsForm\RSSWindowsForm.csproj", "{D337C935-D470-4D65-BB7A-B4A87809B102}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting", "UnitTesting\UnitTesting.csproj", "{8C814795-7420-40E1-9BAF-453CB175E661}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D337C935-D470-4D65-BB7A-B4A87809B102}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D337C935-D470-4D65-BB7A-B4A87809B102}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D337C935-D470-4D65-BB7A-B4A87809B102}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C814795-7420-40E1-9BAF-453CB175E661}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C814795-7420-40E1-9BAF-453CB175E661}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C814795-7420-40E1-9BAF-453CB175E661}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C814795-7420-40E1-9BAF-453CB175E661}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
