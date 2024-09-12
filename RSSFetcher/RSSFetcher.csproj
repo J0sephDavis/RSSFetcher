@@ -6,6 +6,7 @@
     <RootNamespace>RSSFetcher</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;UnitTest</Configurations>
   </PropertyGroup>
 
 </Project>

@@ -13,10 +13,12 @@ namespace RSSFetcher
     };
     public class CommandLineArguments //TODO rename Controller Configuration? Controller Arguments?
     {
+#if UNITTEST
+        public LogLevel UT_loglevel = new(LogType.DEFAULT, LogMod.DEFAULT);
+#endif
         const string rss_file = "rss-config.xml";
         const string download_folder = "Downloads";
         const string log_file = "RSS-F.log";
-
 
         public static readonly string AppRootDirectory = Path.GetDirectoryName(System.AppContext.BaseDirectory) + Path.DirectorySeparatorChar;
         Reporter report = Logger.RequestReporter("CLIARG");
@@ -120,6 +122,9 @@ namespace RSSFetcher
             {
                 report.Out($"Masking log level {level}");
                 Logger.MaskLogLevel(level);
+#if UNITTEST
+                UT_loglevel = level;
+#endif
             }
             report.Log(LogType.DEBUG, LogMod.UNIMPORTANT, $"HandleArgs set: {Result}");
         }
