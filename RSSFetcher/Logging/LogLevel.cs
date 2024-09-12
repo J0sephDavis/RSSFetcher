@@ -162,5 +162,25 @@
         {
             return a._type != t;
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            if (ReferenceEquals(obj, null))
+            {
+                return false;
+            }
+            return Equals((LogLevel)obj);
+        }
+        public bool Equals(LogLevel obj)
+        {
+            return (
+                (GetLMod() == obj.GetLMod())
+                && (GetLType() == obj.GetLType())
+            );
+        }
     }
 }
