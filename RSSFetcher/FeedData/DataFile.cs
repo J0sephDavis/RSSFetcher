@@ -48,7 +48,7 @@ namespace RSSFetcher.FeedData
             bool InExpr = false;
             bool InHistory = false;
             bool InDate = false;
-
+            DateTime DateNow = DateTime.Now;
             while (reader.Read())
             {
 #pragma warning disable CS8602 // Dereference of a possibly null reference. (Feed? feed)
@@ -119,6 +119,7 @@ namespace RSSFetcher.FeedData
                                 feed.Status |= FeedStatus.FROM_FILE;
                                 Feeds.Add(feed);
                                 Loaded++;
+                                ages.Add(DateNow - feed.Date);
                                 break;
                             default:
                                 break;
@@ -163,6 +164,7 @@ namespace RSSFetcher.FeedData
                 //-------- ROOT
                 writer.WriteStartElement(null, "root", null);
                 TimeSpan SinceLast;
+                ages.Clear();
                 //---- item
                 foreach (var feed in feeds)
                 {
@@ -203,18 +205,20 @@ namespace RSSFetcher.FeedData
             // ---
             items.Add(new("Loaded",Loaded.ToString()));
             items.Add(new("Written", Written.ToString()));
-            // ---
-            TimeSpan average = TimeSpan.Zero;
-            TimeSpan max = TimeSpan.Zero;
-            foreach (TimeSpan t in ages)
-            {
-                if (t > max) max = t;
-                average += t;
-            }
-            average = average.Divide(ages.Count);
             //---
-            items.Add(new("Oldest (days)", max.TotalDays.ToString()));
-            items.Add(new("Average (days)", average.TotalDays.ToString()));
+            if (ages.Count > 0)
+            {
+                TimeSpan average = TimeSpan.Zero;
+                TimeSpan max = TimeSpan.Zero;
+                foreach (TimeSpan t in ages)
+                {
+                    if (t > max) max = t;
+                    average += t;
+                }
+                average = average.Divide(ages.Count);
+                items.Add(new("Oldest (days)", max.TotalDays.ToString()));
+                items.Add(new("Average (days)", average.TotalDays.ToString()));
+            }
             // ---
             return items;
         }
