@@ -1,6 +1,6 @@
 using RSSFetcher.Logging;
 
-namespace RSSFetcher.UnitTests;
+namespace RSSFetcher.Tests;
 [TestClass]
 public class CommandLineArgumentsTest
 {
