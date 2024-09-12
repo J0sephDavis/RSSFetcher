@@ -104,9 +104,7 @@ namespace RSSFetcher.FeedData
             using XmlReader reader = XmlReader.Create(xStream, xSettings);
             // ---
             XmlSerializer serializer = new XmlSerializer(typeof(xmlRoot));
-            xmlRoot? document = serializer.Deserialize(reader) as xmlRoot;
-            //
-            if (document == null)
+            if (serializer.Deserialize(reader) is not xmlRoot document)
                 throw new ApplicationException("Failed to deserialize xml");
 
             foreach (var item in document.item)
