@@ -1,13 +1,18 @@
 ﻿using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
+using RSSFetcher.Summary;
 using System.Xml;
 
 namespace RSSFetcher.FeedData
 {
-    internal class DataFile(Uri RSSPath)
+    internal class DataFile(Uri RSSPath) : ISummarizeable
     {
         private readonly Uri path = RSSPath;
         private readonly Reporter report = Logger.RequestReporter("ENTDAT");
+        // --- Summary Data
+        private int Loaded = 0;
+        private int Written = 0;
+        private readonly List<TimeSpan> ages = [];
         //--------------------------------------------------------------------
         private const string RSS_Title = "title";
         private const string RSS_URL = "feed-url";
@@ -15,6 +20,9 @@ namespace RSSFetcher.FeedData
         private const string RSS_History = "history";
         private const string RSS_Item = "item";
         private const string RSS_Date = "date";
+
+        string ISummarizeable.Name => "DataFile";
+
         //--------------------------------------------------------------------
         //! Reads the XML files and populated the FeedEntry list
         public List<Feed> ReadFeeds()
@@ -110,6 +118,7 @@ namespace RSSFetcher.FeedData
                             case RSS_Item:
                                 feed.Status |= FeedStatus.FROM_FILE;
                                 Feeds.Add(feed);
+                                Loaded++;
                                 break;
                             default:
                                 break;
@@ -178,11 +187,36 @@ namespace RSSFetcher.FeedData
                     writer.WriteElementString(RSS_Date, feed.Date.ToString());
                     //---- end item
                     writer.WriteEndElement();
+                    // --- Summary info
+                    Written++;
+                    ages.Add(SinceLast);
                 }
                 //------- ROOT
                 writer.WriteEndElement();
                 writer.Flush();
             }
+        }
+
+        List<SummaryItem> ISummarizeable.GetSummary()
+        {
+            List<SummaryItem> items = [];
+            // ---
+            items.Add(new("Loaded",Loaded.ToString()));
+            items.Add(new("Written", Written.ToString()));
+            // ---
+            TimeSpan average = TimeSpan.Zero;
+            TimeSpan max = TimeSpan.Zero;
+            foreach (TimeSpan t in ages)
+            {
+                if (t > max) max = t;
+                average += t;
+            }
+            average = average.Divide(ages.Count);
+            //---
+            items.Add(new("Oldest (days)", max.TotalDays.ToString()));
+            items.Add(new("Average (days)", average.TotalDays.ToString()));
+            // ---
+            return items;
         }
     }
 }

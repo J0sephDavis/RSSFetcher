@@ -145,6 +145,7 @@ namespace RSSFetcher
         {
             SummaryBuilder summary = new();
             summary.Add(downloadHandler);
+            summary.Add(rssData);
             return summary.ToString();
         }
     }
