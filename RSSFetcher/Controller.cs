@@ -21,7 +21,7 @@ namespace RSSFetcher
     public class Controller : IDisposable
     {
         public const int MAJOR_VERSION = 2;
-        public const int MINOR_VERSION = 0;
+        public const int MINOR_VERSION = 1;
         public const int PATCH = 0;
         public static readonly string versionString = $"VERSION: {MAJOR_VERSION}.{MINOR_VERSION}.{PATCH}.";
         // ---
