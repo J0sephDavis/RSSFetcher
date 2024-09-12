@@ -115,6 +115,7 @@ public class CommandLineArgumentsTest
     }
     #endregion
     #region loglevels
+#if UNITTEST
     LogLevel defaultLevels = new(LogType.DEFAULT, LogMod.DEFAULT);
     [TestMethod]
     public void LogLevel_SPAM()
@@ -135,6 +136,7 @@ public class CommandLineArgumentsTest
         CommandLineArguments cla = new(args);
         Assert.AreEqual(cla.UT_loglevel, expected);
     }
+#endif
     #endregion
     List<CommandLineArguments> GetVariants(List<string> commands, List<string> values)
     {
