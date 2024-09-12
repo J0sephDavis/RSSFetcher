@@ -185,6 +185,7 @@ namespace RSSFetcher.FeedData
                     writer.WriteElementString(RSS_Title, feed.Title);
                     // 2. feed-url
                     writer.WriteStartElement(RSS_URL);
+                    if (feed.URL == null) report.Error($"FEED: {feed.Title} is MISSING a URL. (this shouldn't be possible)");
                     writer.WriteCData(feed.URL == null ? string.Empty : feed.URL.ToString());
                     writer.WriteEndElement();
                     // 3. expr
