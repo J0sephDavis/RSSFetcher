@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <item>
+    <title>Feed A</title>
+    <feed-url><![CDATA[https://example.com/Feed-A-RSS]]></feed-url>
+    <expr>.*Feed A.*</expr>
+    <history>Feed A 10</history>
+    <date>9/6/2024 11:34:08 AM</date>
+  </item>
+  <item>
+    <title>Feed B</title>
+    <feed-url><![CDATA[https://example.com/Feed-B-RSS]]></feed-url>
+    <expr>.*Feed B.*</expr>
+    <history>Feed B 10</history>
+    <date>9/7/2024 11:24:04 AM</date>
+  </item>
+  <item>
+    <title>Feed C</title>
+    <feed-url><![CDATA[https://example.com/Feed-C-RSS]]></feed-url>
+    <expr>.*Feed C.*</expr>
+    <history>Feed C 10</history>
+    <date>9/4/2024 11:16:04 AM</date>
+  </item>
+  <item>
+    <title>Feed D</title>
+    <feed-url><![CDATA[https://example.com/Feed-D-RSS]]></feed-url>
+    <expr>.*Feed D.*</expr>
+    <history>Feed D 10</history>
+    <date>9/9/2024 2:58:47 PM</date>
+  </item>
+</root>
