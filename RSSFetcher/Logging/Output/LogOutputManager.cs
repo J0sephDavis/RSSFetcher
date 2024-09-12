@@ -2,7 +2,7 @@
 
 namespace RSSFetcher.Logging.OutputHandling
 {
-    internal class LogOutputManager
+    public class LogOutputManager
     {
         // ---
         private readonly List<LogMsg> Buffer = []; // lock needed

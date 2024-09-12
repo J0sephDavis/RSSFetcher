@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace RSSFetcher.FeedData
 {
-    internal class DataFile(Uri RSSPath) : ISummarizeable
+    public class DataFile(Uri RSSPath) : ISummarizeable
     {
         private readonly Uri path = RSSPath;
         private readonly Reporter report = Logger.RequestReporter("ENTDAT");

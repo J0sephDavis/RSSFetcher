@@ -3,7 +3,7 @@ using RSSFetcher.Logging.Reporting;
 
 namespace RSSFetcher.FeedData
 {
-    internal class FeedManager()
+    public class FeedManager()
     {
         private readonly Reporter report = Logger.RequestReporter("FEED-M");
         //--------------------------------------------------------------------

@@ -3,7 +3,7 @@ using static RSSFetcher.InteractiveMode.InteractiveEditor;
 
 namespace RSSFetcher.InteractiveMode.Commands
 {
-    internal class QuitCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
+    public class QuitCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
     {
         static readonly string[] valid_commands = ["quit", "exit"];
         public override string GetHelp() => "quits the program";

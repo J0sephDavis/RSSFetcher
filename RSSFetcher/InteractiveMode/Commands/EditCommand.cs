@@ -4,7 +4,7 @@ using static RSSFetcher.InteractiveMode.InteractiveEditor;
 
 namespace RSSFetcher.InteractiveMode.Commands
 {
-    internal class EditCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
+    public class EditCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
     {
         static readonly string[] valid_commands = ["edit"];
         public override string GetName() => valid_commands[0];

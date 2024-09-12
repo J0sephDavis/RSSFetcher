@@ -3,7 +3,7 @@ using RSSFetcher.Logging;
 using RSSFetcher.Logging.Reporting;
 namespace Steward_Zhou
 {
-    internal static class Program
+    public static class Program
     {
         const int MAJOR_VERSION = 1;
         const int MINOR_VERSION = 1;

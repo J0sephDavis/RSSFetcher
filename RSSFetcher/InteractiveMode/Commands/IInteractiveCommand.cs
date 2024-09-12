@@ -3,7 +3,7 @@ using static RSSFetcher.InteractiveMode.InteractiveEditor;
 
 namespace RSSFetcher.InteractiveMode.Commands
 {
-    abstract class IInteractiveCommand(Controller _controller, InteractiveReporter _report)
+    public abstract class IInteractiveCommand(Controller _controller, InteractiveReporter _report)
     {
         protected readonly Controller controller = _controller;
         protected readonly InteractiveReporter report = _report;

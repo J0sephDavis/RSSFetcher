@@ -17,7 +17,7 @@ namespace RSSFetcher.DownloadHandling
         PROCESSING,     //waiting for processing to end
         PROCESSED,      //done
     };
-    internal abstract class DownloadEntryBase
+    public abstract class DownloadEntryBase
     {
         protected readonly DownloadHandler downloadHandler;
         //----
@@ -84,7 +84,7 @@ namespace RSSFetcher.DownloadHandling
         }
         public abstract void HandleDownload(Stream content);
     }
-    internal class DownloadEntryFile(Uri link, DownloadHandler _dlHandle) : DownloadEntryBase(link, _dlHandle, report)
+    public class DownloadEntryFile(Uri link, DownloadHandler _dlHandle) : DownloadEntryBase(link, _dlHandle, report)
     {
         private new static readonly Reporter report = Logger.RequestReporter("DLFILE");
         override public void HandleDownload(Stream content)
@@ -102,7 +102,7 @@ namespace RSSFetcher.DownloadHandling
             Status = DownloadStatus.PROCESSED;
         }
     }
-    internal class DownloadEntryFeed : DownloadEntryBase
+    public class DownloadEntryFeed : DownloadEntryBase
     {
         private new static readonly Reporter report = Logger.RequestReporter("DLFEED");
         //---

@@ -4,7 +4,7 @@ using RSSFetcher.Summary;
 
 namespace RSSFetcher.DownloadHandling
 {
-    internal class DownloadHandler(Uri _downloadPath) : ISummarizeable
+    public class DownloadHandler(Uri _downloadPath) : ISummarizeable
     {
         private readonly HttpClient client = new();
         private readonly Reporter report = Logger.RequestReporter("DLHAND");

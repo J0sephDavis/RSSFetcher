@@ -5,13 +5,13 @@ using RSSFetcher.Logging.Reporting;
 
 namespace RSSFetcher.InteractiveMode
 {
-    internal class InteractiveEditor
+    public class InteractiveEditor
     {
         private readonly List<Feed> Feeds = [];
         private readonly Controller controller;
         private readonly InteractiveReporter report;
         private readonly List<IInteractiveCommand> Commands;
-        internal InteractiveEditor(Controller _controller)
+        public InteractiveEditor(Controller _controller)
         {
             controller = _controller;
             // ---

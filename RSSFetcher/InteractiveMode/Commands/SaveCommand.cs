@@ -4,7 +4,7 @@ using static RSSFetcher.InteractiveMode.InteractiveEditor;
 
 namespace RSSFetcher.InteractiveMode.Commands
 {
-    internal class SaveCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
+    public class SaveCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
     {
         static readonly string[] valid_commands = ["save", "write"];
         public override string GetHelp() => "no args, saves any changes to disk";

@@ -4,7 +4,7 @@ using static RSSFetcher.InteractiveMode.InteractiveEditor;
 
 namespace RSSFetcher.InteractiveMode.Commands
 {
-    internal class CreateCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
+    public class CreateCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
     {
         static readonly string[] valid_commands = ["create", "new"];
         public override string GetHelp() => "run interactive feed creator";

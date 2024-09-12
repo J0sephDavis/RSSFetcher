@@ -2,7 +2,7 @@
 
 namespace RSSFetcher.Summary
 {
-    internal class SummaryBuilder()
+    public class SummaryBuilder()
     {
         private readonly List<ISummarizeable> Summaries = [];
         public void Add(ISummarizeable obj) => Summaries.Add(obj);

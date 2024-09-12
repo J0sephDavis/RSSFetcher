@@ -9,7 +9,7 @@ namespace RSSFetcher.Logging.Reporting
     ///     - Such as a new logging level
     ///     - If we ever use individual buffers for each reporter, it would be possible to flush all the reporters buffers here
     /// </summary>
-    internal class ReporterManager(LogLevel _level)
+    public class ReporterManager(LogLevel _level)
     {
         LogLevel Level = _level;
         private readonly List<Reporter> reporters = [];

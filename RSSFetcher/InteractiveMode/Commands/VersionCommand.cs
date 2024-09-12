@@ -3,7 +3,7 @@ using static RSSFetcher.InteractiveMode.InteractiveEditor;
 
 namespace RSSFetcher.InteractiveMode.Commands
 {
-    internal class VersionCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
+    public class VersionCommand(Controller control, InteractiveReporter report) : IInteractiveCommand(control, report)
     {
         static readonly string[] valid_commands = ["version"];
         public override string GetHelp() => "no args, gets version information";

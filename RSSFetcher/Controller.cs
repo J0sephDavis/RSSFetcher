@@ -45,7 +45,7 @@ namespace RSSFetcher
             // ---
             result = ArgResult.RUN;
         }
-        internal Controller(CommandLineArguments args)
+        public Controller(CommandLineArguments args)
         {
             if (args.Result == ArgResult.EDIT)
                 logger.AddModule(new InteractiveConsole());

@@ -2,7 +2,7 @@
 
 namespace RSSFetcher.Logging.Output.Modules
 {
-    internal class LogFile : IOutputModule
+    public class LogFile : IOutputModule
     {
         public OutputModuleClassification Type { get => OutputModuleClassification.FILE; }
         // ---

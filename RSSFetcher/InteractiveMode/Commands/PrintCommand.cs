@@ -5,7 +5,7 @@ using static RSSFetcher.InteractiveMode.InteractiveEditor;
 
 namespace RSSFetcher.InteractiveMode.Commands
 {
-    internal class PrintCommand(Controller control, InteractiveReporter report)
+    public class PrintCommand(Controller control, InteractiveReporter report)
         : IInteractiveCommand(control, report)
     {
         static readonly string[] valid_commands = ["print"];

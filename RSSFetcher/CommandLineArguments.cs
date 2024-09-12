@@ -4,7 +4,7 @@ using RSSFetcher.Logging.Reporting;
 namespace RSSFetcher
 {
     [Flags]
-    internal enum ArgResult
+    public enum ArgResult
     {
         NONE = 0,
         EXIT = 1 << 0,
@@ -13,7 +13,12 @@ namespace RSSFetcher
     };
     internal class CommandLineArguments //TODO rename Controller Configuration? Controller Arguments?
     {
-        static readonly string AppRootDirectory = Path.GetDirectoryName(System.AppContext.BaseDirectory) + Path.DirectorySeparatorChar;
+        const string rss_file = "rss-config.xml";
+        const string download_folder = "Downloads";
+        const string log_file = "RSS-F.log";
+
+
+        public static readonly string AppRootDirectory = Path.GetDirectoryName(System.AppContext.BaseDirectory) + Path.DirectorySeparatorChar;
         Reporter report = Logger.RequestReporter("CLIARG");
         public ArgResult Result { get; private set; } = ArgResult.RUN;
         // --- eventually set by args

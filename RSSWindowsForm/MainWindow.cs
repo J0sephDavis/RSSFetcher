@@ -167,7 +167,7 @@ namespace Steward_Zhou
     }
     //---------------------------------------------------------------------
     [Flags]
-    enum FeedFields
+    public enum FeedFields
     {
         ID          = 1 << 0,
         TITLE       = 1 << 1,
@@ -179,7 +179,7 @@ namespace Steward_Zhou
         
         ALL = ID | TITLE | URL | EXPRESSION | DATE | HISTORY | STATUS,
     };
-    internal class FeedListViewItem : ListViewItem
+    public class FeedListViewItem : ListViewItem
     {
         public Feed feed;
         //TODO instead of use FeedFields as a flag, it should be an ordered list/array
