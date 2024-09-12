@@ -107,11 +107,11 @@ namespace RSSFetcher.DownloadHandling
             }
             report.Notice("Download queue exhausted");
         }
-        public async void FeedDownloaded()
+        public void FeedDownloaded()
         {
             lock (lock_summary_fields) DownloadedFeeds++;
         }
-        public async void FileDownloaded()
+        public void FileDownloaded()
         {
             lock (lock_summary_fields) DownloadedFiles++;
         }
