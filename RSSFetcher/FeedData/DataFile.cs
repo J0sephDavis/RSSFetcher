@@ -137,7 +137,7 @@ namespace RSSFetcher.FeedData
             using (XmlWriter writer = XmlWriter.Create(xStream, xSettings))
             {
                 //-------- ROOT
-                writer.WriteStartElement(null, "xmlRoot", null);
+                writer.WriteStartElement(null, "root", null);
                 TimeSpan SinceLast;
                 ages.Clear();
                 //---- item
