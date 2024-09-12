@@ -46,52 +46,21 @@ namespace RSSFetcher.FeedData
     [XmlRootAttribute("root",IsNullable = false)]
     public partial class xmlRoot
     {
-        private xmlFeed[] feeds;
         [XmlElementAttribute("item")]
-        public xmlFeed[] item
-        {
-            get => this.feeds;
-            set => this.feeds = value;
-        }
+        public xmlFeed[] item { get; set; }
     }
 
     //[SerializableAttribute()]
     [XmlTypeAttribute(AnonymousType = true)]
     public partial class xmlFeed
     {
-        private string titleField;
-        private string feedurlField;
-        private string exprField;
-        private string historyField;
-        private string dateField;
-
-        public string title
-        {
-            get => this.titleField;
-            set => this.titleField = value;
-        }
+        public string title { get; set; }
 
         [XmlElementAttribute("feed-url")]
-        public string feedurl
-        {
-            get => this.feedurlField;
-            set => this.feedurlField = value;
-        }
-        public string expr
-        {
-            get => this.exprField;
-            set => this.exprField = value;
-        }
-        public string history
-        {
-            get => this.historyField;
-            set => this.historyField = value;
-        }
-        public string date
-        {
-            get => this.dateField;
-            set => this.dateField = value;
-        }
+        public string feedurl { get; set; }
+        public string expr { get; set; }
+        public string history { get; set; }
+        public string date { get; set; }
         public Feed ToFeed()
         {
             return new()
