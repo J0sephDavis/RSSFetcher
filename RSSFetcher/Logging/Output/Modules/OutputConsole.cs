@@ -69,12 +69,12 @@ namespace RSSFetcher.Logging.Output.Modules
         // ---
         private static void DoMsg(LogMsg msg)
         {
-            if ((msg & LogType.ERROR) != 0)
-                Console.WriteLine(msg);
+            Console.WriteLine(msg);
         }
         public void WriteMsg(LogMsg msg)
         {
-            if ((msg & LogMod.INTERACTIVE) != 0) return; //ignore msgs marked interactive, they are output immediately by the InteractiveReporter
+            //ignore msgs marked interactive, they are output immediately by the InteractiveReporter
+            if ((msg & LogMod.INTERACTIVE) != 0) return;
 
             lock(tv_remote)
             {
@@ -90,6 +90,9 @@ namespace RSSFetcher.Logging.Output.Modules
                 }
             }
         }
-        public void Dispose() { }
+        public void Dispose()
+        {
+            PrintBuff();
+        }
     }
 }
