@@ -81,7 +81,6 @@ namespace RSSFetcher
                 default:
                     break;
             }
-            GetSummary();
         }
         void IDisposable.Dispose() => logger.Dispose(); //TODO https://stackoverflow.com/questions/151051/when-should-i-use-gc-suppressfinalize
         public void SubscribeFeedAddOrRemove(EventHandler method) => feedManager.FeedAddOrRemove += method;
@@ -102,7 +101,6 @@ namespace RSSFetcher
                 downloadHandler.AddDownload(new DownloadEntryFeed(feed, downloadHandler));
             }
             await downloadHandler.ProcessDownloads();
-            return;
         }
         public void UpdateEntries()
         {
